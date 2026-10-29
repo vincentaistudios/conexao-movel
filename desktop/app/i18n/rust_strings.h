@@ -345,6 +345,7 @@ static const char *const nectarlink_rust_strings[] = {
     QT_TRANSLATE_NOOP("Messages", "Attachment is %1 (MMS supports up to 900 KB)"), // desktop/app/src/messages.rs
     QT_TRANSLATE_NOOP("Messages", "Group texts can't be sent from the PC yet."), // desktop/app/src/messages.rs
     QT_TRANSLATE_NOOP("Messages", "Only image or voice-note audio files can be attached."), // desktop/app/src/messages.rs
+    QT_TRANSLATE_NOOP("Messages", "The text wasn't sent: this conversation isn't loaded yet. Try again in a moment."), // desktop/app/src/messages.rs
     QT_TRANSLATE_NOOP("Mirror", "Couldn't start recording."), // desktop/app/src/mirror.rs
     QT_TRANSLATE_NOOP("Mirror", "Mirror recording"), // desktop/app/src/mirror.rs
     QT_TRANSLATE_NOOP("Mirror", "Mirror screenshot"), // desktop/app/src/mirror.rs
@@ -400,6 +401,7 @@ static const char *const nectarlink_rust_strings[] = {
     QT_TRANSLATE_NOOP("PhotoBackup", "Up to date, %1 backed up"), // desktop/app/src/bridge/photo_backup.rs
     QT_TRANSLATE_NOOP("PhotoBackup", "Update NectarLink on %1 to back up its photos."), // desktop/app/src/photo_backup.rs
     QT_TRANSLATE_NOOP("PhotoBackup", "Waiting for %1"), // desktop/app/src/bridge/photo_backup.rs
+    QT_TRANSLATE_NOOP("Photos", "%1 of %2 couldn't be moved to %3. They're in Downloads\\Nectarlink."), // desktop/app/src/photos.rs
     QT_TRANSLATE_NOOP("Photos", "Copied to clipboard."), // desktop/app/src/photos.rs
     QT_TRANSLATE_NOOP("Photos", "From %1"), // desktop/app/src/photos.rs
     QT_TRANSLATE_NOOP("Photos", "New photo"), // desktop/app/src/photos.rs
