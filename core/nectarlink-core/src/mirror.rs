@@ -652,10 +652,15 @@ impl Shared {
     /// stream (`op`) of a mirroring.
     fn new_mirror_stop(&self, peer: &DeviceId, mirroring: u32, op: &'static str) -> Arc<tokio::sync::Notify> {
         let signal = Arc::new(tokio::sync::Notify::new());
-        self.mirror_stops
+        let replaced = self
+            .mirror_stops
             .lock()
             .unwrap_or_else(|e| e.into_inner())
             .insert((*peer, mirroring, op), signal.clone());
+        // A stream this one replaces stops: nothing else could reach it now.
+        if let Some(replaced) = replaced {
+            replaced.notify_one();
+        }
         signal
     }
 
