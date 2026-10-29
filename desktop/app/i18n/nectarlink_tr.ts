@@ -9098,19 +9098,16 @@ Neler gerekir
 <context>
     <name>Widget</name>
     <message>
-        <location filename="rust_strings.h" line="494"/>
         <source>No phone connected</source>
-        <translation>Bağlı telefon yok</translation>
+        <translation type="vanished">Bağlı telefon yok</translation>
     </message>
     <message>
-        <location filename="rust_strings.h" line="495"/>
         <source>No recent clipboard items</source>
-        <translation>Son pano öğesi yok</translation>
+        <translation type="vanished">Son pano öğesi yok</translation>
     </message>
     <message>
-        <location filename="rust_strings.h" line="496"/>
         <source>Not available</source>
-        <translation>Kullanılamıyor</translation>
+        <translation type="vanished">Kullanılamıyor</translation>
     </message>
 </context>
 </TS>
