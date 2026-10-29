@@ -1200,6 +1200,7 @@ async fn send_until_done(
                 _ = tokio::time::sleep(Duration::from_secs(1)) => continue,
             }
         };
+        let sent_before = reporter.transfer.done;
         match attempt(reporter, &session, &mut files, cancel, pause_rx).await {
             Attempt::Done => return TransferState::Done { saved: Vec::new() },
             Attempt::Cancelled => return TransferState::Cancelled,
@@ -1212,8 +1213,14 @@ async fn send_until_done(
             }
             Attempt::Fatal(failure) => return TransferState::Failed(failure),
             Attempt::Retry => {
-                // Made it this far: give the device a fresh window to come back.
-                give_up_at = Instant::now() + RETRY_FOR;
+                // Got further: give the device a fresh window to come back. A
+                // device that keeps reconnecting without taking any bytes
+                // doesn't keep the transfer going forever.
+                if reporter.transfer.done > sent_before {
+                    give_up_at = Instant::now() + RETRY_FOR;
+                } else if Instant::now() >= give_up_at {
+                    return TransferState::Failed(TransferFailure::Unreachable);
+                }
                 tracing::debug!(id = %reporter.transfer.id, "transfer interrupted; will resume");
                 reporter.set(TransferState::Waiting);
                 tokio::select! {
@@ -1795,7 +1802,10 @@ async fn receive_bytes(
             })?;
         // A part file longer than `have` (it changed or failed a prior check) starts from `have`.
         if *have < out.metadata().await.map(|m| m.len()).unwrap_or(0) {
-            out.set_len(*have).await.ok();
+            // Appending after leftover bytes would put this file's data in the wrong place.
+            out.set_len(*have).await.map_err(|e| {
+                TransferState::Failed(TransferFailure::Other(format!("can't truncate: {}", e.kind())))
+            })?;
         }
         let mut hasher = if file.blake3.is_some() {
             let have_bytes = *have;
@@ -1918,21 +1928,39 @@ async fn store(
     let parts: Vec<PathBuf> = (0..entries.len()).map(part).collect();
     let dir = dir.to_owned();
     tokio::task::spawn_blocking(move || {
-        std::fs::create_dir_all(&target)?;
-        // A sent folder lands under a name of its own: `Trip`, or
-        // `Trip (2)` when there already is one.
-        let mut folders: HashMap<String, PathBuf> = HashMap::new();
-        let mut saved = Vec::with_capacity(entries.len());
+        let saved = save_files(&target, &entries, parts)?;
+        let _ = std::fs::remove_dir_all(&dir);
+        if let Some(parent) = dir.parent() {
+            let _ = std::fs::remove_dir(parent);
+        }
+        Ok(saved)
+    })
+    .await
+    .map_err(std::io::Error::other)?
+}
+
+/// Moves the received part files into `target`, under their own names.
+/// When one can't be saved, the ones already moved go back to their part
+/// files: the sender hears it failed, and a retry resumes instead of leaving
+/// a second copy of each.
+fn save_files(target: &Path, entries: &[FileEntry], parts: Vec<PathBuf>) -> std::io::Result<Vec<PathBuf>> {
+    std::fs::create_dir_all(target)?;
+    // A sent folder lands under a name of its own: `Trip`, or
+    // `Trip (2)` when there already is one.
+    let mut folders: HashMap<String, PathBuf> = HashMap::new();
+    let mut saved = Vec::with_capacity(entries.len());
+    let mut moved: Vec<(PathBuf, PathBuf)> = Vec::new();
+    let result = (|| {
         for (entry, part) in entries.iter().zip(parts) {
             let at = match entry.folder.as_deref() {
-                None => target.clone(),
+                None => target.to_path_buf(),
                 Some(folder) => {
                     let mut names = folder.split('/').map(storable_name);
                     let top = names.next().unwrap_or_else(|| "Folder".into());
                     let mut at = match folders.get(&top) {
                         Some(at) => at.clone(),
                         None => {
-                            let at = unique_path(&target, &top);
+                            let at = unique_path(target, &top);
                             std::fs::create_dir(&at)?;
                             folders.insert(top, at.clone());
                             saved.push(at.clone());
@@ -1945,23 +1973,39 @@ async fn store(
                 }
             };
             let to = unique_path(&at, &storable_name(&entry.name));
-            if std::fs::rename(&part, &to).is_err() {
-                // Another volume: copy, then drop the part file.
-                std::fs::copy(&part, &to)?;
-                std::fs::remove_file(&part)?;
-            }
+            move_file(&part, &to)?;
+            moved.push((to.clone(), part));
             if entry.folder.is_none() {
                 saved.push(to);
             }
         }
-        let _ = std::fs::remove_dir_all(&dir);
-        if let Some(parent) = dir.parent() {
-            let _ = std::fs::remove_dir(parent);
+        Ok(())
+    })();
+    if let Err(e) = result {
+        for (to, part) in moved.iter().rev() {
+            if let Err(e) = move_file(to, part) {
+                tracing::warn!(error = %e, "can't put a received file back");
+            }
         }
-        Ok(saved)
-    })
-    .await
-    .map_err(std::io::Error::other)?
+        // Folders made here hold nothing of anyone else's.
+        for folder in folders.values() {
+            let _ = std::fs::remove_dir_all(folder);
+        }
+        return Err(e);
+    }
+    Ok(saved)
+}
+
+/// Moves `from` to `to`, copying when they're on different volumes.
+fn move_file(from: &Path, to: &Path) -> std::io::Result<()> {
+    if std::fs::rename(from, to).is_err() {
+        if let Err(e) = std::fs::copy(from, to) {
+            let _ = std::fs::remove_file(to);
+            return Err(e);
+        }
+        std::fs::remove_file(from)?;
+    }
+    Ok(())
 }
 
 /// Deletes partly received files nobody resumed in time.
@@ -1975,6 +2019,20 @@ pub(crate) fn clean_incoming(dir: &Path) {
     let Ok(peers) = std::fs::read_dir(dir) else { return };
     for peer in peers.flatten() {
         let path = peer.path();
+        // Writes to the phone's storage from a PC: `incoming/storage/<peer>/<id>.part`,
+        // each resumable on its own (the folder's own age says nothing about them).
+        if peer.file_name() == "storage" {
+            for peer in std::fs::read_dir(&path).into_iter().flatten().flatten() {
+                for part in std::fs::read_dir(peer.path()).into_iter().flatten().flatten() {
+                    if is_stale(&part) {
+                        let _ = std::fs::remove_file(part.path());
+                    }
+                }
+                let _ = std::fs::remove_dir(peer.path());
+            }
+            let _ = std::fs::remove_dir(&path);
+            continue;
+        }
         // Transfers from before they were kept per peer: `incoming/<offer>`.
         if peer.file_name().to_str().and_then(|n| n.parse::<DeviceId>().ok()).is_none() {
             if is_stale(&peer) {
@@ -1996,6 +2054,55 @@ pub(crate) fn clean_incoming(dir: &Path) {
 #[cfg(test)]
 mod tests {
     use super::*;
+
+    #[test]
+    fn files_go_back_to_their_part_files_when_one_cant_be_saved() {
+        let dir = tempfile::tempdir().unwrap();
+        let (incoming, target) = (dir.path().join("incoming"), dir.path().join("Downloads"));
+        std::fs::create_dir_all(&incoming).unwrap();
+        let entry = |name: &str, folder: Option<&str>| FileEntry {
+            name: name.into(),
+            size: 1,
+            folder: folder.map(Into::into),
+            blake3: None,
+        };
+        let entries = [entry("a.txt", None), entry("b.txt", Some("Trip")), entry("c.txt", None)];
+        let parts: Vec<PathBuf> = (0..3).map(|i| incoming.join(format!("{i}.part"))).collect();
+        std::fs::write(&parts[0], b"a").unwrap();
+        std::fs::write(&parts[1], b"b").unwrap();
+        // The third never arrived, so saving fails on it.
+
+        assert!(save_files(&target, &entries, parts.clone()).is_err());
+        assert_eq!(std::fs::read(&parts[0]).unwrap(), b"a", "back where a retry resumes");
+        assert_eq!(std::fs::read(&parts[1]).unwrap(), b"b");
+        assert_eq!(std::fs::read_dir(&target).unwrap().count(), 0, "nothing half-delivered");
+
+        std::fs::write(&parts[2], b"c").unwrap();
+        let saved = save_files(&target, &entries, parts).unwrap();
+        assert_eq!(saved, [target.join("a.txt"), target.join("Trip"), target.join("c.txt")]);
+        assert_eq!(std::fs::read(target.join("Trip").join("b.txt")).unwrap(), b"b");
+    }
+
+    #[test]
+    fn storage_writes_are_swept_one_part_file_at_a_time() {
+        let dir = tempfile::tempdir().unwrap();
+        let peer = dir.path().join("storage").join("peer");
+        std::fs::create_dir_all(&peer).unwrap();
+        let fresh = peer.join("fresh.part");
+        let stale = peer.join("stale.part");
+        std::fs::write(&fresh, b"resume me").unwrap();
+        std::fs::write(&stale, b"old").unwrap();
+        let old = std::time::SystemTime::now() - KEEP_PARTIAL - Duration::from_secs(60);
+        std::fs::File::options().write(true).open(&stale).unwrap().set_modified(old).unwrap();
+
+        clean_incoming(dir.path());
+        assert!(fresh.exists(), "a recent write stays resumable");
+        assert!(!stale.exists());
+
+        std::fs::remove_file(&fresh).unwrap();
+        clean_incoming(dir.path());
+        assert!(!dir.path().join("storage").exists(), "emptied folders go");
+    }
 
     #[test]
     fn names_are_made_safe() {
