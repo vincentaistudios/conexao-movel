@@ -183,7 +183,7 @@ async fn answer(shared: &Arc<Shared>, session: &Session, env: &Envelope) -> Resu
             blocking(Box::new(move || {
                 let (mime, data) = platform.sms_part(&id)?;
                 if data.len() > sms::MAX_PART_BYTES {
-                    return Ok(Envelope::error(ErrorCode::Busy, "too large"));
+                    return Ok(Envelope::error(ErrorCode::FrameTooLarge, "too large"));
                 }
                 Envelope::new(types::SMS_PART, &SmsPartData { mime, data }).map_err(|e| e.to_string())
             }))
