@@ -8,6 +8,7 @@ static const char *const nectarlink_rust_strings[] = {
     QT_TRANSLATE_NOOP("App", "Command palette"), // desktop/app/src/bridge/app.rs
     QT_TRANSLATE_NOOP("App", "Copied to clipboard."), // desktop/app/src/bridge/app.rs
     QT_TRANSLATE_NOOP("App", "Could not copy to the clipboard."), // desktop/app/src/bridge/app.rs
+    QT_TRANSLATE_NOOP("App", "Couldn't check for updates. Try again."), // desktop/app/src/bridge/app.rs
     QT_TRANSLATE_NOOP("App", "Downloading the update · %1 of %2"), // desktop/app/src/bridge/app.rs
     QT_TRANSLATE_NOOP("App", "Downloading the update…"), // desktop/app/src/bridge/app.rs
     QT_TRANSLATE_NOOP("App", "Find my phone"), // desktop/app/src/bridge/app.rs
@@ -32,6 +33,7 @@ static const char *const nectarlink_rust_strings[] = {
     QT_TRANSLATE_NOOP("App", "That file is no longer in its saved location."), // desktop/app/src/bridge/app.rs
     QT_TRANSLATE_NOOP("App", "The photo couldn't be copied to the clipboard."), // desktop/app/src/bridge/app.rs
     QT_TRANSLATE_NOOP("App", "The received file history couldn't be cleared. Try again."), // desktop/app/src/bridge/app.rs
+    QT_TRANSLATE_NOOP("App", "The update couldn't be installed. Try again."), // desktop/app/src/bridge/app.rs
     QT_TRANSLATE_NOOP("App", "Toggle Shelf"), // desktop/app/src/bridge/app.rs
     QT_TRANSLATE_NOOP("App", "Wi-Fi %1/4"), // desktop/app/src/bridge/app.rs
     QT_TRANSLATE_NOOP("App", "Your phone"), // desktop/app/src/bridge/app.rs
