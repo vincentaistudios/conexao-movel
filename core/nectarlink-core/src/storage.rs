@@ -1098,7 +1098,15 @@ impl FolderStorage {
             self.ensure_inside(&canon_root, &canon_parent)?;
         }
         if std::fs::rename(staged, &dest).is_err() {
-            std::fs::copy(staged, &dest).map_err(|e| StorageError::Failed(e.to_string()))?;
+            // Another volume: copy beside the file, then swap it in, so a
+            // failed copy leaves the file that was there untouched.
+            let name = dest.file_name().unwrap_or_default().to_string_lossy();
+            let temp = dest.with_file_name(format!(".{name}.nectarlink-part"));
+            let swapped = std::fs::copy(staged, &temp).and_then(|_| std::fs::rename(&temp, &dest));
+            if let Err(e) = swapped {
+                let _ = std::fs::remove_file(&temp);
+                return Err(StorageError::Failed(e.to_string()));
+            }
         }
         if let Some(ms) = modified.filter(|m| *m >= 0)
             && let Some(st) = UNIX_EPOCH.checked_add(Duration::from_millis(ms as u64))
