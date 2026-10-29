@@ -20,6 +20,11 @@ change things that need a step from you, and its notes say so.
 - **Sharing your PC's screen with the phone uses H.265** when both sides
   can, and H.264 otherwise. Thanks to [@AS8148](https://github.com/AS8148)
   ([#66](https://github.com/thtbee/nectarlink/pull/66)).
+- **Hardware video for screen sharing on Linux.** With FFmpeg 6 to 9
+  installed, sharing the PC's screen and showing a shared screen use the
+  GPU (VAAPI, NVIDIA or Intel QSV) and fall back to software H.264 when it
+  can't. Thanks to [@AS8148](https://github.com/AS8148)
+  ([#67](https://github.com/thtbee/nectarlink/pull/67)).
 - **Elevated over USB.** Plug the phone into the PC with USB debugging
   allowed and Elevated starts by itself, without setting up Wireless
   debugging. It runs while the cable is in. The PC only starts NectarLink's
