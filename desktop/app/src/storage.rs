@@ -492,12 +492,35 @@ mod imp {
         }
     }
 
+    /// Clears the phone's folder: its placeholders go, but a file that never
+    /// reached the phone (copied in, or changed and not uploaded) is the
+    /// user's own and stays where it is.
     #[cfg(windows)]
     fn cleanup_sync_root_dir(path: &Path) {
+        fn clear(dir: &Path) -> usize {
+            let mut kept = 0;
+            for entry in std::fs::read_dir(dir).into_iter().flatten().flatten() {
+                let path = entry.path();
+                if entry.file_type().is_ok_and(|t| t.is_dir()) {
+                    kept += clear(&path);
+                    let _ = std::fs::remove_dir(&path);
+                } else if needs_upload(&path) {
+                    kept += 1;
+                } else {
+                    let _ = std::fs::remove_file(&path);
+                }
+            }
+            kept
+        }
         if !path.exists() {
             return;
         }
-        let _ = std::fs::remove_dir_all(path);
+        let kept = clear(path);
+        if kept > 0 {
+            tracing::info!(kept, "kept files that never reached the phone in its old folder");
+        } else {
+            let _ = std::fs::remove_dir(path);
+        }
     }
 
     #[cfg(windows)]
@@ -974,6 +997,17 @@ mod imp {
                 current_offset += len;
                 remaining = remaining.saturating_sub(len);
             }
+            // The phone's stream ended short: Explorer hears it now, instead
+            // of waiting out its own timeout.
+            if remaining > 0 {
+                ack_data_failed(
+                    connection_key,
+                    transfer_key,
+                    request_key,
+                    current_offset as i64,
+                    STATUS_CLOUD_NETWORK_UNAVAILABLE,
+                );
+            }
         });
     }
 
@@ -1097,7 +1131,8 @@ mod imp {
                 Ok(()) => STATUS_SUCCESS,
                 Err(nectarlink_core::Error::Offline) => STATUS_CLOUD_NETWORK_UNAVAILABLE,
                 Err(nectarlink_core::Error::Denied) => STATUS_ACCESS_DENIED,
-                Err(nectarlink_core::Error::Storage(msg)) if msg.contains("not_found") => STATUS_SUCCESS,
+                // Already gone from the phone: deleted, as asked.
+                Err(nectarlink_core::Error::NotFound) => STATUS_SUCCESS,
                 Err(_) => STATUS_CLOUD_UNSUCCESSFUL,
             };
             ack_delete(connection_key, transfer_key, request_key, status);
@@ -1201,10 +1236,11 @@ mod imp {
                     None,
                 )
             };
-            let Ok(dir_handle) = dir_handle else { return };
-            if dir_handle == INVALID_HANDLE_VALUE {
+            // Files dropped in this folder won't go to the phone: say why.
+            let Some(dir_handle) = dir_handle.ok().filter(|h| *h != INVALID_HANDLE_VALUE) else {
+                tracing::warn!("can't watch the phone's folder for files to upload");
                 return;
-            }
+            };
 
             let mut buf = vec![0u64; 4096];
             while !stop.load(Ordering::Relaxed) {
@@ -1384,6 +1420,22 @@ mod imp {
     #[cfg(test)]
     mod tests {
         use super::*;
+
+        #[cfg(windows)]
+        #[test]
+        fn clearing_a_phone_folder_keeps_files_that_never_reached_the_phone() {
+            let dir = tempfile::tempdir().unwrap();
+            let root = dir.path().join("Pixel");
+            std::fs::create_dir_all(root.join("DCIM").join("empty")).unwrap();
+            std::fs::write(root.join("DCIM").join("mine.txt"), b"not on the phone").unwrap();
+            cleanup_sync_root_dir(&root);
+            assert_eq!(std::fs::read(root.join("DCIM").join("mine.txt")).unwrap(), b"not on the phone");
+            assert!(!root.join("DCIM").join("empty").exists(), "empty folders go");
+
+            std::fs::remove_file(root.join("DCIM").join("mine.txt")).unwrap();
+            cleanup_sync_root_dir(&root);
+            assert!(!root.exists(), "nothing kept: the folder goes");
+        }
 
         #[test]
         fn converts_unix_ms_to_filetime_and_back() {
