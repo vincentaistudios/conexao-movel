@@ -392,6 +392,7 @@ async fn writer(mut send: SendStream, mut outbox: mpsc::Receiver<Envelope>) {
 }
 
 async fn reader(session: &Arc<Session>, mut recv: RecvStream, shared: &Weak<Shared>) {
+    let background = Arc::new(tokio::sync::Semaphore::new(MAX_BACKGROUND_RPCS));
     loop {
         let frame = match read_frame(&mut recv).await {
             Ok(Some(frame)) => {
@@ -421,11 +422,22 @@ async fn reader(session: &Arc<Session>, mut recv: RecvStream, shared: &Weak<Shar
         }
         let Some(shared) = shared.upgrade() else { return };
         if is_background_rpc(&env.t) {
+            // Waiting for a slot would hold up heartbeats behind slow
+            // requests, so past the limit a request is turned away instead.
+            let Ok(permit) = background.clone().try_acquire_owned() else {
+                tracing::warn!(peer = %session.peer.short(), t = %env.t, "too many requests at once");
+                if env.id.is_some() {
+                    let reply = Envelope::error(ErrorCode::Busy, "too many requests at once");
+                    let _ = session.send(reply.reply_to(env.id)).await;
+                }
+                continue;
+            };
             let session = session.clone();
             tokio::spawn(async move {
                 if let Err(e) = handle(&shared, &session, env).await {
                     tracing::warn!(peer = %session.peer.short(), error = %e, "failed to handle message");
                 }
+                drop(permit);
             });
         } else if let Err(e) = handle(&shared, session, env).await {
             tracing::warn!(peer = %session.peer.short(), error = %e, "failed to handle message");
@@ -586,6 +598,9 @@ async fn handle(shared: &Arc<Shared>, session: &Arc<Session>, env: Envelope) -> 
     }
     Ok(())
 }
+
+/// Background requests one peer may have running at a time.
+const MAX_BACKGROUND_RPCS: usize = 32;
 
 /// Concurrent incoming data streams allowed from one peer at a time.
 const MAX_INCOMING_STREAMS: usize = 32;
