@@ -347,7 +347,10 @@ async fn take_result(
         Ok(()) => {
             let dest = crate::transfer::unique_path(&shared.downloads_dir, &safe_name);
             match tokio::fs::write(&dest, &data).await {
-                Ok(()) => Some(dest),
+                Ok(()) => {
+                    crate::transfer::mark_from_elsewhere(&dest);
+                    Some(dest)
+                }
                 Err(e) => {
                     tracing::warn!(error = %e, "can't save continuity camera capture");
                     None

@@ -143,6 +143,9 @@ has a Stop button. Choosing another
 
 ### Changed
 
+- **Files received on Windows are marked as from another device,** the way
+  a browser marks a download, so Windows checks a program with SmartScreen
+  before it runs and Office opens documents in Protected View.
 - **Pause for banking apps uses less battery.** While the screen is off,
   the phone checks the app in front every 15 seconds instead of several
   times a second, and checks again as soon as the screen turns on. By

@@ -1978,6 +1978,7 @@ fn save_files(target: &Path, entries: &[FileEntry], parts: Vec<PathBuf>) -> std:
             };
             let to = unique_path(&at, &storable_name(&entry.name));
             move_file(&part, &to)?;
+            mark_from_elsewhere(&to);
             moved.push((to.clone(), part));
             if entry.folder.is_none() {
                 saved.push(to);
@@ -1998,6 +1999,24 @@ fn save_files(target: &Path, entries: &[FileEntry], parts: Vec<PathBuf>) -> std:
         return Err(e);
     }
     Ok(saved)
+}
+
+/// Marks a received file as coming from another device, the way a browser
+/// marks a download: on Windows that's the Internet zone (Mark of the Web),
+/// so SmartScreen checks a program before it runs and Office opens a
+/// document in Protected View. Best effort: a drive without alternate data
+/// streams (FAT32, say) takes no mark.
+pub(crate) fn mark_from_elsewhere(path: &Path) {
+    #[cfg(windows)]
+    {
+        let mut stream = path.as_os_str().to_owned();
+        stream.push(":Zone.Identifier");
+        if let Err(e) = std::fs::write(&stream, "[ZoneTransfer]\r\nZoneId=3\r\n") {
+            tracing::debug!(error = %e, "can't mark a received file as from elsewhere");
+        }
+    }
+    #[cfg(not(windows))]
+    let _ = path;
 }
 
 /// Moves `from` to `to`, copying when they're on different volumes.
@@ -2058,6 +2077,18 @@ pub(crate) fn clean_incoming(dir: &Path) {
 #[cfg(test)]
 mod tests {
     use super::*;
+
+    #[cfg(windows)]
+    #[test]
+    fn received_files_are_marked_as_from_the_internet_zone() {
+        let dir = tempfile::tempdir().unwrap();
+        let file = dir.path().join("setup.exe");
+        std::fs::write(&file, b"MZ").unwrap();
+        mark_from_elsewhere(&file);
+        let mut stream = file.into_os_string();
+        stream.push(":Zone.Identifier");
+        assert_eq!(std::fs::read_to_string(stream).unwrap(), "[ZoneTransfer]\r\nZoneId=3\r\n");
+    }
 
     #[test]
     fn files_go_back_to_their_part_files_when_one_cant_be_saved() {
