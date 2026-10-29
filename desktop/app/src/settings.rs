@@ -623,7 +623,22 @@ impl Settings {
     /// A corrupt file is set aside (not deleted) so it can be inspected.
     pub fn load(dir: &Path) -> Settings {
         let path = Self::path(dir);
-        let text = match fs::read_to_string(&path) {
+        // Security software can hold the file for a moment. Defaults now would
+        // be saved over the user's settings, so it's tried again first.
+        let mut read = fs::read_to_string(&path);
+        for _ in 0..10 {
+            match &read {
+                Err(e)
+                    if e.kind() != std::io::ErrorKind::NotFound
+                        && e.kind() != std::io::ErrorKind::InvalidData =>
+                {
+                    std::thread::sleep(std::time::Duration::from_millis(50));
+                    read = fs::read_to_string(&path);
+                }
+                _ => break,
+            }
+        }
+        let text = match read {
             Ok(text) => text,
             Err(e) if e.kind() == std::io::ErrorKind::NotFound => return Settings::default(),
             Err(e) => {
