@@ -394,7 +394,8 @@ impl cxx_qt::Initialize for qobject::Preferences {
         self.as_mut().set_recordings_folder_is_default(settings.recordings_folder.is_none());
         self.as_mut().rust_mut().custom_recordings_folder = settings.recordings_folder.clone();
         self.as_mut().set_recordings_format(QString::from(settings.recordings_format.as_str()));
-        self.as_mut().set_timeline_retention_days(settings.timeline_retention_days as i32);
+        self.as_mut()
+            .set_timeline_retention_days(i32::try_from(settings.timeline_retention_days).unwrap_or(i32::MAX));
         self.as_mut().set_continuity_photo_hotkey(QString::from(&settings.continuity_photo_hotkey));
         self.as_mut().set_continuity_scan_hotkey(QString::from(&settings.continuity_scan_hotkey));
         self.as_mut().set_command_palette_hotkey(QString::from(&settings.command_palette_hotkey));
@@ -740,7 +741,8 @@ impl qobject::Preferences {
         if *self.whats_new_dismissed() != disk.whats_new_dismissed {
             self.as_mut().set_whats_new_dismissed(disk.whats_new_dismissed);
         }
-        let _ = disk.save(&core_host::host().data_dir);
+        // Only read: writing this snapshot back could undo a save that came
+        // in between.
     }
 
     pub fn restart_walkthrough(mut self: Pin<&mut Self>) {
@@ -874,14 +876,22 @@ impl qobject::Preferences {
             .unwrap_or_else(|| String::from(pc_folder));
         let pc_trimmed = raw_pc.trim();
         let phone_trimmed = String::from(phone_folder).trim().to_owned();
-        if pc_trimmed.is_empty() || phone_trimmed.is_empty() {
+        let phone_id = String::from(device_id).trim().to_owned();
+        if pc_trimmed.is_empty() || phone_trimmed.is_empty() || phone_id.is_empty() {
             return;
         }
         let mut rules = crate::settings::folder_sync_rules();
+        // The same pair twice would sync it twice.
+        if rules
+            .iter()
+            .any(|r| r.phone_id == phone_id && r.phone_folder == phone_trimmed && r.pc_folder == pc_trimmed)
+        {
+            return;
+        }
         let next_id = new_rule_id("sync", rules.iter().map(|r| r.id.as_str()));
         rules.push(crate::folder_sync::FolderSyncRule {
             id: next_id,
-            phone_id: String::from(device_id).trim().to_owned(),
+            phone_id,
             phone_folder: phone_trimmed,
             pc_folder: pc_trimmed.to_owned(),
             mode: if two_way { "two_way".into() } else { "one_way_phone_to_pc".into() },
@@ -1061,7 +1071,7 @@ fn save_in_background(settings: Settings) {
     static NEXT: AtomicU64 = AtomicU64::new(0);
     static WRITTEN: Mutex<u64> = Mutex::new(0);
     let seq = NEXT.fetch_add(1, Ordering::SeqCst) + 1;
-    let save = move || {
+    let save = move |settings: Settings| {
         let mut written = WRITTEN.lock().unwrap_or_else(|e| e.into_inner());
         if *written > seq {
             return; // A newer save already ran.
@@ -1073,8 +1083,12 @@ fn save_in_background(settings: Settings) {
         }
         *written = seq;
     };
-    if let Err(e) = std::thread::Builder::new().name("save-preferences".into()).spawn(save) {
-        tracing::warn!(error = %e, "can't save preferences");
+    let fallback = settings.clone();
+    if let Err(e) = std::thread::Builder::new().name("save-preferences".into()).spawn(move || save(settings))
+    {
+        // Better a moment on the UI thread than a change that's lost.
+        tracing::warn!(error = %e, "can't save preferences in the background");
+        save(fallback);
     }
 }
 
