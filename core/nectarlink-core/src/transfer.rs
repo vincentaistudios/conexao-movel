@@ -1944,6 +1944,10 @@ async fn store(
 /// files: the sender hears it failed, and a retry resumes instead of leaving
 /// a second copy of each.
 fn save_files(target: &Path, entries: &[FileEntry], parts: Vec<PathBuf>) -> std::io::Result<Vec<PathBuf>> {
+    // One at a time: two transfers saving `photo.jpg` together would both
+    // find the same free name, and the second would replace the first.
+    static SAVING: std::sync::Mutex<()> = std::sync::Mutex::new(());
+    let _saving = SAVING.lock().unwrap_or_else(|e| e.into_inner());
     std::fs::create_dir_all(target)?;
     // A sent folder lands under a name of its own: `Trip`, or
     // `Trip (2)` when there already is one.
