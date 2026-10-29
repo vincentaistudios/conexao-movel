@@ -4529,6 +4529,35 @@ async fn continuity_camera_respects_photos_toggle() {
 }
 
 #[tokio::test(flavor = "multi_thread", worker_threads = 2)]
+async fn a_capture_the_pc_never_asked_for_isnt_saved() {
+    use nectarlink_core::{CameraCaptureMode, CameraCaptureResultMeta};
+
+    let mut pc = device_with("pc", DeviceKind::Desktop, &["camera.continuity"]).await;
+    let mut phone = device_with("phone", DeviceKind::Phone, &["camera.capture"]).await;
+    pair_qr(&mut pc, &mut phone).await;
+    let pc_id = pc.node.device_id();
+
+    let picture = vec![0xFF, 0xD8, 0xFF, 0xE0, 1, 2, 3, 4, 0xFF, 0xD9];
+    let meta = CameraCaptureResultMeta {
+        request_id: "never-asked".into(),
+        mode: CameraCaptureMode::Photo,
+        file_name: "unasked.jpg".into(),
+        mime: "image/jpeg".into(),
+        size: picture.len() as u64,
+        width: 1,
+        height: 1,
+    };
+    let sent =
+        with_timeout("send an unasked capture", phone.node.send_camera_capture_result(pc_id, meta, picture))
+            .await;
+    assert!(sent.is_err(), "the PC turns it away");
+    assert!(!pc.dir.path().join("received").join("unasked.jpg").exists());
+
+    pc.node.shutdown().await;
+    phone.node.shutdown().await;
+}
+
+#[tokio::test(flavor = "multi_thread", worker_threads = 2)]
 async fn data_retention_counts_and_clear_all_local_data_preserves_pairing_and_settings() {
     use nectarlink_core::{
         Notification, NotificationAction, NotificationChatMessage, NotificationConversation,
