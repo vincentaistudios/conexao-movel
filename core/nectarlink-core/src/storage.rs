@@ -99,8 +99,12 @@ impl StorageState {
 
     pub fn record_open_folder(&mut self, peer: DeviceId, path: &str) {
         let set = self.open_folders.entry(peer).or_default();
-        if set.len() >= MAX_OPEN_FOLDERS_PER_PEER && !set.contains(path) {
-            set.clear();
+        // At the cap one folder makes room, rather than every watched one going quiet.
+        if set.len() >= MAX_OPEN_FOLDERS_PER_PEER
+            && !set.contains(path)
+            && let Some(evicted) = set.iter().next().cloned()
+        {
+            set.remove(&evicted);
         }
         set.insert(path.to_owned());
     }
