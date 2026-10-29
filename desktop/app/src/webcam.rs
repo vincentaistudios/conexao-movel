@@ -570,7 +570,8 @@ pub fn on_event(event: &NodeEvent) {
             core_host::host().hub.changed(Changes::WEBCAM);
         }
         NodeEvent::Webcam { device, on: false }
-        | NodeEvent::LinkChanged { device, link: nectarlink_core::LinkState::Offline { .. } } => {
+        | NodeEvent::LinkChanged { device, link: nectarlink_core::LinkState::Offline { .. } }
+        | NodeEvent::DeviceRemoved(device) => {
             let changed = state(|s| {
                 if matches!(s.phase, Phase::Asking { device: d } | Phase::Streaming { device: d, .. } if d == *device)
                 {
@@ -580,12 +581,13 @@ pub fn on_event(event: &NodeEvent) {
                     false
                 }
             });
-            if changed {
+            // A removed phone also changes the idle picture's name.
+            if changed || matches!(event, NodeEvent::DeviceRemoved(_)) {
                 refresh_idle_frame();
                 core_host::host().hub.changed(Changes::WEBCAM);
             }
         }
-        NodeEvent::DeviceAdded(_) | NodeEvent::DeviceRemoved(_) | NodeEvent::PeerInfoChanged { .. } => {
+        NodeEvent::DeviceAdded(_) | NodeEvent::PeerInfoChanged { .. } => {
             refresh_idle_frame();
             core_host::host().hub.changed(Changes::WEBCAM);
         }
