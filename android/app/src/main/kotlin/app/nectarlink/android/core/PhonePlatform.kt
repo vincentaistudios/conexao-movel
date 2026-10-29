@@ -217,7 +217,7 @@ internal class PhonePlatform(
 
     override fun micStopRequested(pcId: String) {
         onMicStop(pcId)
-        app.nectarlink.android.mic.MicService.stop(context)
+        app.nectarlink.android.mic.MicService.stop(context, pcId)
     }
 
     override fun webcamStopRequested(pcId: String) {
