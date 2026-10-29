@@ -374,26 +374,6 @@ fn latest_bitmap(window: &Window) -> Option<Bitmap> {
     Some(Bitmap { width, height, bgra })
 }
 
-fn free_path(dir: &Path, name: &str) -> PathBuf {
-    let first = dir.join(name);
-    if !first.exists() {
-        return first;
-    }
-    let path = Path::new(name);
-    let stem = path.file_stem().and_then(|s| s.to_str()).unwrap_or(name);
-    let ext = path.extension().and_then(|e| e.to_str());
-    for n in 2..10_000u32 {
-        let candidate = match ext {
-            Some(ext) => dir.join(format!("{stem} ({n}).{ext}")),
-            None => dir.join(format!("{stem} ({n})")),
-        };
-        if !candidate.exists() {
-            return candidate;
-        }
-    }
-    first
-}
-
 /// Copies the current mirror frame for `window` to the PC clipboard as PNG.
 pub fn screenshot_clipboard(window: Window) {
     let Some(bitmap) = latest_bitmap(&window) else {
@@ -442,7 +422,7 @@ pub fn screenshot_file(window: Window) {
         show_message(tr!("Mirror", "The screenshot couldn't be saved."));
         return;
     }
-    let path = free_path(&dir, &base_name);
+    let path = crate::photos::free_path(&dir, &base_name);
     if let Err(e) = std::fs::write(&path, &png) {
         tracing::warn!(error = %e, "can't write mirror screenshot");
         set_notice(window, "Couldn't save screenshot");
@@ -536,7 +516,7 @@ pub fn toggle_recording(window: Window) {
         show_message(tr!("Mirror", "Couldn't start recording."));
         return;
     }
-    let path = free_path(&dir, &base_name);
+    let path = crate::photos::free_path(&dir, &base_name);
     let (width, height) = LAST_CONFIG
         .lock()
         .unwrap_or_else(|e| e.into_inner())
@@ -951,7 +931,23 @@ pub fn resize(window: Window, width: u32, height: u32) {
     });
 }
 
+/// Each request's number per window, so an earlier request's timer can't
+/// end a retry of the same window.
+static ATTEMPTS: Mutex<Option<HashMap<Window, u64>>> = Mutex::new(None);
+
+fn next_attempt(window: Window) -> u64 {
+    let mut attempts = ATTEMPTS.lock().unwrap_or_else(|e| e.into_inner());
+    let n = attempts.get_or_insert_with(HashMap::new).entry(window).or_default();
+    *n += 1;
+    *n
+}
+
+fn is_latest_attempt(window: Window, attempt: u64) -> bool {
+    ATTEMPTS.lock().unwrap_or_else(|e| e.into_inner()).as_ref().and_then(|a| a.get(&window)) == Some(&attempt)
+}
+
 fn request(window: Window, options: MirrorStart) {
+    let attempt = next_attempt(window);
     if window.session == MIRROR_SCREEN {
         crate::phone_sound::stop_for_window(window.device);
     }
@@ -982,7 +978,8 @@ fn request(window: Window, options: MirrorStart) {
         // seconds, or the phone couldn't start it (its stream then ends with no picture).
         if app {
             tokio::time::sleep(APP_START_TIMEOUT).await;
-            let stuck = state(|s| s.windows.get(&window).is_some_and(|w| w.phase == Phase::Asking));
+            let stuck = is_latest_attempt(window, attempt)
+                && state(|s| s.windows.get(&window).is_some_and(|w| w.phase == Phase::Asking));
             if stuck {
                 tracing::warn!(session = window.session, "an app window never started on the phone");
                 node.mirror_stop(window.device, window.session).await;
@@ -1291,11 +1288,7 @@ fn active_or_showing_window() -> Option<Window> {
         {
             return Some(active);
         }
-        s.windows
-            .iter()
-            .find(|(_, shown)| matches!(shown.phase, Phase::Showing))
-            .or_else(|| s.windows.iter().next())
-            .map(|(w, _)| *w)
+        s.windows.iter().find(|(_, shown)| matches!(shown.phase, Phase::Showing)).map(|(w, _)| *w)
     })
 }
 
@@ -1745,6 +1738,13 @@ fn ensure_gamepad_loop() {
             let target = active_or_showing_window().filter(|w| matches!(phase(w), Some(Phase::Showing)));
             let Some(window) = target else {
                 RUNNING.store(false, Ordering::Release);
+                // A window that started showing just now found the loop still
+                // running and left it to this one.
+                let showing =
+                    active_or_showing_window().is_some_and(|w| matches!(phase(&w), Some(Phase::Showing)));
+                if showing && !RUNNING.swap(true, Ordering::AcqRel) {
+                    continue;
+                }
                 break;
             };
             match poll_gamepad() {
@@ -1791,6 +1791,23 @@ struct Sink {
     sound: Mutex<Option<Player>>,
 }
 
+/// Asks the phone for a keyframe, at most every 500 ms per window: a
+/// decoder that's behind would otherwise ask on every dropped frame.
+fn ask_keyframe(window: Window) {
+    static ASKED: Mutex<Option<HashMap<Window, std::time::Instant>>> = Mutex::new(None);
+    {
+        let mut asked = ASKED.lock().unwrap_or_else(|e| e.into_inner());
+        let asked = asked.get_or_insert_with(HashMap::new);
+        if asked.get(&window).is_some_and(|at| at.elapsed() < Duration::from_millis(500)) {
+            return;
+        }
+        asked.insert(window, std::time::Instant::now());
+    }
+    if let Some(node) = core_host::node() {
+        core_host::spawn(async move { node.mirror_keyframe(window.device, window.session).await });
+    }
+}
+
 /// The decoder thread's end of a sink.
 struct Video {
     queue: SyncSender<Item>,
@@ -1821,10 +1838,7 @@ impl Video {
 
 impl Sink {
     fn keyframe_please(&self) {
-        let window = self.window;
-        if let Some(node) = core_host::node() {
-            core_host::spawn(async move { node.mirror_keyframe(window.device, window.session).await });
-        }
+        ask_keyframe(self.window);
     }
 }
 
@@ -1948,11 +1962,7 @@ fn decode(window: Window, items: &Receiver<Item>, waiting: &AtomicUsize) {
         }
     };
     tracing::info!(gpu = decoder.on_gpu(), codec = decoder.codec(), "mirror decoder ready");
-    let keyframe_please = || {
-        if let Some(node) = core_host::node() {
-            core_host::spawn(async move { node.mirror_keyframe(window.device, window.session).await });
-        }
-    };
+    let keyframe_please = || ask_keyframe(window);
     let mut size = (0, 0);
     // After a gap, pictures are garbage until the next keyframe.
     let mut need_keyframe = true;

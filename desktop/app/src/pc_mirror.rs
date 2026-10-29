@@ -12,7 +12,7 @@ mod imp {
     use std::mem::{ManuallyDrop, size_of};
     use std::sync::{
         Arc, Mutex,
-        atomic::{AtomicBool, Ordering},
+        atomic::{AtomicBool, AtomicU64, Ordering},
     };
     #[cfg(any(windows, target_os = "linux"))]
     use std::time::{Duration, Instant};
@@ -127,7 +127,8 @@ mod imp {
         ACTIVE.lock().unwrap_or_else(|e| e.into_inner()).as_ref().is_some_and(|s| s.watching)
     }
 
-    /// Stops a phone watching one of this PC's players; screen sharing goes on.
+    /// Stops a phone watching one of this PC's players. That ends the
+    /// session: a watching session is the one capture there is.
     pub fn stop_watching() {
         let peer =
             ACTIVE.lock().unwrap_or_else(|e| e.into_inner()).as_ref().filter(|s| s.watching).map(|s| s.peer);
@@ -138,7 +139,9 @@ mod imp {
 
     /// Starts or replaces the active PC-to-phone screen mirror stream for `peer`.
     pub fn start(peer: DeviceId, options: MirrorStart) {
-        stop_all();
+        // The same phone asking again replaced its own stream: telling it to
+        // stop could land after the new one starts and end that.
+        stop_session(Some(peer));
         let stop = Arc::new(AtomicBool::new(false));
         let force_keyframe = Arc::new(AtomicBool::new(false));
         {
@@ -153,10 +156,15 @@ mod imp {
         core_host::host().hub.changed(crate::state::Changes::REMOTE);
         core_host::refresh_capabilities();
 
-        std::thread::Builder::new()
+        let stop_on_failure = Arc::clone(&stop);
+        if let Err(e) = std::thread::Builder::new()
             .name("nectarlink-pc-mirror".into())
             .spawn(move || run_capture_loop(peer, options, stop, force_keyframe))
-            .ok();
+        {
+            // Not a session that claims to share with nothing behind it.
+            tracing::warn!(error = %e, "can't start sharing this PC's screen");
+            cleanup_session(&stop_on_failure);
+        }
     }
 
     /// Stops PC-to-phone mirroring if `peer` matches the active viewer.
@@ -182,6 +190,11 @@ mod imp {
 
     /// Stops any active PC-to-phone mirroring session.
     pub fn stop_all() {
+        stop_session(None);
+    }
+
+    /// Stops the active session, telling its phone unless it's `replaced_by`.
+    fn stop_session(replaced_by: Option<DeviceId>) {
         let stopped = {
             let mut guard = ACTIVE.lock().unwrap_or_else(|e| e.into_inner());
             if let Some(s) = guard.take() {
@@ -194,7 +207,9 @@ mod imp {
         if let Some(peer) = stopped {
             win::input::release_held_buttons();
             crate::input_share::leave_remote();
-            if let Some(node) = core_host::node() {
+            if let Some(node) = core_host::node()
+                && replaced_by != Some(peer)
+            {
                 node.set_pc_mirror_session_allowed(peer, false);
                 core_host::spawn(async move {
                     node.mirror_stop(peer, nectarlink_core::MIRROR_SCREEN).await;
@@ -2163,6 +2178,10 @@ mod imp {
             } else {
                 Duration::from_millis(250)
             };
+            // Its last frame would otherwise show as a live screen for good.
+            if !self.alive() {
+                return None;
+            }
             let deadline = Instant::now() + wait;
             loop {
                 if let Some(frame) = self.latest_frame.lock().unwrap_or_else(|e| e.into_inner()).as_ref() {
@@ -2597,8 +2616,16 @@ mod imp {
             }
         }
 
+        // Only when no newer session took over: the screencast is shared.
         #[cfg(target_os = "linux")]
-        stop_wayland_screencast();
+        if ACTIVE
+            .lock()
+            .unwrap_or_else(|e| e.into_inner())
+            .as_ref()
+            .is_none_or(|s| Arc::ptr_eq(&s.stop, &stop))
+        {
+            stop_wayland_screencast();
+        }
         tracing::info!(%peer, "stopped sharing this PC's screen");
         crate::input_share::leave_remote();
         sender.close();
@@ -2616,35 +2643,49 @@ mod imp {
     /// Phone speaker sends it), with the PC's speakers muted if the user wants
     /// (capturing the sound doesn't depend on them), for as long as this lives;
     /// then as before.
+    /// The PC's sound goes to the phone while it watches, and comes back
+    /// afterwards. A restart starts a new one before the old one ends, so
+    /// the settings from before the first are kept here, and only the newest
+    /// puts them back.
     struct SoundToPhone {
-        was_on: bool,
-        was_target: Option<DeviceId>,
-        /// This muted the speakers (they weren't already).
-        muted: bool,
+        generation: u64,
     }
+
+    /// Whether the sound went to the phone, and where, before any of this;
+    /// and whether this muted the speakers (they weren't already).
+    static BEFORE: Mutex<Option<(bool, Option<DeviceId>, bool)>> = Mutex::new(None);
+    static NEWEST: AtomicU64 = AtomicU64::new(0);
 
     impl SoundToPhone {
         fn start(peer: DeviceId) -> SoundToPhone {
-            let muted = MUTE_WHILE_WATCHED.load(Ordering::Relaxed)
-                && win::audio::speaker_state().is_some_and(|(_, muted)| !muted)
-                && win::audio::set_speaker_mute(true).is_ok();
-            let sound = SoundToPhone {
-                was_on: crate::pc_audio_stream::is_enabled(),
-                was_target: crate::pc_audio_stream::target(),
-                muted,
-            };
+            let generation = NEWEST.fetch_add(1, Ordering::AcqRel) + 1;
+            let mut before = BEFORE.lock().unwrap_or_else(|e| e.into_inner());
+            if before.is_none() {
+                let muted = MUTE_WHILE_WATCHED.load(Ordering::Relaxed)
+                    && win::audio::speaker_state().is_some_and(|(_, muted)| !muted)
+                    && win::audio::set_speaker_mute(true).is_ok();
+                *before =
+                    Some((crate::pc_audio_stream::is_enabled(), crate::pc_audio_stream::target(), muted));
+            }
             crate::pc_audio_stream::set_target(Some(peer));
             crate::pc_audio_stream::set_enabled(true);
-            sound
+            SoundToPhone { generation }
         }
     }
 
     impl Drop for SoundToPhone {
         fn drop(&mut self) {
-            crate::pc_audio_stream::set_target(self.was_target);
-            crate::pc_audio_stream::set_enabled(self.was_on);
+            if NEWEST.load(Ordering::Acquire) != self.generation {
+                return;
+            }
+            let Some((was_on, was_target, muted)) = BEFORE.lock().unwrap_or_else(|e| e.into_inner()).take()
+            else {
+                return;
+            };
+            crate::pc_audio_stream::set_target(was_target);
+            crate::pc_audio_stream::set_enabled(was_on);
             // Unmuted only if this muted it.
-            if self.muted {
+            if muted {
                 let _ = win::audio::set_speaker_mute(false);
             }
         }
