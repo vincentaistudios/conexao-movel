@@ -1829,7 +1829,7 @@ class Core(context: Context, private val scope: CoroutineScope) : EventListener 
                         _messages.tryEmit(msg)
                     }
                 }
-                TimelineKind.FILE, TimelineKind.PHOTO, TimelineKind.RECORDING -> {
+                TimelineKind.FILE, TimelineKind.PHOTO -> {
                     val target = entry.target
                     when {
                         target.startsWith("content://") -> sendFiles(entry.deviceId, listOf(Uri.parse(target)))
@@ -1987,7 +1987,14 @@ class Core(context: Context, private val scope: CoroutineScope) : EventListener 
                 else PairingState.Failed(PairingFailure.Declined),
             )
         }
-        scope.launch(Dispatchers.IO) { runCatching { node?.pairingConfirm(matches) } }
+        scope.launch(Dispatchers.IO) {
+            // The result comes as an event; with no answer sent there won't be one.
+            val sent = runCatching { node?.pairingConfirm(matches) != null }.getOrDefault(false)
+            if (matches && !sent) {
+                val failed = PairingState.Failed(PairingFailure.Other("the answer didn't reach the core"))
+                _state.update { s -> if (s.pairing is PairingState.Confirmed) s.copy(pairing = failed) else s }
+            }
+        }
     }
 
     /** Keeps local discovery working while the pairing screen is open. */

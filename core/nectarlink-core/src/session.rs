@@ -579,7 +579,11 @@ async fn handle(shared: &Arc<Shared>, session: &Arc<Session>, env: Envelope) -> 
             }
         }
         types::AUDIO_PCM => {
-            if let Ok(frame) = env.body::<AudioPcmFrame>() {
+            // A rate or layout out of range would play at the wrong speed: dropped.
+            if let Ok(frame) = env.body::<AudioPcmFrame>()
+                && (8_000..=96_000).contains(&frame.sample_rate)
+                && (1..=2).contains(&frame.channels)
+            {
                 shared.emit(NodeEvent::PcAudioFrame {
                     device: peer,
                     sample_rate: frame.sample_rate,
