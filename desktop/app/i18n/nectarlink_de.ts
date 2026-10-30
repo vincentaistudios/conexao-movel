@@ -316,6 +316,18 @@
         <source>Your phone</source>
         <translation>Dein Gerät</translation>
     </message>
+    <message>
+        <source>%1 has reached %2% charge</source>
+        <translation>%1 hat %2% Ladung erreicht</translation>
+    </message>
+    <message>
+        <source>%1's battery is low</source>
+        <translation>Akku von %1 ist fast leer</translation>
+    </message>
+    <message>
+        <source>%1% left. Charge it soon.</source>
+        <translation>Noch %1% verbleibend. Bitte bald laden.</translation>
+    </message>
 </context>
 <context>
     <name>BtHfp</name>
@@ -4317,6 +4329,22 @@ Voraussetzungen
         <source>Open externally</source>
         <translation>Extern öffnen</translation>
     </message>
+    <message>
+        <source>Set nickname</source>
+        <translation>Spitznamen festlegen</translation>
+    </message>
+    <message>
+        <source>Change nickname</source>
+        <translation>Spitznamen ändern</translation>
+    </message>
+    <message>
+        <source>Phone nickname</source>
+        <translation>Telefon-Spitzname</translation>
+    </message>
+    <message>
+        <source>Set a custom name for this phone on your PC. Leave blank to use "%1".</source>
+        <translation>Legen Sie einen benutzerdefinierten Namen für dieses Telefon auf Ihrem PC fest. Leer lassen, um "%1" zu verwenden.</translation>
+    </message>
 </context>
 <context>
     <name>Hotspot</name>
@@ -7941,6 +7969,22 @@ Voraussetzungen
         <location filename="../qml/pages/SettingsPage.qml" line="3608"/>
         <source>Clear everything</source>
         <translation>Alles löschen</translation>
+    </message>
+    <message>
+        <source>Full charge target</source>
+        <translation>Ziel für vollständige Ladung</translation>
+    </message>
+    <message>
+        <source>Alert at 100%, or at 80% if your phone has battery protection enabled.</source>
+        <translation>Benachrichtigung bei 100 % oder bei 80 %, wenn der Akkuschutz auf Ihrem Telefon aktiviert ist.</translation>
+    </message>
+    <message>
+        <source>100% (Standard)</source>
+        <translation>100 % (Standard)</translation>
+    </message>
+    <message>
+        <source>80% (Protect battery)</source>
+        <translation>80 % (Akkuschutz)</translation>
     </message>
 </context>
 <context>

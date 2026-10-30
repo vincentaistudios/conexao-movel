@@ -316,6 +316,18 @@
         <source>Your phone</source>
         <translation>Telefonunuz</translation>
     </message>
+    <message>
+        <source>%1 has reached %2% charge</source>
+        <translation>%1 %%%2 şarja ulaştı</translation>
+    </message>
+    <message>
+        <source>%1's battery is low</source>
+        <translation>%1 cihazının pili zayıf</translation>
+    </message>
+    <message>
+        <source>%1% left. Charge it soon.</source>
+        <translation>%%%1 kaldı. Yakında şarj edin.</translation>
+    </message>
 </context>
 <context>
     <name>BtHfp</name>
@@ -4315,6 +4327,22 @@ Neler gerekir
         <source>Open externally</source>
         <translation>Harici olarak aç</translation>
     </message>
+    <message>
+        <source>Set nickname</source>
+        <translation>Takma ad belirle</translation>
+    </message>
+    <message>
+        <source>Change nickname</source>
+        <translation>Takma adı değiştir</translation>
+    </message>
+    <message>
+        <source>Phone nickname</source>
+        <translation>Telefon takma adı</translation>
+    </message>
+    <message>
+        <source>Set a custom name for this phone on your PC. Leave blank to use "%1".</source>
+        <translation>Bu telefon için bilgisayarınızda özel bir ad belirleyin. "%1" kullanmak için boş bırakın.</translation>
+    </message>
 </context>
 <context>
     <name>Hotspot</name>
@@ -7933,6 +7961,22 @@ Neler gerekir
         <location filename="../qml/pages/SettingsPage.qml" line="3608"/>
         <source>Clear everything</source>
         <translation>Her şeyi temizle</translation>
+    </message>
+    <message>
+        <source>Full charge target</source>
+        <translation>Tam şarj hedefi</translation>
+    </message>
+    <message>
+        <source>Alert at 100%, or at 80% if your phone has battery protection enabled.</source>
+        <translation>Standart olarak %100'de, veya telefonunuzda pil koruması açıksa %80'de uyarın.</translation>
+    </message>
+    <message>
+        <source>100% (Standard)</source>
+        <translation>%100 (Standart)</translation>
+    </message>
+    <message>
+        <source>80% (Protect battery)</source>
+        <translation>%80 (Pili koru)</translation>
     </message>
 </context>
 <context>

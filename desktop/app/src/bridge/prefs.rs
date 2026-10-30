@@ -75,6 +75,8 @@ pub mod qobject {
         #[qproperty(bool, install_updates)]
         /// Tell when a phone's battery is low, or full.
         #[qproperty(bool, battery_alerts)]
+        /// Charge level threshold for full battery alerts (e.g. 100 or 80 for protect battery mode).
+        #[qproperty(i32, battery_full_threshold)]
         /// Folder where voice recordings from phones are saved.
         #[qproperty(QString, recordings_folder)]
         /// Whether `recordings_folder` is the default (`Documents\Nectarlink Recordings`).
@@ -221,6 +223,12 @@ pub mod qobject {
         /// Enables or disables an automation rule by ID.
         #[qinvokable]
         fn set_automation_rule_enabled(self: Pin<&mut Preferences>, rule_id: &QString, enabled: bool);
+        /// Gets custom nickname for a device or empty.
+        #[qinvokable]
+        fn nickname_of(self: &Preferences, device_id: &QString) -> QString;
+        /// Sets or clears a custom nickname for a device.
+        #[qinvokable]
+        fn set_nickname(self: Pin<&mut Preferences>, device_id: &QString, nickname: &QString);
 
         #[qobject]
         #[qml_element]
@@ -302,6 +310,7 @@ pub struct PreferencesRust {
     auto_update: bool,
     install_updates: bool,
     battery_alerts: bool,
+    battery_full_threshold: i32,
     recordings_folder: QString,
     recordings_folder_is_default: bool,
     recordings_format: QString,
@@ -385,6 +394,7 @@ impl cxx_qt::Initialize for qobject::Preferences {
         self.as_mut().set_auto_update(settings.auto_update);
         self.as_mut().set_install_updates(settings.install_updates);
         self.as_mut().set_battery_alerts(settings.battery_alerts);
+        self.as_mut().set_battery_full_threshold(i32::from(settings.battery_full_threshold));
         let start_effective = crate::startup::effective(settings.start_with_windows);
         self.as_mut().set_start_with_windows(start_effective);
         self.as_mut().set_start_at_login(start_effective);
@@ -530,6 +540,13 @@ impl cxx_qt::Initialize for qobject::Preferences {
         self.as_mut()
             .on_battery_alerts_changed(|p| {
                 crate::battery::set_enabled(p.battery_alerts);
+                p.save();
+            })
+            .release();
+        self.as_mut()
+            .on_battery_full_threshold_changed(|p| {
+                let val = p.battery_full_threshold.clamp(50, 100) as u8;
+                crate::settings::set_battery_full_threshold(val);
                 p.save();
             })
             .release();
@@ -835,6 +852,18 @@ impl qobject::Preferences {
         }
     }
 
+    pub fn nickname_of(&self, device_id: &QString) -> QString {
+        QString::from(&crate::settings::nickname_for(&String::from(device_id)).unwrap_or_default())
+    }
+
+    pub fn set_nickname(self: Pin<&mut Self>, device_id: &QString, nickname: &QString) {
+        let dev = String::from(device_id);
+        let nick = String::from(nickname);
+        crate::settings::set_nickname(&dev, if nick.trim().is_empty() { None } else { Some(nick) });
+        self.save();
+        core_host::host().hub.changed(crate::state::Changes::DEVICES);
+    }
+
     pub fn choose_recordings_folder(mut self: Pin<&mut Self>, url: &QString) {
         let raw = QUrl::from(url)
             .to_local_file()
@@ -1012,6 +1041,8 @@ impl qobject::Preferences {
             auto_update: p.auto_update,
             install_updates: p.install_updates,
             battery_alerts: p.battery_alerts,
+            battery_full_threshold: p.battery_full_threshold.clamp(50, 100) as u8,
+            device_nicknames: crate::settings::device_nicknames(),
             start_with_windows: p.start_choice,
             recordings_folder: p.custom_recordings_folder.clone(),
             recordings_format: RecordingFormat::from_str_lossy(&String::from(&p.recordings_format)),

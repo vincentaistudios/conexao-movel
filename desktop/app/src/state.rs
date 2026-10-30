@@ -316,9 +316,10 @@ impl AppState {
     }
 
     /// A name for any device we know of (paired, nearby, or LocalSend peer).
+    /// If the user set a custom nickname for a paired device on this PC, it takes precedence.
     pub fn name_of(&self, id: &DeviceId) -> Option<String> {
-        self.device(id)
-            .map(|d| d.info.name.clone())
+        crate::settings::nickname_for(&id.to_string())
+            .or_else(|| self.device(id).map(|d| d.info.name.clone()))
             .or_else(|| self.discovered.iter().find(|d| d.id == *id).and_then(|d| d.name.clone()))
             .or_else(|| self.localsend_peers.iter().find(|p| p.id == *id).map(|p| p.alias.clone()))
     }

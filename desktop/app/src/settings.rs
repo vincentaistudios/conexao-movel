@@ -225,6 +225,47 @@ pub fn set_away_mode(on: bool) {
     }
 }
 
+static BATTERY_FULL_THRESHOLD: std::sync::atomic::AtomicU8 = std::sync::atomic::AtomicU8::new(100);
+
+pub fn battery_full_threshold() -> u8 {
+    BATTERY_FULL_THRESHOLD.load(std::sync::atomic::Ordering::Relaxed)
+}
+
+pub fn set_battery_full_threshold(threshold: u8) {
+    let clamped = threshold.clamp(50, 100);
+    BATTERY_FULL_THRESHOLD.store(clamped, std::sync::atomic::Ordering::Relaxed);
+}
+
+fn default_battery_full_threshold() -> u8 {
+    100
+}
+
+static NICKNAMES: std::sync::Mutex<Option<std::collections::HashMap<String, String>>> =
+    std::sync::Mutex::new(None);
+
+pub fn device_nicknames() -> std::collections::HashMap<String, String> {
+    NICKNAMES.lock().unwrap_or_else(|e| e.into_inner()).clone().unwrap_or_default()
+}
+
+pub fn set_device_nicknames(nicknames: std::collections::HashMap<String, String>) {
+    *NICKNAMES.lock().unwrap_or_else(|e| e.into_inner()) = Some(nicknames);
+}
+
+pub fn nickname_for(device_id: &str) -> Option<String> {
+    let lock = NICKNAMES.lock().unwrap_or_else(|e| e.into_inner());
+    lock.as_ref()?.get(device_id).cloned().filter(|s| !s.trim().is_empty())
+}
+
+pub fn set_nickname(device_id: &str, nickname: Option<String>) {
+    let mut lock = NICKNAMES.lock().unwrap_or_else(|e| e.into_inner());
+    let map = lock.get_or_insert_default();
+    if let Some(nick) = nickname.filter(|s| !s.trim().is_empty()) {
+        map.insert(device_id.to_string(), nick.trim().to_string());
+    } else {
+        map.remove(device_id);
+    }
+}
+
 static OBS: std::sync::Mutex<(u16, Option<String>)> = std::sync::Mutex::new((crate::obs::DEFAULT_PORT, None));
 
 /// OBS port and encrypted password, as stored.
@@ -362,6 +403,16 @@ pub struct Settings {
     /// Tell when a phone's battery is low, or full.
     #[serde(alias = "battery_alerts")]
     pub battery_alerts: bool,
+    /// Battery charge level percent to treat as "full" for alerts (default `100`, or `80` for battery protection mode).
+    #[serde(default = "default_battery_full_threshold", alias = "battery_full_threshold")]
+    pub battery_full_threshold: u8,
+    /// User-assigned nicknames for paired phones by their device ID (hex string).
+    #[serde(
+        default,
+        skip_serializing_if = "std::collections::HashMap::is_empty",
+        alias = "device_nicknames"
+    )]
+    pub device_nicknames: std::collections::HashMap<String, String>,
     /// Start when the user signs in. Unset until the user chooses: then an
     /// installed copy starts with Windows and a build run from its folder
     /// doesn't.
@@ -514,6 +565,8 @@ impl Default for Settings {
             auto_update: true,
             install_updates: true,
             battery_alerts: true,
+            battery_full_threshold: default_battery_full_threshold(),
+            device_nicknames: std::collections::HashMap::new(),
             start_with_windows: None,
             recordings_folder: None,
             recordings_format: RecordingFormat::default(),
@@ -609,6 +662,8 @@ impl Settings {
         set_share_pc_storage(self.share_pc_storage);
         set_forward_pc_notifications_to_phone(self.forward_pc_notifications_to_phone);
         set_away_mode(self.away_mode);
+        set_battery_full_threshold(self.battery_full_threshold);
+        set_device_nicknames(self.device_nicknames.clone());
         set_window_geometry(
             self.window_screen.clone(),
             self.window_x,
@@ -746,6 +801,8 @@ mod tests {
             auto_update: false,
             install_updates: false,
             battery_alerts: false,
+            battery_full_threshold: 80,
+            device_nicknames: std::collections::HashMap::from([("abc".to_owned(), "Work phone".to_owned())]),
             start_with_windows: Some(true),
             recordings_folder: Some(PathBuf::from(r"C:\Recordings")),
             recordings_format: RecordingFormat::Flac,

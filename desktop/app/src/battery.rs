@@ -35,7 +35,7 @@ pub fn set_enabled(on: bool) {
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
 enum Alert {
     Low(u8),
-    Full,
+    Full(u8),
 }
 
 /// What a phone has been told about already.
@@ -49,13 +49,14 @@ struct Watch {
 }
 
 impl Watch {
-    fn update(&mut self, battery: &Battery) -> Option<Alert> {
-        let low = !battery.charging && battery.level <= LOW;
-        let full = battery.charging && battery.level >= 100;
-        if battery.charging || battery.level >= RECOVERED {
+    fn update(&mut self, battery: &Battery, full_target: u8) -> Option<Alert> {
+        let power = battery.charging || battery.plugged.is_some();
+        let low = !power && battery.level <= LOW;
+        let full = power && battery.level >= full_target;
+        if power || battery.level >= RECOVERED {
             self.told_low = false;
         }
-        if !battery.charging || battery.level < 100 {
+        if !power || battery.level < full_target {
             self.told_full = false;
         }
         let first = !self.seen;
@@ -66,7 +67,7 @@ impl Watch {
             Some(Alert::Low(battery.level))
         } else if full && !self.told_full {
             self.told_full = true;
-            (!first).then_some(Alert::Full)
+            (!first).then_some(Alert::Full(battery.level))
         } else {
             None
         }
@@ -75,9 +76,10 @@ impl Watch {
 
 pub fn on_event(event: &NodeEvent) {
     let NodeEvent::Battery { device, battery } = event else { return };
+    let full_target = crate::settings::battery_full_threshold();
     let alert = {
         let mut watches = WATCHES.lock().unwrap_or_else(|e| e.into_inner());
-        watches.get_or_insert_default().entry(*device).or_default().update(battery)
+        watches.get_or_insert_default().entry(*device).or_default().update(battery, full_target)
     };
     let Some(alert) = alert else { return };
     if !ENABLED.load(Ordering::Relaxed) {
@@ -86,8 +88,19 @@ pub fn on_event(event: &NodeEvent) {
     let name =
         core_host::host().hub.read(|s| s.name_of(device)).unwrap_or_else(|| tr!("Battery", "Your phone"));
     let (title, body) = match alert {
-        Alert::Low(level) => (format!("{name}'s battery is low"), format!("{level}% left. Charge it soon.")),
-        Alert::Full => (tr!("Battery", "%1 is fully charged", name), tr!("Battery", "You can unplug it.")),
+        Alert::Low(level) => {
+            (tr!("Battery", "%1's battery is low", name), tr!("Battery", "%1% left. Charge it soon.", level))
+        }
+        Alert::Full(level) => {
+            if level >= 100 {
+                (tr!("Battery", "%1 is fully charged", name), tr!("Battery", "You can unplug it."))
+            } else {
+                (
+                    tr!("Battery", "%1 has reached %2% charge", name, level),
+                    tr!("Battery", "You can unplug it."),
+                )
+            }
+        }
     };
     toast::show(Toast {
         device: TOAST_GROUP.into(),
@@ -124,33 +137,57 @@ mod tests {
     #[test]
     fn low_is_told_once_until_it_recovers() {
         let mut w = Watch::default();
-        assert_eq!(w.update(&at(40, false)), None);
-        assert_eq!(w.update(&at(15, false)), Some(Alert::Low(15)));
-        assert_eq!(w.update(&at(12, false)), None);
+        assert_eq!(w.update(&at(40, false), 100), None);
+        assert_eq!(w.update(&at(15, false), 100), Some(Alert::Low(15)));
+        assert_eq!(w.update(&at(12, false), 100), None);
         // Plugged in, then out again while still low: worth saying again.
-        assert_eq!(w.update(&at(13, true)), None);
-        assert_eq!(w.update(&at(13, false)), Some(Alert::Low(13)));
+        assert_eq!(w.update(&at(13, true), 100), None);
+        assert_eq!(w.update(&at(13, false), 100), Some(Alert::Low(13)));
         // Bouncing around the line doesn't repeat it.
-        assert_eq!(w.update(&at(16, false)), None);
-        assert_eq!(w.update(&at(15, false)), None);
-        assert_eq!(w.update(&at(30, false)), None);
-        assert_eq!(w.update(&at(14, false)), Some(Alert::Low(14)));
+        assert_eq!(w.update(&at(16, false), 100), None);
+        assert_eq!(w.update(&at(15, false), 100), None);
+        assert_eq!(w.update(&at(30, false), 100), None);
+        assert_eq!(w.update(&at(14, false), 100), Some(Alert::Low(14)));
     }
 
     #[test]
     fn low_is_told_right_after_connecting() {
-        assert_eq!(Watch::default().update(&at(9, false)), Some(Alert::Low(9)));
+        assert_eq!(Watch::default().update(&at(9, false), 100), Some(Alert::Low(9)));
     }
 
     #[test]
     fn full_is_told_when_it_gets_there() {
         let mut w = Watch::default();
-        assert_eq!(w.update(&at(99, true)), None);
-        assert_eq!(w.update(&at(100, true)), Some(Alert::Full));
-        assert_eq!(w.update(&at(100, true)), None);
-        assert_eq!(w.update(&at(100, false)), None);
-        assert_eq!(w.update(&at(100, true)), Some(Alert::Full));
+        assert_eq!(w.update(&at(99, true), 100), None);
+        assert_eq!(w.update(&at(100, true), 100), Some(Alert::Full(100)));
+        assert_eq!(w.update(&at(100, true), 100), None);
+        assert_eq!(w.update(&at(100, false), 100), None);
+        assert_eq!(w.update(&at(100, true), 100), Some(Alert::Full(100)));
         // Already full when it connected: not news.
-        assert_eq!(Watch::default().update(&at(100, true)), None);
+        assert_eq!(Watch::default().update(&at(100, true), 100), None);
+    }
+
+    #[test]
+    fn full_respects_protect_battery_threshold() {
+        let mut w = Watch::default();
+        assert_eq!(w.update(&at(79, true), 80), None);
+        assert_eq!(w.update(&at(80, true), 80), Some(Alert::Full(80)));
+        assert_eq!(w.update(&at(80, true), 80), None);
+        assert_eq!(w.update(&at(80, false), 80), None);
+        assert_eq!(w.update(&at(80, true), 80), Some(Alert::Full(80)));
+    }
+
+    #[test]
+    fn full_alerts_when_holding_at_protect_threshold_while_plugged() {
+        let mut w = Watch::default();
+        let mut b = at(80, false);
+        b.plugged = Some("ac".into());
+        // First report after connect doesn't alert if already 80
+        assert_eq!(w.update(&b, 80), None);
+        // Level dips to 79 and back up to 80 while still plugged
+        b.level = 79;
+        assert_eq!(w.update(&b, 80), None);
+        b.level = 80;
+        assert_eq!(w.update(&b, 80), Some(Alert::Full(80)));
     }
 }

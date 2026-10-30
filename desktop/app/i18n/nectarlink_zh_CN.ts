@@ -316,6 +316,18 @@
         <source>Your phone</source>
         <translation>你的手机</translation>
     </message>
+    <message>
+        <source>%1 has reached %2% charge</source>
+        <translation>%1 已充至 %2%</translation>
+    </message>
+    <message>
+        <source>%1's battery is low</source>
+        <translation>%1 的电量不足</translation>
+    </message>
+    <message>
+        <source>%1% left. Charge it soon.</source>
+        <translation>剩余 %1%，请尽快充电。</translation>
+    </message>
 </context>
 <context>
     <name>BtHfp</name>
@@ -4315,6 +4327,22 @@ What it needs
         <source>Open externally</source>
         <translation>用外部程序打开</translation>
     </message>
+    <message>
+        <source>Set nickname</source>
+        <translation>设置昵称</translation>
+    </message>
+    <message>
+        <source>Change nickname</source>
+        <translation>更改昵称</translation>
+    </message>
+    <message>
+        <source>Phone nickname</source>
+        <translation>手机昵称</translation>
+    </message>
+    <message>
+        <source>Set a custom name for this phone on your PC. Leave blank to use "%1".</source>
+        <translation>在您的电脑上为此手机设置自定义名称。留空以使用“%1”。</translation>
+    </message>
 </context>
 <context>
     <name>Hotspot</name>
@@ -7937,6 +7965,22 @@ What it needs
         <location filename="../qml/pages/SettingsPage.qml" line="3608"/>
         <source>Clear everything</source>
         <translation>清除全部</translation>
+    </message>
+    <message>
+        <source>Full charge target</source>
+        <translation>满电提醒目标</translation>
+    </message>
+    <message>
+        <source>Alert at 100%, or at 80% if your phone has battery protection enabled.</source>
+        <translation>在 100% 时提醒，如果您的手机开启了电池保护则在 80% 时提醒。</translation>
+    </message>
+    <message>
+        <source>100% (Standard)</source>
+        <translation>100%（标准）</translation>
+    </message>
+    <message>
+        <source>80% (Protect battery)</source>
+        <translation>80%（电池保护）</translation>
     </message>
 </context>
 <context>

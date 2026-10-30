@@ -1149,6 +1149,31 @@ Item {
                             }
                         }
 
+                        // Sub-row: Full charge alert target (100% or 80% Protect battery)
+                        Column {
+                            id: batteryThresholdBlock
+                            visible: Preferences.batteryAlerts
+                            width: parent.width
+                            spacing: 0
+
+                            Divider { width: parent.width }
+
+                            ListRow {
+                                width: parent.width
+                                iconPath: Icons.bolt
+                                title: qsTr("Full charge target")
+                                description: qsTr("Alert at 100%, or at 80% if your phone has battery protection enabled.")
+                                Segmented {
+                                    options: [
+                                        { value: 100, label: qsTr("100% (Standard)") },
+                                        { value: 80, label: qsTr("80% (Protect battery)") }
+                                    ]
+                                    value: Preferences.batteryFullThreshold <= 80 ? 80 : 100
+                                    onPicked: (val) => Preferences.batteryFullThreshold = val
+                                }
+                            }
+                        }
+
                         Divider { width: parent.width }
 
                         // Row 3: Sync clipboard to phone

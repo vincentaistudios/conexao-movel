@@ -132,6 +132,8 @@ pub struct DeviceListRust {
 const ROLES: &[&str] = &[
     "deviceId",
     "name",
+    "rawName",
+    "hasNickname",
     "kind",
     "os",
     "osVersion",
@@ -159,7 +161,12 @@ fn role_value(device: &Row, role: &str) -> QVariant {
     let text = |s: &str| QVariant::from(&QString::from(s));
     match role {
         "deviceId" => text(&device.id.to_string()),
-        "name" => text(&device.info.name),
+        "name" => text(
+            &crate::settings::nickname_for(&device.id.to_string())
+                .unwrap_or_else(|| device.info.name.clone()),
+        ),
+        "rawName" => text(&device.info.name),
+        "hasNickname" => QVariant::from(&crate::settings::nickname_for(&device.id.to_string()).is_some()),
         "kind" => text(match device.info.kind {
             DeviceKind::Phone => "phone",
             DeviceKind::Tablet => "tablet",
@@ -297,7 +304,11 @@ impl qobject::DeviceList {
         usize::try_from(row)
             .ok()
             .and_then(|i| self.rows.get(i))
-            .map(|d| QString::from(&d.info.name))
+            .map(|d| {
+                let name =
+                    crate::settings::nickname_for(&d.id.to_string()).unwrap_or_else(|| d.info.name.clone());
+                QString::from(&name)
+            })
             .unwrap_or_default()
     }
 }

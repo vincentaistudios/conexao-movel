@@ -594,6 +594,8 @@ Item {
         id: home
         required property string deviceId
         required property string name
+        required property string rawName
+        required property bool hasNickname
         required property string kind
         required property string osVersion
         required property string model
@@ -1096,15 +1098,28 @@ Item {
                         anchors.right: parent.right
                         anchors.verticalCenter: parent.verticalCenter
                         spacing: 6
-                        Txt {
+                        Row {
                             width: parent.width
-                            text: home.name
-                            role: "displaySmall"
-                            size: home.name.length > 14 ? 20 : (home.name.length > 10 ? 22 : 25)
-                            fontSizeMode: Text.HorizontalFit
-                            minimumPixelSize: 16
-                            color: Theme.heroContent
-                            elide: Text.ElideRight
+                            spacing: 6
+                            Txt {
+                                id: nameTxt
+                                width: Math.min(implicitWidth, parent.width - editNicknameBtn.width - parent.spacing)
+                                text: home.name
+                                role: "displaySmall"
+                                size: home.name.length > 14 ? 20 : (home.name.length > 10 ? 22 : 25)
+                                fontSizeMode: Text.HorizontalFit
+                                minimumPixelSize: 16
+                                color: Theme.heroContent
+                                elide: Text.ElideRight
+                            }
+                            IconButton {
+                                id: editNicknameBtn
+                                anchors.verticalCenter: nameTxt.verticalCenter
+                                iconPath: Icons.edit
+                                iconSize: 14
+                                label: home.hasNickname ? qsTr("Change nickname") : qsTr("Set nickname")
+                                onClicked: nicknameSheet.openFor(home.deviceId, home.name, home.rawName)
+                            }
                         }
                         Txt {
                             width: parent.width
@@ -2625,6 +2640,75 @@ Item {
             Row {
                 anchors.right: parent.right
                 Button { text: qsTr("Done"); onClicked: appSheet.close() }
+            }
+        }
+    }
+
+    // Set a custom PC-side nickname for a phone.
+    Sheet {
+        id: nicknameSheet
+        property string targetDeviceId: ""
+        property string currentName: ""
+        property string rawName: ""
+        cardWidth: 420
+        function openFor(devId, name, raw) {
+            targetDeviceId = devId
+            currentName = name
+            rawName = raw
+            nicknameInput.text = (name !== raw) ? name : ""
+            open()
+            nicknameInput.forceActiveFocus()
+        }
+        function saveNickname() {
+            Preferences.setNickname(targetDeviceId, nicknameInput.text.trim())
+            nicknameSheet.close()
+        }
+        Column {
+            width: parent.width
+            spacing: 16
+            Txt {
+                width: parent.width
+                text: qsTr("Phone nickname")
+                role: "headline"
+            }
+            Txt {
+                width: parent.width
+                wrapMode: Text.WordWrap
+                role: "body"
+                muted: true
+                text: qsTr("Set a custom name for this phone on your PC. Leave blank to use \"%1\".").arg(nicknameSheet.rawName)
+            }
+            Rectangle {
+                width: parent.width
+                height: 40
+                radius: Theme.radiusMd
+                color: Theme.surfaceContainerHighest
+                border.width: nicknameInput.activeFocus ? 2 : 1
+                border.color: nicknameInput.activeFocus ? Theme.primary : Theme.outlineVariant
+
+                TextInput {
+                    id: nicknameInput
+                    anchors.fill: parent
+                    anchors.margins: 10
+                    color: Theme.surfaceContent
+                    font.pixelSize: 14
+                    selectByMouse: true
+                    clip: true
+                    onAccepted: nicknameSheet.saveNickname()
+                }
+            }
+            Row {
+                anchors.right: parent.right
+                spacing: 8
+                Button {
+                    text: qsTr("Cancel")
+                    outlined: true
+                    onClicked: nicknameSheet.close()
+                }
+                Button {
+                    text: qsTr("Save")
+                    onClicked: nicknameSheet.saveNickname()
+                }
             }
         }
     }

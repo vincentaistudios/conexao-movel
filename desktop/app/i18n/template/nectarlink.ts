@@ -316,6 +316,18 @@
         <source>Your phone</source>
         <translation type="unfinished"></translation>
     </message>
+    <message>
+        <source>%1 has reached %2% charge</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>%1's battery is low</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>%1% left. Charge it soon.</source>
+        <translation type="unfinished"></translation>
+    </message>
 </context>
 <context>
     <name>CallCard</name>
@@ -4039,6 +4051,22 @@ What it needs
         <source>Open externally</source>
         <translation type="unfinished"></translation>
     </message>
+    <message>
+        <source>Set nickname</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Change nickname</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Phone nickname</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Set a custom name for this phone on your PC. Leave blank to use "%1".</source>
+        <translation type="unfinished"></translation>
+    </message>
 </context>
 <context>
     <name>Hotspot</name>
@@ -7656,6 +7684,22 @@ What it needs
     <message>
         <location filename="../../qml/pages/SettingsPage.qml" line="3608"/>
         <source>Clear everything</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Full charge target</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Alert at 100%, or at 80% if your phone has battery protection enabled.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>100% (Standard)</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>80% (Protect battery)</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
