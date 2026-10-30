@@ -38,6 +38,15 @@ change things that need a step from you, and its notes say so.
   number anywhere, open the palette with its shortcut, and Call and Text
   for that number are at the top
   ([#83](https://github.com/thtbee/nectarlink/issues/83)).
+- **Battery alerts for phones that stop charging at 80%.** Settings has a
+  **Full charge target**: at **80% (Protect battery)**, the PC tells you the
+  phone is charged when it reaches 80% on the charger. Thanks to
+  [@Armone0](https://github.com/Armone0)
+  ([#98](https://github.com/thtbee/nectarlink/pull/98)).
+- **Nicknames for your phones on the PC.** **Set nickname** on Home names a
+  paired phone for this PC only; leave it blank to use the phone's own name.
+  Thanks to [@Armone0](https://github.com/Armone0)
+  ([#98](https://github.com/thtbee/nectarlink/pull/98)).
 - **The PC app on Linux**, for Ubuntu 24.04 or newer, Debian 13, Fedora 40
   or newer and other distributions from 2024 on, as a `.deb`, an `.rpm`,
   an AppImage or a tarball. It does what the Windows app does: notifications with
