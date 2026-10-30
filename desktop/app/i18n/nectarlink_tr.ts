@@ -452,267 +452,267 @@
         <translation>%1 sn</translation>
     </message>
     <message>
-        <location filename="../qml/pages/CallsPage.qml" line="183"/>
+        <location filename="../qml/pages/CallsPage.qml" line="186"/>
         <source>Call from your PC</source>
         <translation>Bilgisayarınızdan arayın</translation>
     </message>
     <message>
-        <location filename="../qml/pages/CallsPage.qml" line="184"/>
-        <location filename="../qml/pages/CallsPage.qml" line="324"/>
-        <location filename="../qml/pages/CallsPage.qml" line="410"/>
+        <location filename="../qml/pages/CallsPage.qml" line="187"/>
+        <location filename="../qml/pages/CallsPage.qml" line="327"/>
+        <location filename="../qml/pages/CallsPage.qml" line="413"/>
         <source>%1 isn&apos;t connected</source>
         <translation>%1 bağlı değil</translation>
     </message>
     <message>
-        <location filename="../qml/pages/CallsPage.qml" line="192"/>
+        <location filename="../qml/pages/CallsPage.qml" line="195"/>
         <source>Pair your phone to view calls and contacts.</source>
         <translation>Aramaları ve kişileri görmek için telefonunuzu eşleştirin.</translation>
     </message>
     <message>
-        <location filename="../qml/pages/CallsPage.qml" line="193"/>
+        <location filename="../qml/pages/CallsPage.qml" line="196"/>
         <source>Connect %1 to view calls and contacts.</source>
         <translation>Aramaları ve kişileri görmek için %1 cihazını bağlayın.</translation>
     </message>
     <message>
-        <location filename="../qml/pages/CallsPage.qml" line="213"/>
+        <location filename="../qml/pages/CallsPage.qml" line="216"/>
         <source>Recent</source>
         <translation>Son aramalar</translation>
     </message>
     <message>
-        <location filename="../qml/pages/CallsPage.qml" line="214"/>
-        <location filename="../qml/pages/CallsPage.qml" line="1078"/>
+        <location filename="../qml/pages/CallsPage.qml" line="217"/>
+        <location filename="../qml/pages/CallsPage.qml" line="1081"/>
         <source>Contacts</source>
         <translation>Kişiler</translation>
     </message>
     <message>
-        <location filename="../qml/pages/CallsPage.qml" line="224"/>
+        <location filename="../qml/pages/CallsPage.qml" line="227"/>
         <source>Refresh</source>
         <translation>Yenile</translation>
     </message>
     <message>
-        <location filename="../qml/pages/CallsPage.qml" line="264"/>
-        <location filename="../qml/pages/CallsPage.qml" line="274"/>
+        <location filename="../qml/pages/CallsPage.qml" line="267"/>
+        <location filename="../qml/pages/CallsPage.qml" line="277"/>
         <source>Search calls</source>
         <translation>Aramalarda ara</translation>
     </message>
     <message>
-        <location filename="../qml/pages/CallsPage.qml" line="264"/>
-        <location filename="../qml/pages/CallsPage.qml" line="274"/>
+        <location filename="../qml/pages/CallsPage.qml" line="267"/>
+        <location filename="../qml/pages/CallsPage.qml" line="277"/>
         <source>Search contacts</source>
         <translation>Kişilerde ara</translation>
     </message>
     <message>
-        <location filename="../qml/pages/CallsPage.qml" line="285"/>
+        <location filename="../qml/pages/CallsPage.qml" line="288"/>
         <source>Clear search</source>
         <translation>Aramayı temizle</translation>
     </message>
     <message>
-        <location filename="../qml/pages/CallsPage.qml" line="322"/>
+        <location filename="../qml/pages/CallsPage.qml" line="325"/>
         <source>Calls are off for %1</source>
         <translation>%1 için aramalar kapalı</translation>
     </message>
     <message>
-        <location filename="../qml/pages/CallsPage.qml" line="323"/>
+        <location filename="../qml/pages/CallsPage.qml" line="326"/>
         <source>Allow call log on %1</source>
         <translation>%1 cihazında arama kaydına izin verin</translation>
     </message>
     <message>
-        <location filename="../qml/pages/CallsPage.qml" line="325"/>
+        <location filename="../qml/pages/CallsPage.qml" line="328"/>
         <source>Couldn&apos;t load recent calls</source>
         <translation>Son aramalar yüklenemedi</translation>
     </message>
     <message>
-        <location filename="../qml/pages/CallsPage.qml" line="333"/>
+        <location filename="../qml/pages/CallsPage.qml" line="336"/>
         <source>Enable Calls in Settings.</source>
         <translation>Ayarlar&apos;da Aramalar&apos;ı etkinleştirin.</translation>
     </message>
     <message>
-        <location filename="../qml/pages/CallsPage.qml" line="334"/>
+        <location filename="../qml/pages/CallsPage.qml" line="337"/>
         <source>Grant call log permission on %1.</source>
         <translation>%1 cihazında arama kaydı izni verin.</translation>
     </message>
     <message>
-        <location filename="../qml/pages/CallsPage.qml" line="335"/>
+        <location filename="../qml/pages/CallsPage.qml" line="338"/>
         <source>Connect %1 to view recent calls.</source>
         <translation>Son aramaları görmek için %1 cihazını bağlayın.</translation>
     </message>
     <message>
-        <location filename="../qml/pages/CallsPage.qml" line="336"/>
+        <location filename="../qml/pages/CallsPage.qml" line="339"/>
         <source>Unable to load call log.</source>
         <translation>Arama kaydı yüklenemiyor.</translation>
     </message>
     <message>
-        <location filename="../qml/pages/CallsPage.qml" line="343"/>
-        <location filename="../qml/pages/CallsPage.qml" line="429"/>
+        <location filename="../qml/pages/CallsPage.qml" line="346"/>
+        <location filename="../qml/pages/CallsPage.qml" line="432"/>
         <source>Try again</source>
         <translation>Tekrar dene</translation>
     </message>
     <message>
-        <location filename="../qml/pages/CallsPage.qml" line="371"/>
+        <location filename="../qml/pages/CallsPage.qml" line="374"/>
         <source>No calls match.</source>
         <translation>Eşleşen arama yok.</translation>
     </message>
     <message>
-        <location filename="../qml/pages/CallsPage.qml" line="371"/>
+        <location filename="../qml/pages/CallsPage.qml" line="374"/>
         <source>No recent calls.</source>
         <translation>Son arama yok.</translation>
     </message>
     <message>
-        <location filename="../qml/pages/CallsPage.qml" line="408"/>
+        <location filename="../qml/pages/CallsPage.qml" line="411"/>
         <source>Contacts are off for %1</source>
         <translation>%1 için kişiler kapalı</translation>
     </message>
     <message>
-        <location filename="../qml/pages/CallsPage.qml" line="409"/>
+        <location filename="../qml/pages/CallsPage.qml" line="412"/>
         <source>Allow contacts on %1</source>
         <translation>%1 cihazında kişilere izin verin</translation>
     </message>
     <message>
-        <location filename="../qml/pages/CallsPage.qml" line="411"/>
+        <location filename="../qml/pages/CallsPage.qml" line="414"/>
         <source>Couldn&apos;t load contacts</source>
         <translation>Kişiler yüklenemedi</translation>
     </message>
     <message>
-        <location filename="../qml/pages/CallsPage.qml" line="419"/>
+        <location filename="../qml/pages/CallsPage.qml" line="422"/>
         <source>Enable Contacts in Settings.</source>
         <translation>Ayarlar&apos;da Kişiler&apos;i etkinleştirin.</translation>
     </message>
     <message>
-        <location filename="../qml/pages/CallsPage.qml" line="420"/>
+        <location filename="../qml/pages/CallsPage.qml" line="423"/>
         <source>Grant contacts permission on %1.</source>
         <translation>%1 cihazında kişiler izni verin.</translation>
     </message>
     <message>
-        <location filename="../qml/pages/CallsPage.qml" line="421"/>
+        <location filename="../qml/pages/CallsPage.qml" line="424"/>
         <source>Connect %1 to view contacts.</source>
         <translation>Kişileri görmek için %1 cihazını bağlayın.</translation>
     </message>
     <message>
-        <location filename="../qml/pages/CallsPage.qml" line="422"/>
+        <location filename="../qml/pages/CallsPage.qml" line="425"/>
         <source>Unable to load contacts.</source>
         <translation>Kişiler yüklenemiyor.</translation>
     </message>
     <message>
-        <location filename="../qml/pages/CallsPage.qml" line="451"/>
+        <location filename="../qml/pages/CallsPage.qml" line="454"/>
         <source>No contacts match.</source>
         <translation>Eşleşen kişi yok.</translation>
     </message>
     <message>
-        <location filename="../qml/pages/CallsPage.qml" line="451"/>
+        <location filename="../qml/pages/CallsPage.qml" line="454"/>
         <source>No contacts on this phone.</source>
         <translation>Bu telefonda kişi yok.</translation>
     </message>
     <message>
-        <location filename="../qml/pages/CallsPage.qml" line="542"/>
+        <location filename="../qml/pages/CallsPage.qml" line="545"/>
         <source>Close contact</source>
         <translation>Kişiyi kapat</translation>
     </message>
     <message>
-        <location filename="../qml/pages/CallsPage.qml" line="582"/>
+        <location filename="../qml/pages/CallsPage.qml" line="585"/>
         <source>Copy number</source>
         <translation>Numarayı kopyala</translation>
     </message>
     <message>
-        <location filename="../qml/pages/CallsPage.qml" line="588"/>
-        <location filename="../qml/pages/CallsPage.qml" line="1008"/>
-        <location filename="../qml/pages/CallsPage.qml" line="1177"/>
+        <location filename="../qml/pages/CallsPage.qml" line="591"/>
+        <location filename="../qml/pages/CallsPage.qml" line="1011"/>
+        <location filename="../qml/pages/CallsPage.qml" line="1180"/>
         <source>Text %1</source>
         <translation>Mesaj gönder: %1</translation>
     </message>
     <message>
-        <location filename="../qml/pages/CallsPage.qml" line="596"/>
-        <location filename="../qml/pages/CallsPage.qml" line="1016"/>
-        <location filename="../qml/pages/CallsPage.qml" line="1186"/>
+        <location filename="../qml/pages/CallsPage.qml" line="599"/>
+        <location filename="../qml/pages/CallsPage.qml" line="1019"/>
+        <location filename="../qml/pages/CallsPage.qml" line="1189"/>
         <source>Call %1</source>
         <translation>Ara: %1</translation>
     </message>
     <message>
-        <location filename="../qml/pages/CallsPage.qml" line="649"/>
+        <location filename="../qml/pages/CallsPage.qml" line="652"/>
         <source>Phone number to call</source>
         <translation>Aranacak telefon numarası</translation>
     </message>
     <message>
-        <location filename="../qml/pages/CallsPage.qml" line="657"/>
+        <location filename="../qml/pages/CallsPage.qml" line="660"/>
         <source>Enter a number</source>
         <translation>Bir numara girin</translation>
     </message>
     <message>
-        <location filename="../qml/pages/CallsPage.qml" line="684"/>
+        <location filename="../qml/pages/CallsPage.qml" line="687"/>
         <source>Backspace</source>
         <translation>Geri sil</translation>
     </message>
     <message>
-        <location filename="../qml/pages/CallsPage.qml" line="786"/>
+        <location filename="../qml/pages/CallsPage.qml" line="789"/>
         <source>Text</source>
         <translation>Mesaj</translation>
     </message>
     <message>
-        <location filename="../qml/pages/CallsPage.qml" line="798"/>
+        <location filename="../qml/pages/CallsPage.qml" line="801"/>
         <source>Calling…</source>
         <translation>Aranıyor…</translation>
     </message>
     <message>
-        <location filename="../qml/pages/CallsPage.qml" line="798"/>
+        <location filename="../qml/pages/CallsPage.qml" line="801"/>
         <source>Call</source>
         <translation>Ara</translation>
     </message>
     <message>
-        <location filename="../qml/pages/CallsPage.qml" line="807"/>
+        <location filename="../qml/pages/CallsPage.qml" line="810"/>
         <source>Clear number</source>
         <translation>Numarayı temizle</translation>
     </message>
     <message>
-        <location filename="../qml/pages/CallsPage.qml" line="840"/>
+        <location filename="../qml/pages/CallsPage.qml" line="843"/>
         <source>PC call audio connected</source>
         <translation>Bilgisayar arama sesi bağlı</translation>
     </message>
     <message>
-        <location filename="../qml/pages/CallsPage.qml" line="841"/>
+        <location filename="../qml/pages/CallsPage.qml" line="844"/>
         <source>PC call audio ready</source>
         <translation>Bilgisayar arama sesi hazır</translation>
     </message>
     <message>
-        <location filename="../qml/pages/CallsPage.qml" line="842"/>
+        <location filename="../qml/pages/CallsPage.qml" line="845"/>
         <source>PC call audio (Bluetooth)</source>
         <translation>Bilgisayar arama sesi (Bluetooth)</translation>
     </message>
     <message>
-        <location filename="../qml/pages/CallsPage.qml" line="856"/>
+        <location filename="../qml/pages/CallsPage.qml" line="859"/>
         <source>Connect PC audio</source>
         <translation>Bilgisayar sesini bağla</translation>
     </message>
     <message>
-        <location filename="../qml/pages/CallsPage.qml" line="856"/>
+        <location filename="../qml/pages/CallsPage.qml" line="859"/>
         <source>Open Bluetooth settings</source>
         <translation>Bluetooth ayarlarını aç</translation>
     </message>
     <message>
-        <location filename="../qml/pages/CallsPage.qml" line="879"/>
+        <location filename="../qml/pages/CallsPage.qml" line="882"/>
         <source>Missed</source>
         <translation>Cevapsız</translation>
     </message>
     <message>
-        <location filename="../qml/pages/CallsPage.qml" line="880"/>
+        <location filename="../qml/pages/CallsPage.qml" line="883"/>
         <source>Outgoing</source>
         <translation>Giden</translation>
     </message>
     <message>
-        <location filename="../qml/pages/CallsPage.qml" line="881"/>
+        <location filename="../qml/pages/CallsPage.qml" line="884"/>
         <source>Declined</source>
         <translation>Reddedildi</translation>
     </message>
     <message>
-        <location filename="../qml/pages/CallsPage.qml" line="882"/>
+        <location filename="../qml/pages/CallsPage.qml" line="885"/>
         <source>Incoming</source>
         <translation>Gelen</translation>
     </message>
     <message>
-        <location filename="../qml/pages/CallsPage.qml" line="1078"/>
+        <location filename="../qml/pages/CallsPage.qml" line="1081"/>
         <source>Favorites</source>
         <translation>Favoriler</translation>
     </message>
     <message>
-        <location filename="../qml/pages/CallsPage.qml" line="1161"/>
+        <location filename="../qml/pages/CallsPage.qml" line="1164"/>
         <source>+%1 more</source>
         <translation>+%1 daha</translation>
     </message>
@@ -1659,7 +1659,7 @@
         <location filename="../qml/pages/DeckPage.qml" line="215"/>
         <location filename="../qml/pages/DeckPage.qml" line="563"/>
         <location filename="../qml/pages/DeckPage.qml" line="582"/>
-        <location filename="../qml/pages/DeckPage.qml" line="642"/>
+        <location filename="../qml/pages/DeckPage.qml" line="650"/>
         <source>Add tile</source>
         <translation>Kutucuk ekle</translation>
     </message>
@@ -1700,7 +1700,7 @@
     </message>
     <message>
         <location filename="../qml/pages/DeckPage.qml" line="309"/>
-        <location filename="../qml/pages/DeckPage.qml" line="995"/>
+        <location filename="../qml/pages/DeckPage.qml" line="1003"/>
         <source>New page</source>
         <translation>Yeni sayfa</translation>
     </message>
@@ -1711,7 +1711,7 @@
     </message>
     <message>
         <location filename="../qml/pages/DeckPage.qml" line="327"/>
-        <location filename="../qml/pages/DeckPage.qml" line="995"/>
+        <location filename="../qml/pages/DeckPage.qml" line="1003"/>
         <source>Rename page</source>
         <translation>Sayfayı yeniden adlandır</translation>
     </message>
@@ -1726,150 +1726,150 @@
         <translation>Test et: %1</translation>
     </message>
     <message>
-        <location filename="../qml/pages/DeckPage.qml" line="642"/>
+        <location filename="../qml/pages/DeckPage.qml" line="650"/>
         <source>Edit tile</source>
         <translation>Kutucuğu düzenle</translation>
     </message>
     <message>
-        <location filename="../qml/pages/DeckPage.qml" line="650"/>
+        <location filename="../qml/pages/DeckPage.qml" line="658"/>
         <source>Phones see only each tile&apos;s label and icon. Paths and commands stay on this PC.</source>
         <translation>Telefonlar her kutucuğun yalnızca etiketini ve simgesini görür. Yollar ve komutlar bu bilgisayarda kalır.</translation>
     </message>
     <message>
-        <location filename="../qml/pages/DeckPage.qml" line="695"/>
+        <location filename="../qml/pages/DeckPage.qml" line="703"/>
         <source>Action</source>
         <translation>Eylem</translation>
     </message>
     <message>
-        <location filename="../qml/pages/DeckPage.qml" line="731"/>
+        <location filename="../qml/pages/DeckPage.qml" line="739"/>
         <source>Ctrl</source>
         <translation>Ctrl</translation>
     </message>
     <message>
-        <location filename="../qml/pages/DeckPage.qml" line="737"/>
+        <location filename="../qml/pages/DeckPage.qml" line="745"/>
         <source>Alt</source>
         <translation>Alt</translation>
     </message>
     <message>
-        <location filename="../qml/pages/DeckPage.qml" line="743"/>
+        <location filename="../qml/pages/DeckPage.qml" line="751"/>
         <source>Shift</source>
         <translation>Shift</translation>
     </message>
     <message>
-        <location filename="../qml/pages/DeckPage.qml" line="749"/>
+        <location filename="../qml/pages/DeckPage.qml" line="757"/>
         <source>Win</source>
         <translation>Win</translation>
     </message>
     <message>
-        <location filename="../qml/pages/DeckPage.qml" line="749"/>
+        <location filename="../qml/pages/DeckPage.qml" line="757"/>
         <source>Super</source>
         <translation>Super</translation>
     </message>
     <message>
-        <location filename="../qml/pages/DeckPage.qml" line="757"/>
+        <location filename="../qml/pages/DeckPage.qml" line="765"/>
         <source>Key (e.g. c, v, z, f5, tab, enter, space, escape, up, down):</source>
         <translation>Tuş (örn. c, v, z, f5, tab, enter, space, escape, up, down):</translation>
     </message>
     <message>
-        <location filename="../qml/pages/DeckPage.qml" line="758"/>
+        <location filename="../qml/pages/DeckPage.qml" line="766"/>
         <source>Website address (https://…):</source>
         <translation>Web sitesi adresi (https://…):</translation>
     </message>
     <message>
-        <location filename="../qml/pages/DeckPage.qml" line="759"/>
+        <location filename="../qml/pages/DeckPage.qml" line="767"/>
         <source>Text snippet to type:</source>
         <translation>Yazılacak metin parçası:</translation>
     </message>
     <message>
-        <location filename="../qml/pages/DeckPage.qml" line="760"/>
+        <location filename="../qml/pages/DeckPage.qml" line="768"/>
         <source>Application or launcher path (/usr/bin/…, .desktop, or .AppImage):</source>
         <translation>Uygulama veya başlatıcı yolu (/usr/bin/…, .desktop veya .AppImage):</translation>
     </message>
     <message>
-        <location filename="../qml/pages/DeckPage.qml" line="760"/>
+        <location filename="../qml/pages/DeckPage.qml" line="768"/>
         <source>Application or shortcut path (.exe or .lnk):</source>
         <translation>Uygulama veya kısayol yolu (.exe veya .lnk):</translation>
     </message>
     <message>
-        <location filename="../qml/pages/DeckPage.qml" line="761"/>
+        <location filename="../qml/pages/DeckPage.qml" line="769"/>
         <source>Shell command to run on this PC:</source>
         <translation>Bu bilgisayarda çalıştırılacak kabuk komutu:</translation>
     </message>
     <message>
-        <location filename="../qml/pages/DeckPage.qml" line="791"/>
+        <location filename="../qml/pages/DeckPage.qml" line="799"/>
         <source>Action parameter</source>
         <translation>Eylem parametresi</translation>
     </message>
     <message>
-        <location filename="../qml/pages/DeckPage.qml" line="801"/>
+        <location filename="../qml/pages/DeckPage.qml" line="809"/>
         <source>Browse…</source>
         <translation>Gözat…</translation>
     </message>
     <message>
-        <location filename="../qml/pages/DeckPage.qml" line="812"/>
+        <location filename="../qml/pages/DeckPage.qml" line="820"/>
         <source>Requires &quot;Allow running Deck commands&quot; to be turned on for the phone in Settings → Devices.</source>
         <translation>Ayarlar → Cihazlar bölümünde telefon için &quot;Deck komutlarını çalıştırmaya izin ver&quot; seçeneğinin açık olması gerekir.</translation>
     </message>
     <message>
-        <location filename="../qml/pages/DeckPage.qml" line="820"/>
+        <location filename="../qml/pages/DeckPage.qml" line="828"/>
         <source>Label</source>
         <translation>Etiket</translation>
     </message>
     <message>
-        <location filename="../qml/pages/DeckPage.qml" line="846"/>
+        <location filename="../qml/pages/DeckPage.qml" line="854"/>
         <source>Tile label</source>
         <translation>Kutucuk etiketi</translation>
     </message>
     <message>
-        <location filename="../qml/pages/DeckPage.qml" line="855"/>
+        <location filename="../qml/pages/DeckPage.qml" line="863"/>
         <source>Icon</source>
         <translation>Simge</translation>
     </message>
     <message>
-        <location filename="../qml/pages/DeckPage.qml" line="918"/>
+        <location filename="../qml/pages/DeckPage.qml" line="926"/>
         <source>Delete</source>
         <translation>Sil</translation>
     </message>
     <message>
-        <location filename="../qml/pages/DeckPage.qml" line="928"/>
+        <location filename="../qml/pages/DeckPage.qml" line="936"/>
         <source>Test</source>
         <translation>Test et</translation>
     </message>
     <message>
-        <location filename="../qml/pages/DeckPage.qml" line="940"/>
-        <location filename="../qml/pages/DeckPage.qml" line="1028"/>
-        <location filename="../qml/pages/DeckPage.qml" line="1056"/>
+        <location filename="../qml/pages/DeckPage.qml" line="948"/>
+        <location filename="../qml/pages/DeckPage.qml" line="1036"/>
+        <location filename="../qml/pages/DeckPage.qml" line="1064"/>
         <source>Cancel</source>
         <translation>İptal</translation>
     </message>
     <message>
-        <location filename="../qml/pages/DeckPage.qml" line="945"/>
-        <location filename="../qml/pages/DeckPage.qml" line="1031"/>
+        <location filename="../qml/pages/DeckPage.qml" line="953"/>
+        <location filename="../qml/pages/DeckPage.qml" line="1039"/>
         <source>Save</source>
         <translation>Kaydet</translation>
     </message>
     <message>
-        <location filename="../qml/pages/DeckPage.qml" line="1019"/>
+        <location filename="../qml/pages/DeckPage.qml" line="1027"/>
         <source>Page name</source>
         <translation>Sayfa adı</translation>
     </message>
     <message>
-        <location filename="../qml/pages/DeckPage.qml" line="1031"/>
+        <location filename="../qml/pages/DeckPage.qml" line="1039"/>
         <source>Create</source>
         <translation>Oluştur</translation>
     </message>
     <message>
-        <location filename="../qml/pages/DeckPage.qml" line="1045"/>
+        <location filename="../qml/pages/DeckPage.qml" line="1053"/>
         <source>Reset Deck to defaults?</source>
         <translation>Deck varsayılanlara sıfırlansın mı?</translation>
     </message>
     <message>
-        <location filename="../qml/pages/DeckPage.qml" line="1051"/>
+        <location filename="../qml/pages/DeckPage.qml" line="1059"/>
         <source>This replaces your custom pages and tiles with the default 11-tile Deck.</source>
         <translation>Bu işlem özel sayfalarınızı ve kutucuklarınızı varsayılan 11 kutucuklu Deck ile değiştirir.</translation>
     </message>
     <message>
-        <location filename="../qml/pages/DeckPage.qml" line="1059"/>
+        <location filename="../qml/pages/DeckPage.qml" line="1067"/>
         <source>Reset</source>
         <translation>Sıfırla</translation>
     </message>
@@ -2255,12 +2255,12 @@
         <translation>Güvenlik duvarı ayarları</translation>
     </message>
     <message>
-        <location filename="../qml/components/DoctorSheet.qml" line="156"/>
+        <location filename="../qml/components/DoctorSheet.qml" line="158"/>
         <source>Check again</source>
         <translation>Tekrar denetle</translation>
     </message>
     <message>
-        <location filename="../qml/components/DoctorSheet.qml" line="160"/>
+        <location filename="../qml/components/DoctorSheet.qml" line="162"/>
         <source>Done</source>
         <translation>Bitti</translation>
     </message>
@@ -2301,200 +2301,209 @@
 <context>
     <name>FeaturesGuidePage</name>
     <message>
-        <location filename="../qml/pages/FeaturesGuidePage.qml" line="91"/>
+        <location filename="../qml/pages/FeaturesGuidePage.qml" line="99"/>
         <source>Overview</source>
         <translation>Genel bakış</translation>
     </message>
     <message>
-        <location filename="../qml/pages/FeaturesGuidePage.qml" line="92"/>
+        <location filename="../qml/pages/FeaturesGuidePage.qml" line="100"/>
         <source>Setup</source>
         <translation>Kurulum</translation>
     </message>
     <message>
-        <location filename="../qml/pages/FeaturesGuidePage.qml" line="93"/>
+        <location filename="../qml/pages/FeaturesGuidePage.qml" line="101"/>
         <source>Permissions</source>
         <translation>İzinler</translation>
     </message>
     <message>
-        <location filename="../qml/pages/FeaturesGuidePage.qml" line="94"/>
+        <location filename="../qml/pages/FeaturesGuidePage.qml" line="102"/>
         <source>Power levels</source>
         <translation>Güç seviyeleri</translation>
     </message>
     <message>
-        <location filename="../qml/pages/FeaturesGuidePage.qml" line="95"/>
+        <location filename="../qml/pages/FeaturesGuidePage.qml" line="103"/>
         <source>Troubleshooting</source>
         <translation>Sorun giderme</translation>
     </message>
     <message>
-        <location filename="../qml/pages/FeaturesGuidePage.qml" line="96"/>
+        <location filename="../qml/pages/FeaturesGuidePage.qml" line="104"/>
         <source>FAQ</source>
         <translation>SSS</translation>
     </message>
     <message>
-        <location filename="../qml/pages/FeaturesGuidePage.qml" line="472"/>
+        <location filename="../qml/pages/FeaturesGuidePage.qml" line="480"/>
         <source>All</source>
         <translation>Tümü</translation>
     </message>
     <message>
-        <location filename="../qml/pages/FeaturesGuidePage.qml" line="473"/>
+        <location filename="../qml/pages/FeaturesGuidePage.qml" line="481"/>
         <source>Notifications &amp; Calls</source>
         <translation>Bildirimler ve Aramalar</translation>
     </message>
     <message>
-        <location filename="../qml/pages/FeaturesGuidePage.qml" line="474"/>
+        <location filename="../qml/pages/FeaturesGuidePage.qml" line="482"/>
         <source>Messages</source>
         <translation>Mesajlar</translation>
     </message>
     <message>
-        <location filename="../qml/pages/FeaturesGuidePage.qml" line="475"/>
+        <location filename="../qml/pages/FeaturesGuidePage.qml" line="483"/>
         <source>Clipboard &amp; Files</source>
         <translation>Pano ve Dosyalar</translation>
     </message>
     <message>
-        <location filename="../qml/pages/FeaturesGuidePage.qml" line="476"/>
+        <location filename="../qml/pages/FeaturesGuidePage.qml" line="484"/>
         <source>Mirroring &amp; Apps</source>
         <translation>Yansıtma ve Uygulamalar</translation>
     </message>
     <message>
-        <location filename="../qml/pages/FeaturesGuidePage.qml" line="477"/>
+        <location filename="../qml/pages/FeaturesGuidePage.qml" line="485"/>
         <source>Camera &amp; Audio</source>
         <translation>Kamera ve Ses</translation>
     </message>
     <message>
-        <location filename="../qml/pages/FeaturesGuidePage.qml" line="478"/>
+        <location filename="../qml/pages/FeaturesGuidePage.qml" line="486"/>
         <source>Input &amp; Control</source>
         <translation>Giriş ve Kontrol</translation>
     </message>
     <message>
-        <location filename="../qml/pages/FeaturesGuidePage.qml" line="479"/>
+        <location filename="../qml/pages/FeaturesGuidePage.qml" line="487"/>
         <source>Desktop Surfaces</source>
         <translation>Masaüstü Yüzeyleri</translation>
     </message>
     <message>
-        <location filename="../qml/pages/FeaturesGuidePage.qml" line="480"/>
+        <location filename="../qml/pages/FeaturesGuidePage.qml" line="488"/>
         <source>Automation &amp; Network</source>
         <translation>Otomasyon ve Ağ</translation>
     </message>
     <message>
-        <location filename="../qml/pages/FeaturesGuidePage.qml" line="505"/>
-        <location filename="../qml/pages/FeaturesGuidePage.qml" line="509"/>
-        <location filename="../qml/pages/FeaturesGuidePage.qml" line="514"/>
-        <location filename="../qml/pages/FeaturesGuidePage.qml" line="520"/>
+        <location filename="../qml/pages/FeaturesGuidePage.qml" line="513"/>
+        <location filename="../qml/pages/FeaturesGuidePage.qml" line="517"/>
+        <location filename="../qml/pages/FeaturesGuidePage.qml" line="522"/>
+        <location filename="../qml/pages/FeaturesGuidePage.qml" line="528"/>
         <source>Ready on PC</source>
         <translation>Bilgisayarda hazır</translation>
     </message>
     <message>
-        <location filename="../qml/pages/FeaturesGuidePage.qml" line="510"/>
-        <location filename="../qml/pages/FeaturesGuidePage.qml" line="515"/>
-        <location filename="../qml/pages/FeaturesGuidePage.qml" line="521"/>
+        <location filename="../qml/pages/FeaturesGuidePage.qml" line="518"/>
+        <location filename="../qml/pages/FeaturesGuidePage.qml" line="523"/>
+        <location filename="../qml/pages/FeaturesGuidePage.qml" line="529"/>
         <source>Off in Settings</source>
         <translation>Ayarlar&apos;da kapalı</translation>
     </message>
     <message>
-        <location filename="../qml/pages/FeaturesGuidePage.qml" line="525"/>
+        <location filename="../qml/pages/FeaturesGuidePage.qml" line="533"/>
         <source>Opt-in on Home</source>
         <translation>Ana Sayfa&apos;da isteğe bağlı</translation>
     </message>
     <message>
-        <location filename="../qml/pages/FeaturesGuidePage.qml" line="531"/>
-        <location filename="../qml/pages/FeaturesGuidePage.qml" line="543"/>
+        <location filename="../qml/pages/FeaturesGuidePage.qml" line="539"/>
+        <location filename="../qml/pages/FeaturesGuidePage.qml" line="553"/>
         <source>Off on Home</source>
         <translation>Ana Sayfa&apos;da kapalı</translation>
     </message>
     <message>
-        <location filename="../qml/pages/FeaturesGuidePage.qml" line="538"/>
-        <location filename="../qml/pages/FeaturesGuidePage.qml" line="553"/>
+        <location filename="../qml/pages/FeaturesGuidePage.qml" line="548"/>
+        <location filename="../qml/pages/FeaturesGuidePage.qml" line="567"/>
         <source>Ready</source>
         <translation>Hazır</translation>
     </message>
     <message>
-        <location filename="../qml/pages/FeaturesGuidePage.qml" line="540"/>
+        <location filename="../qml/pages/FeaturesGuidePage.qml" line="550"/>
         <source>Basic mode</source>
         <translation>Temel mod</translation>
     </message>
     <message>
-        <location filename="../qml/pages/FeaturesGuidePage.qml" line="545"/>
-        <location filename="../qml/pages/FeaturesGuidePage.qml" line="550"/>
+        <location filename="../qml/pages/FeaturesGuidePage.qml" line="559"/>
+        <source>Needs an update</source>
+        <translation>Güncelleme gerekli</translation>
+    </message>
+    <message>
+        <location filename="../qml/pages/FeaturesGuidePage.qml" line="560"/>
         <source>Needs phone permission</source>
         <translation>Telefon izni gerekli</translation>
     </message>
     <message>
-        <location filename="../qml/pages/FeaturesGuidePage.qml" line="547"/>
+        <location filename="../qml/pages/FeaturesGuidePage.qml" line="555"/>
         <source>Needs Elevated</source>
         <translation>Yükseltilmiş mod gerekli</translation>
     </message>
     <message>
-        <location filename="../qml/pages/FeaturesGuidePage.qml" line="549"/>
+        <location filename="../qml/pages/FeaturesGuidePage.qml" line="557"/>
         <source>Needs Assist</source>
         <translation>Yardımcı mod gerekli</translation>
     </message>
     <message>
-        <location filename="../qml/pages/FeaturesGuidePage.qml" line="572"/>
+        <location filename="../qml/pages/FeaturesGuidePage.qml" line="563"/>
+        <source>Not on this phone</source>
+        <translation>Bu telefonda yok</translation>
+    </message>
+    <message>
+        <location filename="../qml/pages/FeaturesGuidePage.qml" line="586"/>
         <source>Every feature in NectarLink, what it needs, and where to find it.</source>
         <translation>NectarLink&apos;teki her özellik, neye ihtiyaç duyduğu ve nerede bulunacağı.</translation>
     </message>
     <message>
-        <location filename="../qml/pages/FeaturesGuidePage.qml" line="611"/>
+        <location filename="../qml/pages/FeaturesGuidePage.qml" line="625"/>
         <source>Read the full guide ›</source>
         <translation>Rehberin tamamını okuyun ›</translation>
     </message>
     <message>
-        <location filename="../qml/pages/FeaturesGuidePage.qml" line="619"/>
+        <location filename="../qml/pages/FeaturesGuidePage.qml" line="633"/>
         <source>Setup walkthrough</source>
         <translation>Kurulum rehberi</translation>
     </message>
     <message>
-        <location filename="../qml/pages/FeaturesGuidePage.qml" line="654"/>
+        <location filename="../qml/pages/FeaturesGuidePage.qml" line="668"/>
         <source>Connect your phone to see which features are ready</source>
         <translation>Hangi özelliklerin hazır olduğunu görmek için telefonunuzu bağlayın</translation>
     </message>
     <message>
-        <location filename="../qml/pages/FeaturesGuidePage.qml" line="703"/>
+        <location filename="../qml/pages/FeaturesGuidePage.qml" line="717"/>
         <source>Search features by name, location, or permission...</source>
         <translation>Özellikleri ada, konuma veya izne göre arayın...</translation>
     </message>
     <message>
-        <location filename="../qml/pages/FeaturesGuidePage.qml" line="713"/>
+        <location filename="../qml/pages/FeaturesGuidePage.qml" line="727"/>
         <source>Clear search</source>
         <translation>Aramayı temizle</translation>
     </message>
     <message>
-        <location filename="../qml/pages/FeaturesGuidePage.qml" line="888"/>
+        <location filename="../qml/pages/FeaturesGuidePage.qml" line="902"/>
         <source>Show me</source>
         <translation>Göster</translation>
     </message>
     <message>
-        <location filename="../qml/pages/FeaturesGuidePage.qml" line="916"/>
+        <location filename="../qml/pages/FeaturesGuidePage.qml" line="930"/>
         <source>Learn more ›</source>
         <translation>Daha fazla bilgi ›</translation>
     </message>
     <message>
-        <location filename="../qml/pages/FeaturesGuidePage.qml" line="935"/>
+        <location filename="../qml/pages/FeaturesGuidePage.qml" line="949"/>
         <source>Where:</source>
         <translation>Nerede:</translation>
     </message>
     <message>
-        <location filename="../qml/pages/FeaturesGuidePage.qml" line="955"/>
+        <location filename="../qml/pages/FeaturesGuidePage.qml" line="969"/>
         <source>Needs:</source>
         <translation>Gerekenler:</translation>
     </message>
     <message>
-        <location filename="../qml/pages/FeaturesGuidePage.qml" line="981"/>
+        <location filename="../qml/pages/FeaturesGuidePage.qml" line="995"/>
         <source>No matching features</source>
         <translation>Eşleşen özellik yok</translation>
     </message>
     <message>
-        <location filename="../qml/pages/FeaturesGuidePage.qml" line="987"/>
+        <location filename="../qml/pages/FeaturesGuidePage.qml" line="1001"/>
         <source>Try another search term or select All above.</source>
         <translation>Başka bir arama terimi deneyin veya yukarıdan Tümü&apos;nü seçin.</translation>
     </message>
     <message>
-        <location filename="../qml/pages/FeaturesGuidePage.qml" line="1040"/>
+        <location filename="../qml/pages/FeaturesGuidePage.qml" line="1064"/>
         <source>Close guide</source>
         <translation>Rehberi kapat</translation>
     </message>
     <message>
-        <location filename="../qml/pages/FeaturesGuidePage.qml" line="1111"/>
+        <location filename="../qml/pages/FeaturesGuidePage.qml" line="1135"/>
         <source>Close</source>
         <translation>Kapat</translation>
     </message>
@@ -4333,89 +4342,89 @@ Neler gerekir
         <translation>Nectar Island</translation>
     </message>
     <message>
-        <location filename="../qml/IslandWindow.qml" line="213"/>
+        <location filename="../qml/IslandWindow.qml" line="223"/>
         <source>Phone call</source>
         <translation>Telefon araması</translation>
     </message>
     <message>
-        <location filename="../qml/IslandWindow.qml" line="216"/>
+        <location filename="../qml/IslandWindow.qml" line="226"/>
         <source>Transfer complete</source>
         <translation>Aktarım tamamlandı</translation>
     </message>
     <message>
-        <location filename="../qml/IslandWindow.qml" line="219"/>
+        <location filename="../qml/IslandWindow.qml" line="229"/>
         <source>Transferring %1 file(s)…</source>
         <translation>%1 dosya aktarılıyor…</translation>
     </message>
     <message>
-        <location filename="../qml/IslandWindow.qml" line="222"/>
+        <location filename="../qml/IslandWindow.qml" line="232"/>
         <source>Now playing</source>
         <translation>Şimdi çalıyor</translation>
     </message>
     <message>
-        <location filename="../qml/IslandWindow.qml" line="224"/>
+        <location filename="../qml/IslandWindow.qml" line="234"/>
         <source>%1 phone notification(s)</source>
         <translation>%1 telefon bildirimi</translation>
     </message>
     <message>
-        <location filename="../qml/IslandWindow.qml" line="226"/>
-        <location filename="../qml/IslandWindow.qml" line="245"/>
-        <location filename="../qml/IslandWindow.qml" line="254"/>
+        <location filename="../qml/IslandWindow.qml" line="236"/>
+        <location filename="../qml/IslandWindow.qml" line="255"/>
+        <location filename="../qml/IslandWindow.qml" line="264"/>
         <source>%1 waiting</source>
         <translation>%1 bekliyor</translation>
     </message>
     <message>
-        <location filename="../qml/IslandWindow.qml" line="228"/>
+        <location filename="../qml/IslandWindow.qml" line="238"/>
         <source>Nectar Island · %1</source>
         <translation>Nectar Island · %1</translation>
     </message>
     <message>
-        <location filename="../qml/IslandWindow.qml" line="229"/>
+        <location filename="../qml/IslandWindow.qml" line="239"/>
         <source>Nectar Island · Ready</source>
         <translation>Nectar Island · Hazır</translation>
     </message>
     <message>
-        <location filename="../qml/IslandWindow.qml" line="234"/>
+        <location filename="../qml/IslandWindow.qml" line="244"/>
         <source>Incoming call</source>
         <translation>Gelen arama</translation>
     </message>
     <message>
-        <location filename="../qml/IslandWindow.qml" line="235"/>
+        <location filename="../qml/IslandWindow.qml" line="245"/>
         <source>On hold</source>
         <translation>Beklemede</translation>
     </message>
     <message>
-        <location filename="../qml/IslandWindow.qml" line="236"/>
+        <location filename="../qml/IslandWindow.qml" line="246"/>
         <source>Call in progress</source>
         <translation>Arama sürüyor</translation>
     </message>
     <message>
-        <location filename="../qml/IslandWindow.qml" line="249"/>
+        <location filename="../qml/IslandWindow.qml" line="259"/>
         <source>This PC</source>
         <translation>Bu bilgisayar</translation>
     </message>
     <message>
-        <location filename="../qml/IslandWindow.qml" line="249"/>
+        <location filename="../qml/IslandWindow.qml" line="259"/>
         <source>Phone</source>
         <translation>Telefon</translation>
     </message>
     <message>
-        <location filename="../qml/IslandWindow.qml" line="258"/>
+        <location filename="../qml/IslandWindow.qml" line="268"/>
         <source>Click to view in NectarLink</source>
         <translation>NectarLink&apos;te görmek için tıklayın</translation>
     </message>
     <message>
-        <location filename="../qml/IslandWindow.qml" line="261"/>
+        <location filename="../qml/IslandWindow.qml" line="271"/>
         <source>Will send when %1 is back</source>
         <translation>%1 geri geldiğinde gönderilecek</translation>
     </message>
     <message>
-        <location filename="../qml/IslandWindow.qml" line="262"/>
+        <location filename="../qml/IslandWindow.qml" line="272"/>
         <source>Will send when connected</source>
         <translation>Bağlanıldığında gönderilecek</translation>
     </message>
     <message>
-        <location filename="../qml/IslandWindow.qml" line="264"/>
+        <location filename="../qml/IslandWindow.qml" line="274"/>
         <source>Live calls, transfers &amp; media</source>
         <translation>Canlı aramalar, aktarımlar ve medya</translation>
     </message>
@@ -5005,120 +5014,120 @@ Neler gerekir
         <translation>Eki kaldır</translation>
     </message>
     <message>
-        <location filename="../qml/pages/MessagesPage.qml" line="882"/>
+        <location filename="../qml/pages/MessagesPage.qml" line="886"/>
         <source>Attach image (MMS)</source>
         <translation>Görüntü ekle (MMS)</translation>
     </message>
     <message>
-        <location filename="../qml/pages/MessagesPage.qml" line="917"/>
+        <location filename="../qml/pages/MessagesPage.qml" line="921"/>
         <source>Reply in %1</source>
         <translation>%1 içinde yanıtla</translation>
     </message>
     <message>
-        <location filename="../qml/pages/MessagesPage.qml" line="918"/>
-        <location filename="../qml/pages/MessagesPage.qml" line="954"/>
+        <location filename="../qml/pages/MessagesPage.qml" line="922"/>
+        <location filename="../qml/pages/MessagesPage.qml" line="958"/>
         <source>Text message</source>
         <translation>Kısa mesaj</translation>
     </message>
     <message>
-        <location filename="../qml/pages/MessagesPage.qml" line="947"/>
+        <location filename="../qml/pages/MessagesPage.qml" line="951"/>
         <source>Replies are available while the notification is active on your phone</source>
         <translation>Yanıtlar, bildirim telefonunuzda etkin olduğu sürece kullanılabilir</translation>
     </message>
     <message>
-        <location filename="../qml/pages/MessagesPage.qml" line="949"/>
+        <location filename="../qml/pages/MessagesPage.qml" line="953"/>
         <source>Reply in %1…</source>
         <translation>%1 içinde yanıtla…</translation>
     </message>
     <message>
-        <location filename="../qml/pages/MessagesPage.qml" line="951"/>
+        <location filename="../qml/pages/MessagesPage.qml" line="955"/>
         <source>Group texts can&apos;t be sent from the PC yet</source>
         <translation>Grup mesajları henüz bilgisayardan gönderilemiyor</translation>
     </message>
     <message>
-        <location filename="../qml/pages/MessagesPage.qml" line="953"/>
+        <location filename="../qml/pages/MessagesPage.qml" line="957"/>
         <source>Add a caption (optional)…</source>
         <translation>Açıklama ekleyin (isteğe bağlı)…</translation>
     </message>
     <message>
-        <location filename="../qml/pages/MessagesPage.qml" line="965"/>
+        <location filename="../qml/pages/MessagesPage.qml" line="969"/>
         <source>Send</source>
         <translation>Gönder</translation>
     </message>
     <message numerus="yes">
-        <location filename="../qml/pages/MessagesPage.qml" line="983"/>
+        <location filename="../qml/pages/MessagesPage.qml" line="987"/>
         <source>%1 characters · %n text(s)</source>
         <translation>
             <numerusform>%1 karakter · %n mesaj</numerusform>
         </translation>
     </message>
     <message>
-        <location filename="../qml/pages/MessagesPage.qml" line="1232"/>
+        <location filename="../qml/pages/MessagesPage.qml" line="1235"/>
         <source>Open image attachment</source>
         <translation>Görüntü ekini aç</translation>
     </message>
     <message>
-        <location filename="../qml/pages/MessagesPage.qml" line="1298"/>
+        <location filename="../qml/pages/MessagesPage.qml" line="1301"/>
         <source>Voice note</source>
         <translation>Sesli not</translation>
     </message>
     <message>
-        <location filename="../qml/pages/MessagesPage.qml" line="1304"/>
+        <location filename="../qml/pages/MessagesPage.qml" line="1307"/>
         <source> · Click to play</source>
         <translation> · Oynatmak için tıklayın</translation>
     </message>
     <message>
-        <location filename="../qml/pages/MessagesPage.qml" line="1304"/>
+        <location filename="../qml/pages/MessagesPage.qml" line="1307"/>
         <source> · Loading…</source>
         <translation> · Yükleniyor…</translation>
     </message>
     <message>
-        <location filename="../qml/pages/MessagesPage.qml" line="1327"/>
+        <location filename="../qml/pages/MessagesPage.qml" line="1330"/>
         <source>Attachment (open it on the phone)</source>
         <translation>Ek (telefonda açın)</translation>
     </message>
     <message>
-        <location filename="../qml/pages/MessagesPage.qml" line="1353"/>
+        <location filename="../qml/pages/MessagesPage.qml" line="1356"/>
         <source>Not sent</source>
         <translation>Gönderilmedi</translation>
     </message>
     <message>
-        <location filename="../qml/pages/MessagesPage.qml" line="1354"/>
+        <location filename="../qml/pages/MessagesPage.qml" line="1357"/>
         <source>Sending…</source>
         <translation>Gönderiliyor…</translation>
     </message>
     <message>
-        <location filename="../qml/pages/MessagesPage.qml" line="1369"/>
+        <location filename="../qml/pages/MessagesPage.qml" line="1372"/>
         <source>Copy text</source>
         <translation>Metni kopyala</translation>
     </message>
     <message>
-        <location filename="../qml/pages/MessagesPage.qml" line="1387"/>
+        <location filename="../qml/pages/MessagesPage.qml" line="1390"/>
         <source>Copied</source>
         <translation>Kopyalandı</translation>
     </message>
     <message>
-        <location filename="../qml/pages/MessagesPage.qml" line="1387"/>
+        <location filename="../qml/pages/MessagesPage.qml" line="1390"/>
         <source>Copy code %1</source>
         <translation>%1 kodunu kopyala</translation>
     </message>
     <message>
-        <location filename="../qml/pages/MessagesPage.qml" line="1419"/>
+        <location filename="../qml/pages/MessagesPage.qml" line="1422"/>
         <source>Image attachment</source>
         <translation>Görüntü eki</translation>
     </message>
     <message>
-        <location filename="../qml/pages/MessagesPage.qml" line="1426"/>
+        <location filename="../qml/pages/MessagesPage.qml" line="1429"/>
         <source>Close</source>
         <translation>Kapat</translation>
     </message>
     <message>
-        <location filename="../qml/pages/MessagesPage.qml" line="1454"/>
+        <location filename="../qml/pages/MessagesPage.qml" line="1457"/>
         <source>Open externally</source>
         <translation>Harici olarak aç</translation>
     </message>
     <message>
-        <location filename="../qml/pages/MessagesPage.qml" line="1458"/>
+        <location filename="../qml/pages/MessagesPage.qml" line="1461"/>
         <source>Done</source>
         <translation>Bitti</translation>
     </message>
@@ -6000,7 +6009,7 @@ Neler gerekir
     <name>PhotosPage</name>
     <message>
         <location filename="../qml/pages/PhotosPage.qml" line="43"/>
-        <location filename="../qml/pages/PhotosPage.qml" line="331"/>
+        <location filename="../qml/pages/PhotosPage.qml" line="334"/>
         <source>All photos</source>
         <translation>Tüm fotoğraflar</translation>
     </message>
@@ -6010,260 +6019,265 @@ Neler gerekir
         <translation>Albüm</translation>
     </message>
     <message>
-        <location filename="../qml/pages/PhotosPage.qml" line="71"/>
-        <location filename="../qml/pages/PhotosPage.qml" line="86"/>
+        <location filename="../qml/pages/PhotosPage.qml" line="72"/>
+        <location filename="../qml/pages/PhotosPage.qml" line="87"/>
         <source>Today</source>
         <translation>Bugün</translation>
     </message>
     <message>
-        <location filename="../qml/pages/PhotosPage.qml" line="72"/>
-        <location filename="../qml/pages/PhotosPage.qml" line="87"/>
+        <location filename="../qml/pages/PhotosPage.qml" line="73"/>
+        <location filename="../qml/pages/PhotosPage.qml" line="88"/>
         <source>Yesterday</source>
         <translation>Dün</translation>
     </message>
     <message>
-        <location filename="../qml/pages/PhotosPage.qml" line="110"/>
+        <location filename="../qml/pages/PhotosPage.qml" line="111"/>
         <source>%1 B</source>
         <translation>%1 B</translation>
     </message>
     <message>
-        <location filename="../qml/pages/PhotosPage.qml" line="111"/>
+        <location filename="../qml/pages/PhotosPage.qml" line="112"/>
         <source>%1 KB</source>
         <translation>%1 KB</translation>
     </message>
     <message>
-        <location filename="../qml/pages/PhotosPage.qml" line="111"/>
+        <location filename="../qml/pages/PhotosPage.qml" line="112"/>
         <source>%1 MB</source>
         <translation>%1 MB</translation>
     </message>
     <message>
-        <location filename="../qml/pages/PhotosPage.qml" line="111"/>
+        <location filename="../qml/pages/PhotosPage.qml" line="112"/>
         <source>%1 GB</source>
         <translation>%1 GB</translation>
     </message>
     <message>
-        <location filename="../qml/pages/PhotosPage.qml" line="111"/>
+        <location filename="../qml/pages/PhotosPage.qml" line="112"/>
         <source>%1 TB</source>
         <translation>%1 TB</translation>
     </message>
     <message>
-        <location filename="../qml/pages/PhotosPage.qml" line="233"/>
+        <location filename="../qml/pages/PhotosPage.qml" line="236"/>
         <source>Choose default folder for saved photos</source>
         <translation>Kaydedilen fotoğraflar için varsayılan klasörü seçin</translation>
     </message>
     <message>
-        <location filename="../qml/pages/PhotosPage.qml" line="240"/>
+        <location filename="../qml/pages/PhotosPage.qml" line="243"/>
         <source>Save to folder</source>
         <translation>Klasöre kaydet</translation>
     </message>
     <message>
-        <location filename="../qml/pages/PhotosPage.qml" line="270"/>
+        <location filename="../qml/pages/PhotosPage.qml" line="273"/>
         <source>Photos</source>
         <translation>Fotoğraflar</translation>
     </message>
     <message>
-        <location filename="../qml/pages/PhotosPage.qml" line="271"/>
-        <location filename="../qml/pages/PhotosPage.qml" line="608"/>
+        <location filename="../qml/pages/PhotosPage.qml" line="274"/>
+        <location filename="../qml/pages/PhotosPage.qml" line="612"/>
         <source>%1 isn&apos;t connected</source>
         <translation>%1 bağlı değil</translation>
     </message>
     <message>
-        <location filename="../qml/pages/PhotosPage.qml" line="280"/>
+        <location filename="../qml/pages/PhotosPage.qml" line="283"/>
         <source>Pair your phone to browse photos and albums.</source>
         <translation>Fotoğraflara ve albümlere göz atmak için telefonunuzu eşleştirin.</translation>
     </message>
     <message>
-        <location filename="../qml/pages/PhotosPage.qml" line="281"/>
-        <location filename="../qml/pages/PhotosPage.qml" line="622"/>
+        <location filename="../qml/pages/PhotosPage.qml" line="284"/>
+        <location filename="../qml/pages/PhotosPage.qml" line="626"/>
         <source>Connect %1 to view photos.</source>
         <translation>Fotoğrafları görmek için %1 cihazını bağlayın.</translation>
     </message>
     <message>
-        <location filename="../qml/pages/PhotosPage.qml" line="302"/>
+        <location filename="../qml/pages/PhotosPage.qml" line="305"/>
         <source>Albums</source>
         <translation>Albümler</translation>
     </message>
     <message>
-        <location filename="../qml/pages/PhotosPage.qml" line="309"/>
+        <location filename="../qml/pages/PhotosPage.qml" line="312"/>
         <source>Refresh</source>
         <translation>Yenile</translation>
     </message>
     <message>
-        <location filename="../qml/pages/PhotosPage.qml" line="405"/>
+        <location filename="../qml/pages/PhotosPage.qml" line="408"/>
         <source>%1+ items</source>
         <translation>%1+ öğe</translation>
     </message>
     <message>
-        <location filename="../qml/pages/PhotosPage.qml" line="406"/>
+        <location filename="../qml/pages/PhotosPage.qml" line="409"/>
         <source>1 item</source>
         <translation>1 öğe</translation>
     </message>
     <message>
-        <location filename="../qml/pages/PhotosPage.qml" line="406"/>
+        <location filename="../qml/pages/PhotosPage.qml" line="409"/>
         <source>%1 items</source>
         <translation>%1 öğe</translation>
     </message>
     <message>
-        <location filename="../qml/pages/PhotosPage.qml" line="432"/>
+        <location filename="../qml/pages/PhotosPage.qml" line="435"/>
         <source>Cancel</source>
         <translation>İptal</translation>
     </message>
     <message>
-        <location filename="../qml/pages/PhotosPage.qml" line="442"/>
+        <location filename="../qml/pages/PhotosPage.qml" line="445"/>
         <source>Photo</source>
         <translation>Fotoğraf</translation>
     </message>
     <message>
-        <location filename="../qml/pages/PhotosPage.qml" line="442"/>
+        <location filename="../qml/pages/PhotosPage.qml" line="445"/>
         <source>Take photo</source>
         <translation>Fotoğraf çek</translation>
     </message>
     <message>
-        <location filename="../qml/pages/PhotosPage.qml" line="452"/>
+        <location filename="../qml/pages/PhotosPage.qml" line="455"/>
         <source>Scan</source>
         <translation>Tara</translation>
     </message>
     <message>
-        <location filename="../qml/pages/PhotosPage.qml" line="452"/>
+        <location filename="../qml/pages/PhotosPage.qml" line="455"/>
         <source>Scan document</source>
         <translation>Belge tara</translation>
     </message>
     <message>
-        <location filename="../qml/pages/PhotosPage.qml" line="477"/>
+        <location filename="../qml/pages/PhotosPage.qml" line="480"/>
         <source>Select</source>
         <translation>Seç</translation>
     </message>
     <message>
-        <location filename="../qml/pages/PhotosPage.qml" line="493"/>
+        <location filename="../qml/pages/PhotosPage.qml" line="496"/>
         <source>Cancel selection</source>
         <translation>Seçimi iptal et</translation>
     </message>
     <message>
-        <location filename="../qml/pages/PhotosPage.qml" line="501"/>
+        <location filename="../qml/pages/PhotosPage.qml" line="504"/>
         <source>%1 selected</source>
         <translation>%1 seçildi</translation>
     </message>
     <message>
-        <location filename="../qml/pages/PhotosPage.qml" line="502"/>
+        <location filename="../qml/pages/PhotosPage.qml" line="505"/>
         <source>Select items</source>
         <translation>Öğeleri seç</translation>
     </message>
     <message>
-        <location filename="../qml/pages/PhotosPage.qml" line="502"/>
+        <location filename="../qml/pages/PhotosPage.qml" line="505"/>
         <source>Click items to select</source>
         <translation>Seçmek için öğelere tıklayın</translation>
     </message>
     <message>
-        <location filename="../qml/pages/PhotosPage.qml" line="509"/>
+        <location filename="../qml/pages/PhotosPage.qml" line="513"/>
         <source>Select all</source>
         <translation>Tümünü seç</translation>
     </message>
     <message>
-        <location filename="../qml/pages/PhotosPage.qml" line="527"/>
-        <location filename="../qml/pages/PhotosPage.qml" line="816"/>
+        <location filename="../qml/pages/PhotosPage.qml" line="513"/>
+        <source>Select first 500</source>
+        <translation>İlk 500&apos;ü seç</translation>
+    </message>
+    <message>
+        <location filename="../qml/pages/PhotosPage.qml" line="531"/>
+        <location filename="../qml/pages/PhotosPage.qml" line="820"/>
         <source>Copy</source>
         <translation>Kopyala</translation>
     </message>
     <message>
-        <location filename="../qml/pages/PhotosPage.qml" line="538"/>
+        <location filename="../qml/pages/PhotosPage.qml" line="542"/>
         <source>Open</source>
         <translation>Aç</translation>
     </message>
     <message>
-        <location filename="../qml/pages/PhotosPage.qml" line="551"/>
+        <location filename="../qml/pages/PhotosPage.qml" line="555"/>
         <source>Save (%1)</source>
         <translation>Kaydet (%1)</translation>
     </message>
     <message>
-        <location filename="../qml/pages/PhotosPage.qml" line="552"/>
-        <location filename="../qml/pages/PhotosPage.qml" line="838"/>
+        <location filename="../qml/pages/PhotosPage.qml" line="556"/>
+        <location filename="../qml/pages/PhotosPage.qml" line="842"/>
         <source>Save</source>
         <translation>Kaydet</translation>
     </message>
     <message>
-        <location filename="../qml/pages/PhotosPage.qml" line="563"/>
-        <location filename="../qml/pages/PhotosPage.qml" line="846"/>
+        <location filename="../qml/pages/PhotosPage.qml" line="567"/>
+        <location filename="../qml/pages/PhotosPage.qml" line="850"/>
         <source>Save to folder…</source>
         <translation>Klasöre kaydet…</translation>
     </message>
     <message>
-        <location filename="../qml/pages/PhotosPage.qml" line="606"/>
+        <location filename="../qml/pages/PhotosPage.qml" line="610"/>
         <source>Photos are off for %1</source>
         <translation>%1 için fotoğraflar kapalı</translation>
     </message>
     <message>
-        <location filename="../qml/pages/PhotosPage.qml" line="607"/>
+        <location filename="../qml/pages/PhotosPage.qml" line="611"/>
         <source>Allow photos on %1</source>
         <translation>%1 cihazında fotoğraflara izin verin</translation>
     </message>
     <message>
-        <location filename="../qml/pages/PhotosPage.qml" line="609"/>
+        <location filename="../qml/pages/PhotosPage.qml" line="613"/>
         <source>Couldn&apos;t load photos</source>
         <translation>Fotoğraflar yüklenemedi</translation>
     </message>
     <message>
-        <location filename="../qml/pages/PhotosPage.qml" line="618"/>
+        <location filename="../qml/pages/PhotosPage.qml" line="622"/>
         <source>Enable Photos in Settings.</source>
         <translation>Ayarlar&apos;da Fotoğraflar&apos;ı etkinleştirin.</translation>
     </message>
     <message>
-        <location filename="../qml/pages/PhotosPage.qml" line="620"/>
+        <location filename="../qml/pages/PhotosPage.qml" line="624"/>
         <source>Grant photos permission on %1.</source>
         <translation>%1 cihazında fotoğraf izni verin.</translation>
     </message>
     <message>
-        <location filename="../qml/pages/PhotosPage.qml" line="623"/>
+        <location filename="../qml/pages/PhotosPage.qml" line="627"/>
         <source>Unable to load photos.</source>
         <translation>Fotoğraflar yüklenemiyor.</translation>
     </message>
     <message>
-        <location filename="../qml/pages/PhotosPage.qml" line="635"/>
+        <location filename="../qml/pages/PhotosPage.qml" line="639"/>
         <source>Try again</source>
         <translation>Tekrar dene</translation>
     </message>
     <message>
-        <location filename="../qml/pages/PhotosPage.qml" line="658"/>
+        <location filename="../qml/pages/PhotosPage.qml" line="662"/>
         <source>No photos or videos</source>
         <translation>Fotoğraf veya video yok</translation>
     </message>
     <message>
-        <location filename="../qml/pages/PhotosPage.qml" line="763"/>
+        <location filename="../qml/pages/PhotosPage.qml" line="767"/>
         <source>Back to gallery</source>
         <translation>Galeriye dön</translation>
     </message>
     <message>
-        <location filename="../qml/pages/PhotosPage.qml" line="826"/>
-        <location filename="../qml/pages/PhotosPage.qml" line="924"/>
+        <location filename="../qml/pages/PhotosPage.qml" line="830"/>
+        <location filename="../qml/pages/PhotosPage.qml" line="928"/>
         <source>Play video</source>
         <translation>Videoyu oynat</translation>
     </message>
     <message>
-        <location filename="../qml/pages/PhotosPage.qml" line="826"/>
+        <location filename="../qml/pages/PhotosPage.qml" line="830"/>
         <source>Open in Photos</source>
         <translation>Fotoğraflar&apos;da aç</translation>
     </message>
     <message>
-        <location filename="../qml/pages/PhotosPage.qml" line="905"/>
+        <location filename="../qml/pages/PhotosPage.qml" line="909"/>
         <source>Loading full resolution…</source>
         <translation>Tam çözünürlük yükleniyor…</translation>
     </message>
     <message>
-        <location filename="../qml/pages/PhotosPage.qml" line="964"/>
+        <location filename="../qml/pages/PhotosPage.qml" line="968"/>
         <source>Previous photo</source>
         <translation>Önceki fotoğraf</translation>
     </message>
     <message>
-        <location filename="../qml/pages/PhotosPage.qml" line="977"/>
+        <location filename="../qml/pages/PhotosPage.qml" line="981"/>
         <source>Next photo</source>
         <translation>Sonraki fotoğraf</translation>
     </message>
     <message>
-        <location filename="../qml/pages/PhotosPage.qml" line="1064"/>
+        <location filename="../qml/pages/PhotosPage.qml" line="1068"/>
         <source>%1</source>
         <translation>%1</translation>
     </message>
     <message>
-        <location filename="../qml/pages/PhotosPage.qml" line="1246"/>
+        <location filename="../qml/pages/PhotosPage.qml" line="1250"/>
         <source>Select photo</source>
         <translation>Fotoğrafı seç</translation>
     </message>
@@ -8537,109 +8551,113 @@ Neler gerekir
     </message>
     <message>
         <location filename="../qml/pages/TimelinePage.qml" line="41"/>
-        <location filename="../qml/pages/TimelinePage.qml" line="43"/>
-        <location filename="../qml/pages/TimelinePage.qml" line="656"/>
-        <location filename="../qml/pages/TimelinePage.qml" line="685"/>
+        <location filename="../qml/pages/TimelinePage.qml" line="657"/>
+        <location filename="../qml/pages/TimelinePage.qml" line="686"/>
         <source>All devices</source>
         <translation>Tüm cihazlar</translation>
     </message>
     <message>
-        <location filename="../qml/pages/TimelinePage.qml" line="86"/>
+        <location filename="../qml/pages/TimelinePage.qml" line="44"/>
+        <source>A removed device</source>
+        <translation>Kaldırılmış bir cihaz</translation>
+    </message>
+    <message>
+        <location filename="../qml/pages/TimelinePage.qml" line="87"/>
         <source>Today</source>
         <translation>Bugün</translation>
     </message>
     <message>
-        <location filename="../qml/pages/TimelinePage.qml" line="88"/>
+        <location filename="../qml/pages/TimelinePage.qml" line="89"/>
         <source>Yesterday</source>
         <translation>Dün</translation>
     </message>
     <message>
-        <location filename="../qml/pages/TimelinePage.qml" line="170"/>
+        <location filename="../qml/pages/TimelinePage.qml" line="171"/>
         <source>Search timeline</source>
         <translation>Zaman çizelgesinde ara</translation>
     </message>
     <message>
-        <location filename="../qml/pages/TimelinePage.qml" line="183"/>
+        <location filename="../qml/pages/TimelinePage.qml" line="184"/>
         <source>Search timeline…</source>
         <translation>Zaman çizelgesinde ara…</translation>
     </message>
     <message>
-        <location filename="../qml/pages/TimelinePage.qml" line="193"/>
+        <location filename="../qml/pages/TimelinePage.qml" line="194"/>
         <source>Clear search</source>
         <translation>Aramayı temizle</translation>
     </message>
     <message>
-        <location filename="../qml/pages/TimelinePage.qml" line="212"/>
+        <location filename="../qml/pages/TimelinePage.qml" line="213"/>
         <source>Clear all</source>
         <translation>Tümünü temizle</translation>
     </message>
     <message>
-        <location filename="../qml/pages/TimelinePage.qml" line="266"/>
+        <location filename="../qml/pages/TimelinePage.qml" line="267"/>
         <source>Device filter: %1</source>
         <translation>Cihaz filtresi: %1</translation>
     </message>
     <message>
-        <location filename="../qml/pages/TimelinePage.qml" line="344"/>
+        <location filename="../qml/pages/TimelinePage.qml" line="345"/>
         <source>Clear timeline history? Saved files on disk are kept.</source>
         <translation>Zaman çizelgesi geçmişi temizlensin mi? Diskte kayıtlı dosyalar korunur.</translation>
     </message>
     <message>
-        <location filename="../qml/pages/TimelinePage.qml" line="354"/>
+        <location filename="../qml/pages/TimelinePage.qml" line="355"/>
         <source>Cancel</source>
         <translation>İptal</translation>
     </message>
     <message>
-        <location filename="../qml/pages/TimelinePage.qml" line="361"/>
+        <location filename="../qml/pages/TimelinePage.qml" line="362"/>
         <source>Clear timeline</source>
         <translation>Zaman çizelgesini temizle</translation>
     </message>
     <message>
-        <location filename="../qml/pages/TimelinePage.qml" line="398"/>
+        <location filename="../qml/pages/TimelinePage.qml" line="399"/>
         <source>No matching items</source>
         <translation>Eşleşen öğe yok</translation>
     </message>
     <message>
-        <location filename="../qml/pages/TimelinePage.qml" line="399"/>
+        <location filename="../qml/pages/TimelinePage.qml" line="400"/>
         <source>No recent activity</source>
         <translation>Son etkinlik yok</translation>
     </message>
     <message>
-        <location filename="../qml/pages/TimelinePage.qml" line="408"/>
+        <location filename="../qml/pages/TimelinePage.qml" line="409"/>
         <source>Clear the search or filter.</source>
         <translation>Aramayı veya filtreyi temizleyin.</translation>
     </message>
     <message>
-        <location filename="../qml/pages/TimelinePage.qml" line="409"/>
+        <location filename="../qml/pages/TimelinePage.qml" line="410"/>
         <source>Shared files, clips, links, and photos appear here.</source>
         <translation>Paylaşılan dosyalar, pano öğeleri, bağlantılar ve fotoğraflar burada görünür.</translation>
     </message>
     <message>
-        <location filename="../qml/pages/TimelinePage.qml" line="562"/>
+        <location filename="../qml/pages/TimelinePage.qml" line="563"/>
         <source>Open</source>
         <translation>Aç</translation>
     </message>
     <message>
-        <location filename="../qml/pages/TimelinePage.qml" line="571"/>
+        <location filename="../qml/pages/TimelinePage.qml" line="572"/>
         <source>Show in folder</source>
         <translation>Klasörde göster</translation>
     </message>
     <message>
-        <location filename="../qml/pages/TimelinePage.qml" line="580"/>
+        <location filename="../qml/pages/TimelinePage.qml" line="581"/>
         <source>Copy</source>
         <translation>Kopyala</translation>
     </message>
     <message>
-        <location filename="../qml/pages/TimelinePage.qml" line="589"/>
+        <location filename="../qml/pages/TimelinePage.qml" line="590"/>
         <source>Send again</source>
         <translation>Yeniden gönder</translation>
     </message>
     <message>
-        <location filename="../qml/pages/TimelinePage.qml" line="596"/>
+        <location filename="../qml/pages/TimelinePage.qml" line="597"/>
         <source>Remove from timeline</source>
         <translation>Zaman çizelgesinden kaldır</translation>
     </message>
     <message>
-        <location filename="../qml/pages/TimelinePage.qml" line="611"/>
+        <location filename="../qml/pages/TimelinePage.qml" line="612"/>
         <source>Load more</source>
         <translation>Daha fazla yükle</translation>
     </message>

@@ -138,6 +138,9 @@ Item {
     Component.onCompleted: load()
     onDeviceIdChanged: {
         selectedContact = null
+        // Another phone's contacts: the last search doesn't apply. A typed
+        // number stays, to call it from this phone.
+        search.text = ""
         load()
     }
 

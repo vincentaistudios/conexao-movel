@@ -851,8 +851,12 @@ Item {
             function send() {
                 if (!canSend)
                     return
-                if (page.composing)
-                    Messages.sendTo(toField.text, input.text)
+                if (page.composing) {
+                    // A name typed in To is its contact's number, as Return makes it.
+                    if (!/\d/.test(toField.text) && page.recipientMatches.length > 0)
+                        toField.text = page.recipientMatches[0].number
+                    Messages.sendTo(toField.text.trim(), input.text)
+                }
                 else
                     Messages.send(input.text)
                 input.text = ""
@@ -1166,8 +1170,7 @@ Item {
         readonly property bool newDay: {
             if (!previous)
                 return true
-            if (Math.abs(message.date - previous.date) < 600000)
-                return false
+            // By the calendar alone: 23:55 and 00:02 are two days.
             const d1 = new Date(previous.date)
             const d2 = new Date(message.date)
             return d1.getFullYear() !== d2.getFullYear() || d1.getMonth() !== d2.getMonth() || d1.getDate() !== d2.getDate()

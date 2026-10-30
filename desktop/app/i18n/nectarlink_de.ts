@@ -452,267 +452,267 @@
         <translation>%1s</translation>
     </message>
     <message>
-        <location filename="../qml/pages/CallsPage.qml" line="183"/>
+        <location filename="../qml/pages/CallsPage.qml" line="186"/>
         <source>Call from your PC</source>
         <translation>Vom PC aus anrufen</translation>
     </message>
     <message>
-        <location filename="../qml/pages/CallsPage.qml" line="184"/>
-        <location filename="../qml/pages/CallsPage.qml" line="324"/>
-        <location filename="../qml/pages/CallsPage.qml" line="410"/>
+        <location filename="../qml/pages/CallsPage.qml" line="187"/>
+        <location filename="../qml/pages/CallsPage.qml" line="327"/>
+        <location filename="../qml/pages/CallsPage.qml" line="413"/>
         <source>%1 isn&apos;t connected</source>
         <translation>%1 ist nicht verbunden</translation>
     </message>
     <message>
-        <location filename="../qml/pages/CallsPage.qml" line="192"/>
+        <location filename="../qml/pages/CallsPage.qml" line="195"/>
         <source>Pair your phone to view calls and contacts.</source>
         <translation>Kopple dein Gerät, um Anrufe und Kontakte anzuzeigen.</translation>
     </message>
     <message>
-        <location filename="../qml/pages/CallsPage.qml" line="193"/>
+        <location filename="../qml/pages/CallsPage.qml" line="196"/>
         <source>Connect %1 to view calls and contacts.</source>
         <translation>Verbinde %1, um Anrufe und Kontakte anzuzeigen.</translation>
     </message>
     <message>
-        <location filename="../qml/pages/CallsPage.qml" line="213"/>
+        <location filename="../qml/pages/CallsPage.qml" line="216"/>
         <source>Recent</source>
         <translation>Verlauf</translation>
     </message>
     <message>
-        <location filename="../qml/pages/CallsPage.qml" line="214"/>
-        <location filename="../qml/pages/CallsPage.qml" line="1078"/>
+        <location filename="../qml/pages/CallsPage.qml" line="217"/>
+        <location filename="../qml/pages/CallsPage.qml" line="1081"/>
         <source>Contacts</source>
         <translation>Kontakte</translation>
     </message>
     <message>
-        <location filename="../qml/pages/CallsPage.qml" line="224"/>
+        <location filename="../qml/pages/CallsPage.qml" line="227"/>
         <source>Refresh</source>
         <translation>Aktualisieren</translation>
     </message>
     <message>
-        <location filename="../qml/pages/CallsPage.qml" line="264"/>
-        <location filename="../qml/pages/CallsPage.qml" line="274"/>
+        <location filename="../qml/pages/CallsPage.qml" line="267"/>
+        <location filename="../qml/pages/CallsPage.qml" line="277"/>
         <source>Search calls</source>
         <translation>Anrufe durchsuchen</translation>
     </message>
     <message>
-        <location filename="../qml/pages/CallsPage.qml" line="264"/>
-        <location filename="../qml/pages/CallsPage.qml" line="274"/>
+        <location filename="../qml/pages/CallsPage.qml" line="267"/>
+        <location filename="../qml/pages/CallsPage.qml" line="277"/>
         <source>Search contacts</source>
         <translation>Kontakte durchsuchen</translation>
     </message>
     <message>
-        <location filename="../qml/pages/CallsPage.qml" line="285"/>
+        <location filename="../qml/pages/CallsPage.qml" line="288"/>
         <source>Clear search</source>
         <translation>Suche löschen</translation>
     </message>
     <message>
-        <location filename="../qml/pages/CallsPage.qml" line="322"/>
+        <location filename="../qml/pages/CallsPage.qml" line="325"/>
         <source>Calls are off for %1</source>
         <translation>Anrufe sind für %1 deaktiviert</translation>
     </message>
     <message>
-        <location filename="../qml/pages/CallsPage.qml" line="323"/>
+        <location filename="../qml/pages/CallsPage.qml" line="326"/>
         <source>Allow call log on %1</source>
         <translation>Anrufliste auf %1 erlauben</translation>
     </message>
     <message>
-        <location filename="../qml/pages/CallsPage.qml" line="325"/>
+        <location filename="../qml/pages/CallsPage.qml" line="328"/>
         <source>Couldn&apos;t load recent calls</source>
         <translation>Anrufliste konnte nicht geladen werden</translation>
     </message>
     <message>
-        <location filename="../qml/pages/CallsPage.qml" line="333"/>
+        <location filename="../qml/pages/CallsPage.qml" line="336"/>
         <source>Enable Calls in Settings.</source>
         <translation>Aktiviere Anrufe in den Einstellungen.</translation>
     </message>
     <message>
-        <location filename="../qml/pages/CallsPage.qml" line="334"/>
+        <location filename="../qml/pages/CallsPage.qml" line="337"/>
         <source>Grant call log permission on %1.</source>
         <translation>Erteile die Berechtigung für die Anrufliste auf %1.</translation>
     </message>
     <message>
-        <location filename="../qml/pages/CallsPage.qml" line="335"/>
+        <location filename="../qml/pages/CallsPage.qml" line="338"/>
         <source>Connect %1 to view recent calls.</source>
         <translation>Verbinde %1, um die letzten Anrufe anzuzeigen.</translation>
     </message>
     <message>
-        <location filename="../qml/pages/CallsPage.qml" line="336"/>
+        <location filename="../qml/pages/CallsPage.qml" line="339"/>
         <source>Unable to load call log.</source>
         <translation>Anrufliste kann nicht geladen werden.</translation>
     </message>
     <message>
-        <location filename="../qml/pages/CallsPage.qml" line="343"/>
-        <location filename="../qml/pages/CallsPage.qml" line="429"/>
+        <location filename="../qml/pages/CallsPage.qml" line="346"/>
+        <location filename="../qml/pages/CallsPage.qml" line="432"/>
         <source>Try again</source>
         <translation>Erneut versuchen</translation>
     </message>
     <message>
-        <location filename="../qml/pages/CallsPage.qml" line="371"/>
+        <location filename="../qml/pages/CallsPage.qml" line="374"/>
         <source>No calls match.</source>
         <translation>Keine passenden Anrufe gefunden.</translation>
     </message>
     <message>
-        <location filename="../qml/pages/CallsPage.qml" line="371"/>
+        <location filename="../qml/pages/CallsPage.qml" line="374"/>
         <source>No recent calls.</source>
         <translation>Keine aktuellen Anrufe.</translation>
     </message>
     <message>
-        <location filename="../qml/pages/CallsPage.qml" line="408"/>
+        <location filename="../qml/pages/CallsPage.qml" line="411"/>
         <source>Contacts are off for %1</source>
         <translation>Kontakte sind für %1 deaktiviert</translation>
     </message>
     <message>
-        <location filename="../qml/pages/CallsPage.qml" line="409"/>
+        <location filename="../qml/pages/CallsPage.qml" line="412"/>
         <source>Allow contacts on %1</source>
         <translation>Kontakte auf %1 erlauben</translation>
     </message>
     <message>
-        <location filename="../qml/pages/CallsPage.qml" line="411"/>
+        <location filename="../qml/pages/CallsPage.qml" line="414"/>
         <source>Couldn&apos;t load contacts</source>
         <translation>Kontakte konnten nicht geladen werden</translation>
     </message>
     <message>
-        <location filename="../qml/pages/CallsPage.qml" line="419"/>
+        <location filename="../qml/pages/CallsPage.qml" line="422"/>
         <source>Enable Contacts in Settings.</source>
         <translation>Aktiviere Kontakte in den Einstellungen.</translation>
     </message>
     <message>
-        <location filename="../qml/pages/CallsPage.qml" line="420"/>
+        <location filename="../qml/pages/CallsPage.qml" line="423"/>
         <source>Grant contacts permission on %1.</source>
         <translation>Erteile die Kontakte-Berechtigung auf %1.</translation>
     </message>
     <message>
-        <location filename="../qml/pages/CallsPage.qml" line="421"/>
+        <location filename="../qml/pages/CallsPage.qml" line="424"/>
         <source>Connect %1 to view contacts.</source>
         <translation>Verbinde %1, um Kontakte anzuzeigen.</translation>
     </message>
     <message>
-        <location filename="../qml/pages/CallsPage.qml" line="422"/>
+        <location filename="../qml/pages/CallsPage.qml" line="425"/>
         <source>Unable to load contacts.</source>
         <translation>Kontakte können nicht geladen werden.</translation>
     </message>
     <message>
-        <location filename="../qml/pages/CallsPage.qml" line="451"/>
+        <location filename="../qml/pages/CallsPage.qml" line="454"/>
         <source>No contacts match.</source>
         <translation>Keine passenden Kontakte gefunden.</translation>
     </message>
     <message>
-        <location filename="../qml/pages/CallsPage.qml" line="451"/>
+        <location filename="../qml/pages/CallsPage.qml" line="454"/>
         <source>No contacts on this phone.</source>
         <translation>Keine Kontakte auf diesem Gerät.</translation>
     </message>
     <message>
-        <location filename="../qml/pages/CallsPage.qml" line="542"/>
+        <location filename="../qml/pages/CallsPage.qml" line="545"/>
         <source>Close contact</source>
         <translation>Kontakt schließen</translation>
     </message>
     <message>
-        <location filename="../qml/pages/CallsPage.qml" line="582"/>
+        <location filename="../qml/pages/CallsPage.qml" line="585"/>
         <source>Copy number</source>
         <translation>Nummer kopieren</translation>
     </message>
     <message>
-        <location filename="../qml/pages/CallsPage.qml" line="588"/>
-        <location filename="../qml/pages/CallsPage.qml" line="1008"/>
-        <location filename="../qml/pages/CallsPage.qml" line="1177"/>
+        <location filename="../qml/pages/CallsPage.qml" line="591"/>
+        <location filename="../qml/pages/CallsPage.qml" line="1011"/>
+        <location filename="../qml/pages/CallsPage.qml" line="1180"/>
         <source>Text %1</source>
         <translation>SMS an %1</translation>
     </message>
     <message>
-        <location filename="../qml/pages/CallsPage.qml" line="596"/>
-        <location filename="../qml/pages/CallsPage.qml" line="1016"/>
-        <location filename="../qml/pages/CallsPage.qml" line="1186"/>
+        <location filename="../qml/pages/CallsPage.qml" line="599"/>
+        <location filename="../qml/pages/CallsPage.qml" line="1019"/>
+        <location filename="../qml/pages/CallsPage.qml" line="1189"/>
         <source>Call %1</source>
         <translation>%1 anrufen</translation>
     </message>
     <message>
-        <location filename="../qml/pages/CallsPage.qml" line="649"/>
+        <location filename="../qml/pages/CallsPage.qml" line="652"/>
         <source>Phone number to call</source>
         <translation>Anzurufende Telefonnummer</translation>
     </message>
     <message>
-        <location filename="../qml/pages/CallsPage.qml" line="657"/>
+        <location filename="../qml/pages/CallsPage.qml" line="660"/>
         <source>Enter a number</source>
         <translation>Nummer eingeben</translation>
     </message>
     <message>
-        <location filename="../qml/pages/CallsPage.qml" line="684"/>
+        <location filename="../qml/pages/CallsPage.qml" line="687"/>
         <source>Backspace</source>
         <translation>Rücktaste</translation>
     </message>
     <message>
-        <location filename="../qml/pages/CallsPage.qml" line="786"/>
+        <location filename="../qml/pages/CallsPage.qml" line="789"/>
         <source>Text</source>
         <translation>SMS</translation>
     </message>
     <message>
-        <location filename="../qml/pages/CallsPage.qml" line="798"/>
+        <location filename="../qml/pages/CallsPage.qml" line="801"/>
         <source>Calling…</source>
         <translation>Wird angerufen…</translation>
     </message>
     <message>
-        <location filename="../qml/pages/CallsPage.qml" line="798"/>
+        <location filename="../qml/pages/CallsPage.qml" line="801"/>
         <source>Call</source>
         <translation>Anrufen</translation>
     </message>
     <message>
-        <location filename="../qml/pages/CallsPage.qml" line="807"/>
+        <location filename="../qml/pages/CallsPage.qml" line="810"/>
         <source>Clear number</source>
         <translation>Nummer löschen</translation>
     </message>
     <message>
-        <location filename="../qml/pages/CallsPage.qml" line="840"/>
+        <location filename="../qml/pages/CallsPage.qml" line="843"/>
         <source>PC call audio connected</source>
         <translation>PC-Anrufaudio verbunden</translation>
     </message>
     <message>
-        <location filename="../qml/pages/CallsPage.qml" line="841"/>
+        <location filename="../qml/pages/CallsPage.qml" line="844"/>
         <source>PC call audio ready</source>
         <translation>PC-Anrufaudio bereit</translation>
     </message>
     <message>
-        <location filename="../qml/pages/CallsPage.qml" line="842"/>
+        <location filename="../qml/pages/CallsPage.qml" line="845"/>
         <source>PC call audio (Bluetooth)</source>
         <translation>PC-Anrufaudio (Bluetooth)</translation>
     </message>
     <message>
-        <location filename="../qml/pages/CallsPage.qml" line="856"/>
+        <location filename="../qml/pages/CallsPage.qml" line="859"/>
         <source>Connect PC audio</source>
         <translation>PC-Audio verbinden</translation>
     </message>
     <message>
-        <location filename="../qml/pages/CallsPage.qml" line="856"/>
+        <location filename="../qml/pages/CallsPage.qml" line="859"/>
         <source>Open Bluetooth settings</source>
         <translation>Bluetooth-Einstellungen öffnen</translation>
     </message>
     <message>
-        <location filename="../qml/pages/CallsPage.qml" line="879"/>
+        <location filename="../qml/pages/CallsPage.qml" line="882"/>
         <source>Missed</source>
         <translation>Verpasst</translation>
     </message>
     <message>
-        <location filename="../qml/pages/CallsPage.qml" line="880"/>
+        <location filename="../qml/pages/CallsPage.qml" line="883"/>
         <source>Outgoing</source>
         <translation>Ausgehend</translation>
     </message>
     <message>
-        <location filename="../qml/pages/CallsPage.qml" line="881"/>
+        <location filename="../qml/pages/CallsPage.qml" line="884"/>
         <source>Declined</source>
         <translation>Abgelehnt</translation>
     </message>
     <message>
-        <location filename="../qml/pages/CallsPage.qml" line="882"/>
+        <location filename="../qml/pages/CallsPage.qml" line="885"/>
         <source>Incoming</source>
         <translation>Eingehend</translation>
     </message>
     <message>
-        <location filename="../qml/pages/CallsPage.qml" line="1078"/>
+        <location filename="../qml/pages/CallsPage.qml" line="1081"/>
         <source>Favorites</source>
         <translation>Favoriten</translation>
     </message>
     <message>
-        <location filename="../qml/pages/CallsPage.qml" line="1161"/>
+        <location filename="../qml/pages/CallsPage.qml" line="1164"/>
         <source>+%1 more</source>
         <translation>+%1 weitere</translation>
     </message>
@@ -1659,7 +1659,7 @@
         <location filename="../qml/pages/DeckPage.qml" line="215"/>
         <location filename="../qml/pages/DeckPage.qml" line="563"/>
         <location filename="../qml/pages/DeckPage.qml" line="582"/>
-        <location filename="../qml/pages/DeckPage.qml" line="642"/>
+        <location filename="../qml/pages/DeckPage.qml" line="650"/>
         <source>Add tile</source>
         <translation>Kachel hinzufügen</translation>
     </message>
@@ -1700,7 +1700,7 @@
     </message>
     <message>
         <location filename="../qml/pages/DeckPage.qml" line="309"/>
-        <location filename="../qml/pages/DeckPage.qml" line="995"/>
+        <location filename="../qml/pages/DeckPage.qml" line="1003"/>
         <source>New page</source>
         <translation>Neue Seite</translation>
     </message>
@@ -1711,7 +1711,7 @@
     </message>
     <message>
         <location filename="../qml/pages/DeckPage.qml" line="327"/>
-        <location filename="../qml/pages/DeckPage.qml" line="995"/>
+        <location filename="../qml/pages/DeckPage.qml" line="1003"/>
         <source>Rename page</source>
         <translation>Seite umbenennen</translation>
     </message>
@@ -1726,150 +1726,150 @@
         <translation>%1 testen</translation>
     </message>
     <message>
-        <location filename="../qml/pages/DeckPage.qml" line="642"/>
+        <location filename="../qml/pages/DeckPage.qml" line="650"/>
         <source>Edit tile</source>
         <translation>Kachel bearbeiten</translation>
     </message>
     <message>
-        <location filename="../qml/pages/DeckPage.qml" line="650"/>
+        <location filename="../qml/pages/DeckPage.qml" line="658"/>
         <source>Phones see only each tile&apos;s label and icon. Paths and commands stay on this PC.</source>
         <translation>Geräte sehen nur die Beschriftung und das Symbol jeder Kachel. Pfade und Befehle bleiben auf diesem PC.</translation>
     </message>
     <message>
-        <location filename="../qml/pages/DeckPage.qml" line="695"/>
+        <location filename="../qml/pages/DeckPage.qml" line="703"/>
         <source>Action</source>
         <translation>Aktion</translation>
     </message>
     <message>
-        <location filename="../qml/pages/DeckPage.qml" line="731"/>
+        <location filename="../qml/pages/DeckPage.qml" line="739"/>
         <source>Ctrl</source>
         <translation>Strg</translation>
     </message>
     <message>
-        <location filename="../qml/pages/DeckPage.qml" line="737"/>
+        <location filename="../qml/pages/DeckPage.qml" line="745"/>
         <source>Alt</source>
         <translation>Alt</translation>
     </message>
     <message>
-        <location filename="../qml/pages/DeckPage.qml" line="743"/>
+        <location filename="../qml/pages/DeckPage.qml" line="751"/>
         <source>Shift</source>
         <translation>Umschalt</translation>
     </message>
     <message>
-        <location filename="../qml/pages/DeckPage.qml" line="749"/>
+        <location filename="../qml/pages/DeckPage.qml" line="757"/>
         <source>Win</source>
         <translation>Win</translation>
     </message>
     <message>
-        <location filename="../qml/pages/DeckPage.qml" line="749"/>
+        <location filename="../qml/pages/DeckPage.qml" line="757"/>
         <source>Super</source>
         <translation>Super</translation>
     </message>
     <message>
-        <location filename="../qml/pages/DeckPage.qml" line="757"/>
+        <location filename="../qml/pages/DeckPage.qml" line="765"/>
         <source>Key (e.g. c, v, z, f5, tab, enter, space, escape, up, down):</source>
         <translation>Taste (z. B. c, v, z, f5, tab, enter, space, escape, up, down):</translation>
     </message>
     <message>
-        <location filename="../qml/pages/DeckPage.qml" line="758"/>
+        <location filename="../qml/pages/DeckPage.qml" line="766"/>
         <source>Website address (https://…):</source>
         <translation>Website-Adresse (https://…):</translation>
     </message>
     <message>
-        <location filename="../qml/pages/DeckPage.qml" line="759"/>
+        <location filename="../qml/pages/DeckPage.qml" line="767"/>
         <source>Text snippet to type:</source>
         <translation>Einzutippender Textbaustein:</translation>
     </message>
     <message>
-        <location filename="../qml/pages/DeckPage.qml" line="760"/>
+        <location filename="../qml/pages/DeckPage.qml" line="768"/>
         <source>Application or launcher path (/usr/bin/…, .desktop, or .AppImage):</source>
         <translation>Anwendungs- oder Starterpfad (/usr/bin/…, .desktop oder .AppImage):</translation>
     </message>
     <message>
-        <location filename="../qml/pages/DeckPage.qml" line="760"/>
+        <location filename="../qml/pages/DeckPage.qml" line="768"/>
         <source>Application or shortcut path (.exe or .lnk):</source>
         <translation>Anwendungs- oder Verknüpfungspfad (.exe oder .lnk):</translation>
     </message>
     <message>
-        <location filename="../qml/pages/DeckPage.qml" line="761"/>
+        <location filename="../qml/pages/DeckPage.qml" line="769"/>
         <source>Shell command to run on this PC:</source>
         <translation>Auf diesem PC auszuführender Shell-Befehl:</translation>
     </message>
     <message>
-        <location filename="../qml/pages/DeckPage.qml" line="791"/>
+        <location filename="../qml/pages/DeckPage.qml" line="799"/>
         <source>Action parameter</source>
         <translation>Aktionsparameter</translation>
     </message>
     <message>
-        <location filename="../qml/pages/DeckPage.qml" line="801"/>
+        <location filename="../qml/pages/DeckPage.qml" line="809"/>
         <source>Browse…</source>
         <translation>Durchsuchen…</translation>
     </message>
     <message>
-        <location filename="../qml/pages/DeckPage.qml" line="812"/>
+        <location filename="../qml/pages/DeckPage.qml" line="820"/>
         <source>Requires &quot;Allow running Deck commands&quot; to be turned on for the phone in Settings → Devices.</source>
         <translation>Erfordert, dass unter Einstellungen → Geräte für das Gerät „Deck-Befehle ausführen“ aktiviert ist.</translation>
     </message>
     <message>
-        <location filename="../qml/pages/DeckPage.qml" line="820"/>
+        <location filename="../qml/pages/DeckPage.qml" line="828"/>
         <source>Label</source>
         <translation>Beschriftung</translation>
     </message>
     <message>
-        <location filename="../qml/pages/DeckPage.qml" line="846"/>
+        <location filename="../qml/pages/DeckPage.qml" line="854"/>
         <source>Tile label</source>
         <translation>Kachelbeschriftung</translation>
     </message>
     <message>
-        <location filename="../qml/pages/DeckPage.qml" line="855"/>
+        <location filename="../qml/pages/DeckPage.qml" line="863"/>
         <source>Icon</source>
         <translation>Symbol</translation>
     </message>
     <message>
-        <location filename="../qml/pages/DeckPage.qml" line="918"/>
+        <location filename="../qml/pages/DeckPage.qml" line="926"/>
         <source>Delete</source>
         <translation>Löschen</translation>
     </message>
     <message>
-        <location filename="../qml/pages/DeckPage.qml" line="928"/>
+        <location filename="../qml/pages/DeckPage.qml" line="936"/>
         <source>Test</source>
         <translation>Testen</translation>
     </message>
     <message>
-        <location filename="../qml/pages/DeckPage.qml" line="940"/>
-        <location filename="../qml/pages/DeckPage.qml" line="1028"/>
-        <location filename="../qml/pages/DeckPage.qml" line="1056"/>
+        <location filename="../qml/pages/DeckPage.qml" line="948"/>
+        <location filename="../qml/pages/DeckPage.qml" line="1036"/>
+        <location filename="../qml/pages/DeckPage.qml" line="1064"/>
         <source>Cancel</source>
         <translation>Abbrechen</translation>
     </message>
     <message>
-        <location filename="../qml/pages/DeckPage.qml" line="945"/>
-        <location filename="../qml/pages/DeckPage.qml" line="1031"/>
+        <location filename="../qml/pages/DeckPage.qml" line="953"/>
+        <location filename="../qml/pages/DeckPage.qml" line="1039"/>
         <source>Save</source>
         <translation>Speichern</translation>
     </message>
     <message>
-        <location filename="../qml/pages/DeckPage.qml" line="1019"/>
+        <location filename="../qml/pages/DeckPage.qml" line="1027"/>
         <source>Page name</source>
         <translation>Seitenname</translation>
     </message>
     <message>
-        <location filename="../qml/pages/DeckPage.qml" line="1031"/>
+        <location filename="../qml/pages/DeckPage.qml" line="1039"/>
         <source>Create</source>
         <translation>Erstellen</translation>
     </message>
     <message>
-        <location filename="../qml/pages/DeckPage.qml" line="1045"/>
+        <location filename="../qml/pages/DeckPage.qml" line="1053"/>
         <source>Reset Deck to defaults?</source>
         <translation>Deck auf Standard zurücksetzen?</translation>
     </message>
     <message>
-        <location filename="../qml/pages/DeckPage.qml" line="1051"/>
+        <location filename="../qml/pages/DeckPage.qml" line="1059"/>
         <source>This replaces your custom pages and tiles with the default 11-tile Deck.</source>
         <translation>Dadurch werden deine benutzerdefinierten Seiten und Kacheln durch das Standard-Deck mit 11 Kacheln ersetzt.</translation>
     </message>
     <message>
-        <location filename="../qml/pages/DeckPage.qml" line="1059"/>
+        <location filename="../qml/pages/DeckPage.qml" line="1067"/>
         <source>Reset</source>
         <translation>Zurücksetzen</translation>
     </message>
@@ -2255,12 +2255,12 @@
         <translation>Firewall-Einstellungen</translation>
     </message>
     <message>
-        <location filename="../qml/components/DoctorSheet.qml" line="156"/>
+        <location filename="../qml/components/DoctorSheet.qml" line="158"/>
         <source>Check again</source>
         <translation>Erneut prüfen</translation>
     </message>
     <message>
-        <location filename="../qml/components/DoctorSheet.qml" line="160"/>
+        <location filename="../qml/components/DoctorSheet.qml" line="162"/>
         <source>Done</source>
         <translation>Fertig</translation>
     </message>
@@ -2301,200 +2301,209 @@
 <context>
     <name>FeaturesGuidePage</name>
     <message>
-        <location filename="../qml/pages/FeaturesGuidePage.qml" line="91"/>
+        <location filename="../qml/pages/FeaturesGuidePage.qml" line="99"/>
         <source>Overview</source>
         <translation>Übersicht</translation>
     </message>
     <message>
-        <location filename="../qml/pages/FeaturesGuidePage.qml" line="92"/>
+        <location filename="../qml/pages/FeaturesGuidePage.qml" line="100"/>
         <source>Setup</source>
         <translation>Einrichtung</translation>
     </message>
     <message>
-        <location filename="../qml/pages/FeaturesGuidePage.qml" line="93"/>
+        <location filename="../qml/pages/FeaturesGuidePage.qml" line="101"/>
         <source>Permissions</source>
         <translation>Berechtigungen</translation>
     </message>
     <message>
-        <location filename="../qml/pages/FeaturesGuidePage.qml" line="94"/>
+        <location filename="../qml/pages/FeaturesGuidePage.qml" line="102"/>
         <source>Power levels</source>
         <translation>Funktionsmodi</translation>
     </message>
     <message>
-        <location filename="../qml/pages/FeaturesGuidePage.qml" line="95"/>
+        <location filename="../qml/pages/FeaturesGuidePage.qml" line="103"/>
         <source>Troubleshooting</source>
         <translation>Fehlerbehebung</translation>
     </message>
     <message>
-        <location filename="../qml/pages/FeaturesGuidePage.qml" line="96"/>
+        <location filename="../qml/pages/FeaturesGuidePage.qml" line="104"/>
         <source>FAQ</source>
         <translation>FAQ</translation>
     </message>
     <message>
-        <location filename="../qml/pages/FeaturesGuidePage.qml" line="472"/>
+        <location filename="../qml/pages/FeaturesGuidePage.qml" line="480"/>
         <source>All</source>
         <translation>Alle</translation>
     </message>
     <message>
-        <location filename="../qml/pages/FeaturesGuidePage.qml" line="473"/>
+        <location filename="../qml/pages/FeaturesGuidePage.qml" line="481"/>
         <source>Notifications &amp; Calls</source>
         <translation>Benachrichtigungen &amp; Anrufe</translation>
     </message>
     <message>
-        <location filename="../qml/pages/FeaturesGuidePage.qml" line="474"/>
+        <location filename="../qml/pages/FeaturesGuidePage.qml" line="482"/>
         <source>Messages</source>
         <translation>Nachrichten</translation>
     </message>
     <message>
-        <location filename="../qml/pages/FeaturesGuidePage.qml" line="475"/>
+        <location filename="../qml/pages/FeaturesGuidePage.qml" line="483"/>
         <source>Clipboard &amp; Files</source>
         <translation>Zwischenablage &amp; Dateien</translation>
     </message>
     <message>
-        <location filename="../qml/pages/FeaturesGuidePage.qml" line="476"/>
+        <location filename="../qml/pages/FeaturesGuidePage.qml" line="484"/>
         <source>Mirroring &amp; Apps</source>
         <translation>Spiegelung &amp; Apps</translation>
     </message>
     <message>
-        <location filename="../qml/pages/FeaturesGuidePage.qml" line="477"/>
+        <location filename="../qml/pages/FeaturesGuidePage.qml" line="485"/>
         <source>Camera &amp; Audio</source>
         <translation>Kamera &amp; Audio</translation>
     </message>
     <message>
-        <location filename="../qml/pages/FeaturesGuidePage.qml" line="478"/>
+        <location filename="../qml/pages/FeaturesGuidePage.qml" line="486"/>
         <source>Input &amp; Control</source>
         <translation>Eingabe &amp; Steuerung</translation>
     </message>
     <message>
-        <location filename="../qml/pages/FeaturesGuidePage.qml" line="479"/>
+        <location filename="../qml/pages/FeaturesGuidePage.qml" line="487"/>
         <source>Desktop Surfaces</source>
         <translation>Desktop-Oberflächen</translation>
     </message>
     <message>
-        <location filename="../qml/pages/FeaturesGuidePage.qml" line="480"/>
+        <location filename="../qml/pages/FeaturesGuidePage.qml" line="488"/>
         <source>Automation &amp; Network</source>
         <translation>Automatisierung &amp; Netzwerk</translation>
     </message>
     <message>
-        <location filename="../qml/pages/FeaturesGuidePage.qml" line="505"/>
-        <location filename="../qml/pages/FeaturesGuidePage.qml" line="509"/>
-        <location filename="../qml/pages/FeaturesGuidePage.qml" line="514"/>
-        <location filename="../qml/pages/FeaturesGuidePage.qml" line="520"/>
+        <location filename="../qml/pages/FeaturesGuidePage.qml" line="513"/>
+        <location filename="../qml/pages/FeaturesGuidePage.qml" line="517"/>
+        <location filename="../qml/pages/FeaturesGuidePage.qml" line="522"/>
+        <location filename="../qml/pages/FeaturesGuidePage.qml" line="528"/>
         <source>Ready on PC</source>
         <translation>Bereit auf dem PC</translation>
     </message>
     <message>
-        <location filename="../qml/pages/FeaturesGuidePage.qml" line="510"/>
-        <location filename="../qml/pages/FeaturesGuidePage.qml" line="515"/>
-        <location filename="../qml/pages/FeaturesGuidePage.qml" line="521"/>
+        <location filename="../qml/pages/FeaturesGuidePage.qml" line="518"/>
+        <location filename="../qml/pages/FeaturesGuidePage.qml" line="523"/>
+        <location filename="../qml/pages/FeaturesGuidePage.qml" line="529"/>
         <source>Off in Settings</source>
         <translation>In Einstellungen deaktiviert</translation>
     </message>
     <message>
-        <location filename="../qml/pages/FeaturesGuidePage.qml" line="525"/>
+        <location filename="../qml/pages/FeaturesGuidePage.qml" line="533"/>
         <source>Opt-in on Home</source>
         <translation>Auf der Startseite aktivierbar</translation>
     </message>
     <message>
-        <location filename="../qml/pages/FeaturesGuidePage.qml" line="531"/>
-        <location filename="../qml/pages/FeaturesGuidePage.qml" line="543"/>
+        <location filename="../qml/pages/FeaturesGuidePage.qml" line="539"/>
+        <location filename="../qml/pages/FeaturesGuidePage.qml" line="553"/>
         <source>Off on Home</source>
         <translation>Auf der Startseite deaktiviert</translation>
     </message>
     <message>
-        <location filename="../qml/pages/FeaturesGuidePage.qml" line="538"/>
-        <location filename="../qml/pages/FeaturesGuidePage.qml" line="553"/>
+        <location filename="../qml/pages/FeaturesGuidePage.qml" line="548"/>
+        <location filename="../qml/pages/FeaturesGuidePage.qml" line="567"/>
         <source>Ready</source>
         <translation>Bereit</translation>
     </message>
     <message>
-        <location filename="../qml/pages/FeaturesGuidePage.qml" line="540"/>
+        <location filename="../qml/pages/FeaturesGuidePage.qml" line="550"/>
         <source>Basic mode</source>
         <translation>Basismodus</translation>
     </message>
     <message>
-        <location filename="../qml/pages/FeaturesGuidePage.qml" line="545"/>
-        <location filename="../qml/pages/FeaturesGuidePage.qml" line="550"/>
+        <location filename="../qml/pages/FeaturesGuidePage.qml" line="559"/>
+        <source>Needs an update</source>
+        <translation>Update nötig</translation>
+    </message>
+    <message>
+        <location filename="../qml/pages/FeaturesGuidePage.qml" line="560"/>
         <source>Needs phone permission</source>
         <translation>Geräteberechtigung erforderlich</translation>
     </message>
     <message>
-        <location filename="../qml/pages/FeaturesGuidePage.qml" line="547"/>
+        <location filename="../qml/pages/FeaturesGuidePage.qml" line="555"/>
         <source>Needs Elevated</source>
         <translation>Benötigt Erweitert</translation>
     </message>
     <message>
-        <location filename="../qml/pages/FeaturesGuidePage.qml" line="549"/>
+        <location filename="../qml/pages/FeaturesGuidePage.qml" line="557"/>
         <source>Needs Assist</source>
         <translation>Benötigt Assistenz</translation>
     </message>
     <message>
-        <location filename="../qml/pages/FeaturesGuidePage.qml" line="572"/>
+        <location filename="../qml/pages/FeaturesGuidePage.qml" line="563"/>
+        <source>Not on this phone</source>
+        <translation>Auf diesem Gerät nicht verfügbar</translation>
+    </message>
+    <message>
+        <location filename="../qml/pages/FeaturesGuidePage.qml" line="586"/>
         <source>Every feature in NectarLink, what it needs, and where to find it.</source>
         <translation>Jede Funktion in NectarLink, was sie benötigt und wo du sie findest.</translation>
     </message>
     <message>
-        <location filename="../qml/pages/FeaturesGuidePage.qml" line="611"/>
+        <location filename="../qml/pages/FeaturesGuidePage.qml" line="625"/>
         <source>Read the full guide ›</source>
         <translation>Vollständiges Handbuch lesen ›</translation>
     </message>
     <message>
-        <location filename="../qml/pages/FeaturesGuidePage.qml" line="619"/>
+        <location filename="../qml/pages/FeaturesGuidePage.qml" line="633"/>
         <source>Setup walkthrough</source>
         <translation>Einrichtungsassistent</translation>
     </message>
     <message>
-        <location filename="../qml/pages/FeaturesGuidePage.qml" line="654"/>
+        <location filename="../qml/pages/FeaturesGuidePage.qml" line="668"/>
         <source>Connect your phone to see which features are ready</source>
         <translation>Verbinde dein Gerät, um zu sehen, welche Funktionen bereit sind</translation>
     </message>
     <message>
-        <location filename="../qml/pages/FeaturesGuidePage.qml" line="703"/>
+        <location filename="../qml/pages/FeaturesGuidePage.qml" line="717"/>
         <source>Search features by name, location, or permission...</source>
         <translation>Funktionen nach Name, Ort oder Berechtigung durchsuchen…</translation>
     </message>
     <message>
-        <location filename="../qml/pages/FeaturesGuidePage.qml" line="713"/>
+        <location filename="../qml/pages/FeaturesGuidePage.qml" line="727"/>
         <source>Clear search</source>
         <translation>Suche löschen</translation>
     </message>
     <message>
-        <location filename="../qml/pages/FeaturesGuidePage.qml" line="888"/>
+        <location filename="../qml/pages/FeaturesGuidePage.qml" line="902"/>
         <source>Show me</source>
         <translation>Zeig es mir</translation>
     </message>
     <message>
-        <location filename="../qml/pages/FeaturesGuidePage.qml" line="916"/>
+        <location filename="../qml/pages/FeaturesGuidePage.qml" line="930"/>
         <source>Learn more ›</source>
         <translation>Mehr erfahren ›</translation>
     </message>
     <message>
-        <location filename="../qml/pages/FeaturesGuidePage.qml" line="935"/>
+        <location filename="../qml/pages/FeaturesGuidePage.qml" line="949"/>
         <source>Where:</source>
         <translation>Wo:</translation>
     </message>
     <message>
-        <location filename="../qml/pages/FeaturesGuidePage.qml" line="955"/>
+        <location filename="../qml/pages/FeaturesGuidePage.qml" line="969"/>
         <source>Needs:</source>
         <translation>Benötigt:</translation>
     </message>
     <message>
-        <location filename="../qml/pages/FeaturesGuidePage.qml" line="981"/>
+        <location filename="../qml/pages/FeaturesGuidePage.qml" line="995"/>
         <source>No matching features</source>
         <translation>Keine passenden Funktionen</translation>
     </message>
     <message>
-        <location filename="../qml/pages/FeaturesGuidePage.qml" line="987"/>
+        <location filename="../qml/pages/FeaturesGuidePage.qml" line="1001"/>
         <source>Try another search term or select All above.</source>
         <translation>Versuche einen anderen Suchbegriff oder wähle oben „Alle“.</translation>
     </message>
     <message>
-        <location filename="../qml/pages/FeaturesGuidePage.qml" line="1040"/>
+        <location filename="../qml/pages/FeaturesGuidePage.qml" line="1064"/>
         <source>Close guide</source>
         <translation>Handbuch schließen</translation>
     </message>
     <message>
-        <location filename="../qml/pages/FeaturesGuidePage.qml" line="1111"/>
+        <location filename="../qml/pages/FeaturesGuidePage.qml" line="1135"/>
         <source>Close</source>
         <translation>Schließen</translation>
     </message>
@@ -4335,89 +4344,89 @@ Voraussetzungen
         <translation>Nectar Island</translation>
     </message>
     <message>
-        <location filename="../qml/IslandWindow.qml" line="213"/>
+        <location filename="../qml/IslandWindow.qml" line="223"/>
         <source>Phone call</source>
         <translation>Telefonanruf</translation>
     </message>
     <message>
-        <location filename="../qml/IslandWindow.qml" line="216"/>
+        <location filename="../qml/IslandWindow.qml" line="226"/>
         <source>Transfer complete</source>
         <translation>Übertragung abgeschlossen</translation>
     </message>
     <message>
-        <location filename="../qml/IslandWindow.qml" line="219"/>
+        <location filename="../qml/IslandWindow.qml" line="229"/>
         <source>Transferring %1 file(s)…</source>
         <translation>%1 Datei(en) werden übertragen…</translation>
     </message>
     <message>
-        <location filename="../qml/IslandWindow.qml" line="222"/>
+        <location filename="../qml/IslandWindow.qml" line="232"/>
         <source>Now playing</source>
         <translation>Aktuelle Wiedergabe</translation>
     </message>
     <message>
-        <location filename="../qml/IslandWindow.qml" line="224"/>
+        <location filename="../qml/IslandWindow.qml" line="234"/>
         <source>%1 phone notification(s)</source>
         <translation>%1 Gerätebenachrichtigung(en)</translation>
     </message>
     <message>
-        <location filename="../qml/IslandWindow.qml" line="226"/>
-        <location filename="../qml/IslandWindow.qml" line="245"/>
-        <location filename="../qml/IslandWindow.qml" line="254"/>
+        <location filename="../qml/IslandWindow.qml" line="236"/>
+        <location filename="../qml/IslandWindow.qml" line="255"/>
+        <location filename="../qml/IslandWindow.qml" line="264"/>
         <source>%1 waiting</source>
         <translation>%1 ausstehend</translation>
     </message>
     <message>
-        <location filename="../qml/IslandWindow.qml" line="228"/>
+        <location filename="../qml/IslandWindow.qml" line="238"/>
         <source>Nectar Island · %1</source>
         <translation>Nectar Island · %1</translation>
     </message>
     <message>
-        <location filename="../qml/IslandWindow.qml" line="229"/>
+        <location filename="../qml/IslandWindow.qml" line="239"/>
         <source>Nectar Island · Ready</source>
         <translation>Nectar Island · Bereit</translation>
     </message>
     <message>
-        <location filename="../qml/IslandWindow.qml" line="234"/>
+        <location filename="../qml/IslandWindow.qml" line="244"/>
         <source>Incoming call</source>
         <translation>Eingehender Anruf</translation>
     </message>
     <message>
-        <location filename="../qml/IslandWindow.qml" line="235"/>
+        <location filename="../qml/IslandWindow.qml" line="245"/>
         <source>On hold</source>
         <translation>Gehalten</translation>
     </message>
     <message>
-        <location filename="../qml/IslandWindow.qml" line="236"/>
+        <location filename="../qml/IslandWindow.qml" line="246"/>
         <source>Call in progress</source>
         <translation>Laufender Anruf</translation>
     </message>
     <message>
-        <location filename="../qml/IslandWindow.qml" line="249"/>
+        <location filename="../qml/IslandWindow.qml" line="259"/>
         <source>This PC</source>
         <translation>Dieser PC</translation>
     </message>
     <message>
-        <location filename="../qml/IslandWindow.qml" line="249"/>
+        <location filename="../qml/IslandWindow.qml" line="259"/>
         <source>Phone</source>
         <translation>Gerät</translation>
     </message>
     <message>
-        <location filename="../qml/IslandWindow.qml" line="258"/>
+        <location filename="../qml/IslandWindow.qml" line="268"/>
         <source>Click to view in NectarLink</source>
         <translation>Klicken, um in NectarLink anzuzeigen</translation>
     </message>
     <message>
-        <location filename="../qml/IslandWindow.qml" line="261"/>
+        <location filename="../qml/IslandWindow.qml" line="271"/>
         <source>Will send when %1 is back</source>
         <translation>Wird gesendet, sobald %1 wieder da ist</translation>
     </message>
     <message>
-        <location filename="../qml/IslandWindow.qml" line="262"/>
+        <location filename="../qml/IslandWindow.qml" line="272"/>
         <source>Will send when connected</source>
         <translation>Wird gesendet, sobald verbunden</translation>
     </message>
     <message>
-        <location filename="../qml/IslandWindow.qml" line="264"/>
+        <location filename="../qml/IslandWindow.qml" line="274"/>
         <source>Live calls, transfers &amp; media</source>
         <translation>Aktive Anrufe, Übertragungen &amp; Medien</translation>
     </message>
@@ -5011,48 +5020,48 @@ Voraussetzungen
         <translation>Anhang entfernen</translation>
     </message>
     <message>
-        <location filename="../qml/pages/MessagesPage.qml" line="882"/>
+        <location filename="../qml/pages/MessagesPage.qml" line="886"/>
         <source>Attach image (MMS)</source>
         <translation>Bild anhängen (MMS)</translation>
     </message>
     <message>
-        <location filename="../qml/pages/MessagesPage.qml" line="917"/>
+        <location filename="../qml/pages/MessagesPage.qml" line="921"/>
         <source>Reply in %1</source>
         <translation>In %1 antworten</translation>
     </message>
     <message>
-        <location filename="../qml/pages/MessagesPage.qml" line="918"/>
-        <location filename="../qml/pages/MessagesPage.qml" line="954"/>
+        <location filename="../qml/pages/MessagesPage.qml" line="922"/>
+        <location filename="../qml/pages/MessagesPage.qml" line="958"/>
         <source>Text message</source>
         <translation>SMS-Nachricht</translation>
     </message>
     <message>
-        <location filename="../qml/pages/MessagesPage.qml" line="947"/>
+        <location filename="../qml/pages/MessagesPage.qml" line="951"/>
         <source>Replies are available while the notification is active on your phone</source>
         <translation>Antworten sind möglich, solange die Benachrichtigung auf deinem Gerät aktiv ist</translation>
     </message>
     <message>
-        <location filename="../qml/pages/MessagesPage.qml" line="949"/>
+        <location filename="../qml/pages/MessagesPage.qml" line="953"/>
         <source>Reply in %1…</source>
         <translation>In %1 antworten…</translation>
     </message>
     <message>
-        <location filename="../qml/pages/MessagesPage.qml" line="951"/>
+        <location filename="../qml/pages/MessagesPage.qml" line="955"/>
         <source>Group texts can&apos;t be sent from the PC yet</source>
         <translation>Gruppennachrichten können noch nicht vom PC aus gesendet werden</translation>
     </message>
     <message>
-        <location filename="../qml/pages/MessagesPage.qml" line="953"/>
+        <location filename="../qml/pages/MessagesPage.qml" line="957"/>
         <source>Add a caption (optional)…</source>
         <translation>Bildunterschrift hinzufügen (optional)…</translation>
     </message>
     <message>
-        <location filename="../qml/pages/MessagesPage.qml" line="965"/>
+        <location filename="../qml/pages/MessagesPage.qml" line="969"/>
         <source>Send</source>
         <translation>Senden</translation>
     </message>
     <message numerus="yes">
-        <location filename="../qml/pages/MessagesPage.qml" line="983"/>
+        <location filename="../qml/pages/MessagesPage.qml" line="987"/>
         <source>%1 characters · %n text(s)</source>
         <translation>
             <numerusform>%1 Zeichen · %n SMS</numerusform>
@@ -5060,72 +5069,72 @@ Voraussetzungen
         </translation>
     </message>
     <message>
-        <location filename="../qml/pages/MessagesPage.qml" line="1232"/>
+        <location filename="../qml/pages/MessagesPage.qml" line="1235"/>
         <source>Open image attachment</source>
         <translation>Bildanhang öffnen</translation>
     </message>
     <message>
-        <location filename="../qml/pages/MessagesPage.qml" line="1298"/>
+        <location filename="../qml/pages/MessagesPage.qml" line="1301"/>
         <source>Voice note</source>
         <translation>Sprachnotiz</translation>
     </message>
     <message>
-        <location filename="../qml/pages/MessagesPage.qml" line="1304"/>
+        <location filename="../qml/pages/MessagesPage.qml" line="1307"/>
         <source> · Click to play</source>
         <translation> · Klicken zum Abspielen</translation>
     </message>
     <message>
-        <location filename="../qml/pages/MessagesPage.qml" line="1304"/>
+        <location filename="../qml/pages/MessagesPage.qml" line="1307"/>
         <source> · Loading…</source>
         <translation> · Lädt…</translation>
     </message>
     <message>
-        <location filename="../qml/pages/MessagesPage.qml" line="1327"/>
+        <location filename="../qml/pages/MessagesPage.qml" line="1330"/>
         <source>Attachment (open it on the phone)</source>
         <translation>Anhang (auf dem Gerät öffnen)</translation>
     </message>
     <message>
-        <location filename="../qml/pages/MessagesPage.qml" line="1353"/>
+        <location filename="../qml/pages/MessagesPage.qml" line="1356"/>
         <source>Not sent</source>
         <translation>Nicht gesendet</translation>
     </message>
     <message>
-        <location filename="../qml/pages/MessagesPage.qml" line="1354"/>
+        <location filename="../qml/pages/MessagesPage.qml" line="1357"/>
         <source>Sending…</source>
         <translation>Wird gesendet…</translation>
     </message>
     <message>
-        <location filename="../qml/pages/MessagesPage.qml" line="1369"/>
+        <location filename="../qml/pages/MessagesPage.qml" line="1372"/>
         <source>Copy text</source>
         <translation>Text kopieren</translation>
     </message>
     <message>
-        <location filename="../qml/pages/MessagesPage.qml" line="1387"/>
+        <location filename="../qml/pages/MessagesPage.qml" line="1390"/>
         <source>Copied</source>
         <translation>Kopiert</translation>
     </message>
     <message>
-        <location filename="../qml/pages/MessagesPage.qml" line="1387"/>
+        <location filename="../qml/pages/MessagesPage.qml" line="1390"/>
         <source>Copy code %1</source>
         <translation>Code %1 kopieren</translation>
     </message>
     <message>
-        <location filename="../qml/pages/MessagesPage.qml" line="1419"/>
+        <location filename="../qml/pages/MessagesPage.qml" line="1422"/>
         <source>Image attachment</source>
         <translation>Bildanhang</translation>
     </message>
     <message>
-        <location filename="../qml/pages/MessagesPage.qml" line="1426"/>
+        <location filename="../qml/pages/MessagesPage.qml" line="1429"/>
         <source>Close</source>
         <translation>Schließen</translation>
     </message>
     <message>
-        <location filename="../qml/pages/MessagesPage.qml" line="1454"/>
+        <location filename="../qml/pages/MessagesPage.qml" line="1457"/>
         <source>Open externally</source>
         <translation>Extern öffnen</translation>
     </message>
     <message>
-        <location filename="../qml/pages/MessagesPage.qml" line="1458"/>
+        <location filename="../qml/pages/MessagesPage.qml" line="1461"/>
         <source>Done</source>
         <translation>Fertig</translation>
     </message>
@@ -6008,7 +6017,7 @@ Voraussetzungen
     <name>PhotosPage</name>
     <message>
         <location filename="../qml/pages/PhotosPage.qml" line="43"/>
-        <location filename="../qml/pages/PhotosPage.qml" line="331"/>
+        <location filename="../qml/pages/PhotosPage.qml" line="334"/>
         <source>All photos</source>
         <translation>Alle Fotos</translation>
     </message>
@@ -6018,260 +6027,265 @@ Voraussetzungen
         <translation>Album</translation>
     </message>
     <message>
-        <location filename="../qml/pages/PhotosPage.qml" line="71"/>
-        <location filename="../qml/pages/PhotosPage.qml" line="86"/>
+        <location filename="../qml/pages/PhotosPage.qml" line="72"/>
+        <location filename="../qml/pages/PhotosPage.qml" line="87"/>
         <source>Today</source>
         <translation>Heute</translation>
     </message>
     <message>
-        <location filename="../qml/pages/PhotosPage.qml" line="72"/>
-        <location filename="../qml/pages/PhotosPage.qml" line="87"/>
+        <location filename="../qml/pages/PhotosPage.qml" line="73"/>
+        <location filename="../qml/pages/PhotosPage.qml" line="88"/>
         <source>Yesterday</source>
         <translation>Gestern</translation>
     </message>
     <message>
-        <location filename="../qml/pages/PhotosPage.qml" line="110"/>
+        <location filename="../qml/pages/PhotosPage.qml" line="111"/>
         <source>%1 B</source>
         <translation>%1 B</translation>
     </message>
     <message>
-        <location filename="../qml/pages/PhotosPage.qml" line="111"/>
+        <location filename="../qml/pages/PhotosPage.qml" line="112"/>
         <source>%1 KB</source>
         <translation>%1 KB</translation>
     </message>
     <message>
-        <location filename="../qml/pages/PhotosPage.qml" line="111"/>
+        <location filename="../qml/pages/PhotosPage.qml" line="112"/>
         <source>%1 MB</source>
         <translation>%1 MB</translation>
     </message>
     <message>
-        <location filename="../qml/pages/PhotosPage.qml" line="111"/>
+        <location filename="../qml/pages/PhotosPage.qml" line="112"/>
         <source>%1 GB</source>
         <translation>%1 GB</translation>
     </message>
     <message>
-        <location filename="../qml/pages/PhotosPage.qml" line="111"/>
+        <location filename="../qml/pages/PhotosPage.qml" line="112"/>
         <source>%1 TB</source>
         <translation>%1 TB</translation>
     </message>
     <message>
-        <location filename="../qml/pages/PhotosPage.qml" line="233"/>
+        <location filename="../qml/pages/PhotosPage.qml" line="236"/>
         <source>Choose default folder for saved photos</source>
         <translation>Standardordner für gespeicherte Fotos auswählen</translation>
     </message>
     <message>
-        <location filename="../qml/pages/PhotosPage.qml" line="240"/>
+        <location filename="../qml/pages/PhotosPage.qml" line="243"/>
         <source>Save to folder</source>
         <translation>In Ordner speichern</translation>
     </message>
     <message>
-        <location filename="../qml/pages/PhotosPage.qml" line="270"/>
+        <location filename="../qml/pages/PhotosPage.qml" line="273"/>
         <source>Photos</source>
         <translation>Fotos</translation>
     </message>
     <message>
-        <location filename="../qml/pages/PhotosPage.qml" line="271"/>
-        <location filename="../qml/pages/PhotosPage.qml" line="608"/>
+        <location filename="../qml/pages/PhotosPage.qml" line="274"/>
+        <location filename="../qml/pages/PhotosPage.qml" line="612"/>
         <source>%1 isn&apos;t connected</source>
         <translation>%1 ist nicht verbunden</translation>
     </message>
     <message>
-        <location filename="../qml/pages/PhotosPage.qml" line="280"/>
+        <location filename="../qml/pages/PhotosPage.qml" line="283"/>
         <source>Pair your phone to browse photos and albums.</source>
         <translation>Kopple dein Gerät, um Fotos und Alben zu durchsuchen.</translation>
     </message>
     <message>
-        <location filename="../qml/pages/PhotosPage.qml" line="281"/>
-        <location filename="../qml/pages/PhotosPage.qml" line="622"/>
+        <location filename="../qml/pages/PhotosPage.qml" line="284"/>
+        <location filename="../qml/pages/PhotosPage.qml" line="626"/>
         <source>Connect %1 to view photos.</source>
         <translation>Verbinde %1, um Fotos anzuzeigen.</translation>
     </message>
     <message>
-        <location filename="../qml/pages/PhotosPage.qml" line="302"/>
+        <location filename="../qml/pages/PhotosPage.qml" line="305"/>
         <source>Albums</source>
         <translation>Alben</translation>
     </message>
     <message>
-        <location filename="../qml/pages/PhotosPage.qml" line="309"/>
+        <location filename="../qml/pages/PhotosPage.qml" line="312"/>
         <source>Refresh</source>
         <translation>Aktualisieren</translation>
     </message>
     <message>
-        <location filename="../qml/pages/PhotosPage.qml" line="405"/>
+        <location filename="../qml/pages/PhotosPage.qml" line="408"/>
         <source>%1+ items</source>
         <translation>%1+ Elemente</translation>
     </message>
     <message>
-        <location filename="../qml/pages/PhotosPage.qml" line="406"/>
+        <location filename="../qml/pages/PhotosPage.qml" line="409"/>
         <source>1 item</source>
         <translation>1 Element</translation>
     </message>
     <message>
-        <location filename="../qml/pages/PhotosPage.qml" line="406"/>
+        <location filename="../qml/pages/PhotosPage.qml" line="409"/>
         <source>%1 items</source>
         <translation>%1 Elemente</translation>
     </message>
     <message>
-        <location filename="../qml/pages/PhotosPage.qml" line="432"/>
+        <location filename="../qml/pages/PhotosPage.qml" line="435"/>
         <source>Cancel</source>
         <translation>Abbrechen</translation>
     </message>
     <message>
-        <location filename="../qml/pages/PhotosPage.qml" line="442"/>
+        <location filename="../qml/pages/PhotosPage.qml" line="445"/>
         <source>Photo</source>
         <translation>Foto</translation>
     </message>
     <message>
-        <location filename="../qml/pages/PhotosPage.qml" line="442"/>
+        <location filename="../qml/pages/PhotosPage.qml" line="445"/>
         <source>Take photo</source>
         <translation>Foto aufnehmen</translation>
     </message>
     <message>
-        <location filename="../qml/pages/PhotosPage.qml" line="452"/>
+        <location filename="../qml/pages/PhotosPage.qml" line="455"/>
         <source>Scan</source>
         <translation>Scannen</translation>
     </message>
     <message>
-        <location filename="../qml/pages/PhotosPage.qml" line="452"/>
+        <location filename="../qml/pages/PhotosPage.qml" line="455"/>
         <source>Scan document</source>
         <translation>Dokument scannen</translation>
     </message>
     <message>
-        <location filename="../qml/pages/PhotosPage.qml" line="477"/>
+        <location filename="../qml/pages/PhotosPage.qml" line="480"/>
         <source>Select</source>
         <translation>Auswählen</translation>
     </message>
     <message>
-        <location filename="../qml/pages/PhotosPage.qml" line="493"/>
+        <location filename="../qml/pages/PhotosPage.qml" line="496"/>
         <source>Cancel selection</source>
         <translation>Auswahl aufheben</translation>
     </message>
     <message>
-        <location filename="../qml/pages/PhotosPage.qml" line="501"/>
+        <location filename="../qml/pages/PhotosPage.qml" line="504"/>
         <source>%1 selected</source>
         <translation>%1 ausgewählt</translation>
     </message>
     <message>
-        <location filename="../qml/pages/PhotosPage.qml" line="502"/>
+        <location filename="../qml/pages/PhotosPage.qml" line="505"/>
         <source>Select items</source>
         <translation>Elemente auswählen</translation>
     </message>
     <message>
-        <location filename="../qml/pages/PhotosPage.qml" line="502"/>
+        <location filename="../qml/pages/PhotosPage.qml" line="505"/>
         <source>Click items to select</source>
         <translation>Klicke auf Elemente, um sie auszuwählen</translation>
     </message>
     <message>
-        <location filename="../qml/pages/PhotosPage.qml" line="509"/>
+        <location filename="../qml/pages/PhotosPage.qml" line="513"/>
         <source>Select all</source>
         <translation>Alle auswählen</translation>
     </message>
     <message>
-        <location filename="../qml/pages/PhotosPage.qml" line="527"/>
-        <location filename="../qml/pages/PhotosPage.qml" line="816"/>
+        <location filename="../qml/pages/PhotosPage.qml" line="513"/>
+        <source>Select first 500</source>
+        <translation>Erste 500 auswählen</translation>
+    </message>
+    <message>
+        <location filename="../qml/pages/PhotosPage.qml" line="531"/>
+        <location filename="../qml/pages/PhotosPage.qml" line="820"/>
         <source>Copy</source>
         <translation>Kopieren</translation>
     </message>
     <message>
-        <location filename="../qml/pages/PhotosPage.qml" line="538"/>
+        <location filename="../qml/pages/PhotosPage.qml" line="542"/>
         <source>Open</source>
         <translation>Öffnen</translation>
     </message>
     <message>
-        <location filename="../qml/pages/PhotosPage.qml" line="551"/>
+        <location filename="../qml/pages/PhotosPage.qml" line="555"/>
         <source>Save (%1)</source>
         <translation>Speichern (%1)</translation>
     </message>
     <message>
-        <location filename="../qml/pages/PhotosPage.qml" line="552"/>
-        <location filename="../qml/pages/PhotosPage.qml" line="838"/>
+        <location filename="../qml/pages/PhotosPage.qml" line="556"/>
+        <location filename="../qml/pages/PhotosPage.qml" line="842"/>
         <source>Save</source>
         <translation>Speichern</translation>
     </message>
     <message>
-        <location filename="../qml/pages/PhotosPage.qml" line="563"/>
-        <location filename="../qml/pages/PhotosPage.qml" line="846"/>
+        <location filename="../qml/pages/PhotosPage.qml" line="567"/>
+        <location filename="../qml/pages/PhotosPage.qml" line="850"/>
         <source>Save to folder…</source>
         <translation>In Ordner speichern…</translation>
     </message>
     <message>
-        <location filename="../qml/pages/PhotosPage.qml" line="606"/>
+        <location filename="../qml/pages/PhotosPage.qml" line="610"/>
         <source>Photos are off for %1</source>
         <translation>Fotos sind für %1 deaktiviert</translation>
     </message>
     <message>
-        <location filename="../qml/pages/PhotosPage.qml" line="607"/>
+        <location filename="../qml/pages/PhotosPage.qml" line="611"/>
         <source>Allow photos on %1</source>
         <translation>Fotos auf %1 erlauben</translation>
     </message>
     <message>
-        <location filename="../qml/pages/PhotosPage.qml" line="609"/>
+        <location filename="../qml/pages/PhotosPage.qml" line="613"/>
         <source>Couldn&apos;t load photos</source>
         <translation>Fotos konnten nicht geladen werden</translation>
     </message>
     <message>
-        <location filename="../qml/pages/PhotosPage.qml" line="618"/>
+        <location filename="../qml/pages/PhotosPage.qml" line="622"/>
         <source>Enable Photos in Settings.</source>
         <translation>Aktiviere „Fotos“ in den Einstellungen.</translation>
     </message>
     <message>
-        <location filename="../qml/pages/PhotosPage.qml" line="620"/>
+        <location filename="../qml/pages/PhotosPage.qml" line="624"/>
         <source>Grant photos permission on %1.</source>
         <translation>Erteile die Foto-Berechtigung auf %1.</translation>
     </message>
     <message>
-        <location filename="../qml/pages/PhotosPage.qml" line="623"/>
+        <location filename="../qml/pages/PhotosPage.qml" line="627"/>
         <source>Unable to load photos.</source>
         <translation>Fotos können nicht geladen werden.</translation>
     </message>
     <message>
-        <location filename="../qml/pages/PhotosPage.qml" line="635"/>
+        <location filename="../qml/pages/PhotosPage.qml" line="639"/>
         <source>Try again</source>
         <translation>Erneut versuchen</translation>
     </message>
     <message>
-        <location filename="../qml/pages/PhotosPage.qml" line="658"/>
+        <location filename="../qml/pages/PhotosPage.qml" line="662"/>
         <source>No photos or videos</source>
         <translation>Keine Fotos oder Videos</translation>
     </message>
     <message>
-        <location filename="../qml/pages/PhotosPage.qml" line="763"/>
+        <location filename="../qml/pages/PhotosPage.qml" line="767"/>
         <source>Back to gallery</source>
         <translation>Zurück zur Galerie</translation>
     </message>
     <message>
-        <location filename="../qml/pages/PhotosPage.qml" line="826"/>
-        <location filename="../qml/pages/PhotosPage.qml" line="924"/>
+        <location filename="../qml/pages/PhotosPage.qml" line="830"/>
+        <location filename="../qml/pages/PhotosPage.qml" line="928"/>
         <source>Play video</source>
         <translation>Video abspielen</translation>
     </message>
     <message>
-        <location filename="../qml/pages/PhotosPage.qml" line="826"/>
+        <location filename="../qml/pages/PhotosPage.qml" line="830"/>
         <source>Open in Photos</source>
         <translation>In Fotos öffnen</translation>
     </message>
     <message>
-        <location filename="../qml/pages/PhotosPage.qml" line="905"/>
+        <location filename="../qml/pages/PhotosPage.qml" line="909"/>
         <source>Loading full resolution…</source>
         <translation>Volle Auflösung wird geladen…</translation>
     </message>
     <message>
-        <location filename="../qml/pages/PhotosPage.qml" line="964"/>
+        <location filename="../qml/pages/PhotosPage.qml" line="968"/>
         <source>Previous photo</source>
         <translation>Vorheriges Foto</translation>
     </message>
     <message>
-        <location filename="../qml/pages/PhotosPage.qml" line="977"/>
+        <location filename="../qml/pages/PhotosPage.qml" line="981"/>
         <source>Next photo</source>
         <translation>Nächstes Foto</translation>
     </message>
     <message>
-        <location filename="../qml/pages/PhotosPage.qml" line="1064"/>
+        <location filename="../qml/pages/PhotosPage.qml" line="1068"/>
         <source>%1</source>
         <translation>%1</translation>
     </message>
     <message>
-        <location filename="../qml/pages/PhotosPage.qml" line="1246"/>
+        <location filename="../qml/pages/PhotosPage.qml" line="1250"/>
         <source>Select photo</source>
         <translation>Foto auswählen</translation>
     </message>
@@ -8549,109 +8563,113 @@ Voraussetzungen
     </message>
     <message>
         <location filename="../qml/pages/TimelinePage.qml" line="41"/>
-        <location filename="../qml/pages/TimelinePage.qml" line="43"/>
-        <location filename="../qml/pages/TimelinePage.qml" line="656"/>
-        <location filename="../qml/pages/TimelinePage.qml" line="685"/>
+        <location filename="../qml/pages/TimelinePage.qml" line="657"/>
+        <location filename="../qml/pages/TimelinePage.qml" line="686"/>
         <source>All devices</source>
         <translation>Alle Geräte</translation>
     </message>
     <message>
-        <location filename="../qml/pages/TimelinePage.qml" line="86"/>
+        <location filename="../qml/pages/TimelinePage.qml" line="44"/>
+        <source>A removed device</source>
+        <translation>Ein entferntes Gerät</translation>
+    </message>
+    <message>
+        <location filename="../qml/pages/TimelinePage.qml" line="87"/>
         <source>Today</source>
         <translation>Heute</translation>
     </message>
     <message>
-        <location filename="../qml/pages/TimelinePage.qml" line="88"/>
+        <location filename="../qml/pages/TimelinePage.qml" line="89"/>
         <source>Yesterday</source>
         <translation>Gestern</translation>
     </message>
     <message>
-        <location filename="../qml/pages/TimelinePage.qml" line="170"/>
+        <location filename="../qml/pages/TimelinePage.qml" line="171"/>
         <source>Search timeline</source>
         <translation>Zeitverlauf durchsuchen</translation>
     </message>
     <message>
-        <location filename="../qml/pages/TimelinePage.qml" line="183"/>
+        <location filename="../qml/pages/TimelinePage.qml" line="184"/>
         <source>Search timeline…</source>
         <translation>Zeitverlauf durchsuchen…</translation>
     </message>
     <message>
-        <location filename="../qml/pages/TimelinePage.qml" line="193"/>
+        <location filename="../qml/pages/TimelinePage.qml" line="194"/>
         <source>Clear search</source>
         <translation>Suche löschen</translation>
     </message>
     <message>
-        <location filename="../qml/pages/TimelinePage.qml" line="212"/>
+        <location filename="../qml/pages/TimelinePage.qml" line="213"/>
         <source>Clear all</source>
         <translation>Alle löschen</translation>
     </message>
     <message>
-        <location filename="../qml/pages/TimelinePage.qml" line="266"/>
+        <location filename="../qml/pages/TimelinePage.qml" line="267"/>
         <source>Device filter: %1</source>
         <translation>Gerätefilter: %1</translation>
     </message>
     <message>
-        <location filename="../qml/pages/TimelinePage.qml" line="344"/>
+        <location filename="../qml/pages/TimelinePage.qml" line="345"/>
         <source>Clear timeline history? Saved files on disk are kept.</source>
         <translation>Zeitverlauf löschen? Auf der Festplatte gespeicherte Dateien bleiben erhalten.</translation>
     </message>
     <message>
-        <location filename="../qml/pages/TimelinePage.qml" line="354"/>
+        <location filename="../qml/pages/TimelinePage.qml" line="355"/>
         <source>Cancel</source>
         <translation>Abbrechen</translation>
     </message>
     <message>
-        <location filename="../qml/pages/TimelinePage.qml" line="361"/>
+        <location filename="../qml/pages/TimelinePage.qml" line="362"/>
         <source>Clear timeline</source>
         <translation>Zeitverlauf löschen</translation>
     </message>
     <message>
-        <location filename="../qml/pages/TimelinePage.qml" line="398"/>
+        <location filename="../qml/pages/TimelinePage.qml" line="399"/>
         <source>No matching items</source>
         <translation>Keine passenden Einträge</translation>
     </message>
     <message>
-        <location filename="../qml/pages/TimelinePage.qml" line="399"/>
+        <location filename="../qml/pages/TimelinePage.qml" line="400"/>
         <source>No recent activity</source>
         <translation>Keine kürzlichen Aktivitäten</translation>
     </message>
     <message>
-        <location filename="../qml/pages/TimelinePage.qml" line="408"/>
+        <location filename="../qml/pages/TimelinePage.qml" line="409"/>
         <source>Clear the search or filter.</source>
         <translation>Setze die Suche oder den Filter zurück.</translation>
     </message>
     <message>
-        <location filename="../qml/pages/TimelinePage.qml" line="409"/>
+        <location filename="../qml/pages/TimelinePage.qml" line="410"/>
         <source>Shared files, clips, links, and photos appear here.</source>
         <translation>Geteilte Dateien, Zwischenablage-Einträge, Links und Fotos erscheinen hier.</translation>
     </message>
     <message>
-        <location filename="../qml/pages/TimelinePage.qml" line="562"/>
+        <location filename="../qml/pages/TimelinePage.qml" line="563"/>
         <source>Open</source>
         <translation>Öffnen</translation>
     </message>
     <message>
-        <location filename="../qml/pages/TimelinePage.qml" line="571"/>
+        <location filename="../qml/pages/TimelinePage.qml" line="572"/>
         <source>Show in folder</source>
         <translation>Im Ordner anzeigen</translation>
     </message>
     <message>
-        <location filename="../qml/pages/TimelinePage.qml" line="580"/>
+        <location filename="../qml/pages/TimelinePage.qml" line="581"/>
         <source>Copy</source>
         <translation>Kopieren</translation>
     </message>
     <message>
-        <location filename="../qml/pages/TimelinePage.qml" line="589"/>
+        <location filename="../qml/pages/TimelinePage.qml" line="590"/>
         <source>Send again</source>
         <translation>Erneut senden</translation>
     </message>
     <message>
-        <location filename="../qml/pages/TimelinePage.qml" line="596"/>
+        <location filename="../qml/pages/TimelinePage.qml" line="597"/>
         <source>Remove from timeline</source>
         <translation>Aus Zeitverlauf entfernen</translation>
     </message>
     <message>
-        <location filename="../qml/pages/TimelinePage.qml" line="611"/>
+        <location filename="../qml/pages/TimelinePage.qml" line="612"/>
         <source>Load more</source>
         <translation>Mehr laden</translation>
     </message>
