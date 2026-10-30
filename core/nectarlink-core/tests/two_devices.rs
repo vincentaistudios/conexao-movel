@@ -3880,8 +3880,17 @@ async fn live_notifications_and_task_notify_flow_end_to_end() {
         .await
         .expect("task_notify done succeeds");
 
+    // A new session or a refresh re-sends the running task with its elapsed time moved on, so
+    // the phone may see it more than once before the completion.
     let recorded = phone.platform.tasks.lock().unwrap().clone();
-    assert_eq!(recorded, vec![running, done]);
+    let (last, updates) = recorded.split_last().expect("task updates recorded");
+    assert_eq!(last, &done);
+    assert_eq!(updates.first(), Some(&running));
+    for update in updates {
+        assert_eq!(update.id, running.id);
+        assert!(update.active && update.exit_code.is_none());
+        assert!(update.elapsed_ms >= running.elapsed_ms);
+    }
 }
 
 #[tokio::test(flavor = "multi_thread")]
