@@ -1635,6 +1635,15 @@ async fn receive(shared: Arc<Shared>, peer: DeviceId, mut send: SendStream, mut 
         };
         have.push(valid_len);
     }
+    // What's still to come has to fit where it's received and where it's
+    // saved; a transfer that runs out of room partway helps nobody. The
+    // sender reads Busy as "not enough space" (TransferFailure::NoSpace).
+    let to_come = offer.total_size().saturating_sub(have.iter().sum());
+    let fits = |at: &Path| free_space(at).is_none_or(|free| free >= to_come.saturating_add(SPACE_MARGIN));
+    if !fits(&dir) || !fits(&shared.downloads_dir) {
+        tracing::warn!(bytes = to_come, "not enough space for incoming files");
+        return refuse(&mut send, ErrorCode::Busy, "not enough space").await;
+    }
     let Ok(accept) = Envelope::new(files::ACCEPT, &FilesAccept { have: have.clone() }) else { return };
     if write_frame(&mut send, &accept.to_cbor()).await.is_err() {
         return;
@@ -2019,6 +2028,42 @@ pub(crate) fn mark_from_elsewhere(path: &Path) {
     let _ = path;
 }
 
+/// Room kept free beyond an incoming transfer's size.
+const SPACE_MARGIN: u64 = 64 * 1024 * 1024;
+
+/// Bytes free for this user on the drive holding `path` (`None` when it
+/// can't tell, which never blocks a transfer).
+#[allow(unsafe_code)]
+pub(crate) fn free_space(path: &Path) -> Option<u64> {
+    #[cfg(windows)]
+    {
+        use windows::{Win32::Storage::FileSystem::GetDiskFreeSpaceExW, core::HSTRING};
+        let mut free = 0u64;
+        // SAFETY: a valid path string and an out pointer to a local.
+        unsafe { GetDiskFreeSpaceExW(&HSTRING::from(path.as_os_str()), Some(&mut free), None, None) }
+            .ok()
+            .map(|()| free)
+    }
+    #[cfg(unix)]
+    {
+        use std::os::unix::ffi::OsStrExt;
+        let c_path = std::ffi::CString::new(path.as_os_str().as_bytes()).ok()?;
+        // SAFETY: statvfs is plain data; zeroed is a valid value for it.
+        let mut stat: libc::statvfs = unsafe { std::mem::zeroed() };
+        // SAFETY: `c_path` is NUL-terminated and `stat` is writable.
+        if unsafe { libc::statvfs(c_path.as_ptr(), &mut stat) } != 0 {
+            return None;
+        }
+        let block = if stat.f_frsize > 0 { stat.f_frsize as u64 } else { stat.f_bsize as u64 };
+        Some((stat.f_bavail as u64).saturating_mul(block))
+    }
+    #[cfg(not(any(windows, unix)))]
+    {
+        let _ = path;
+        None
+    }
+}
+
 /// Moves `from` to `to`, copying when they're on different volumes.
 fn move_file(from: &Path, to: &Path) -> std::io::Result<()> {
     if std::fs::rename(from, to).is_err() {
@@ -2088,6 +2133,13 @@ mod tests {
         let mut stream = file.into_os_string();
         stream.push(":Zone.Identifier");
         assert_eq!(std::fs::read_to_string(stream).unwrap(), "[ZoneTransfer]\r\nZoneId=3\r\n");
+    }
+
+    #[test]
+    fn free_space_is_read_for_a_real_folder() {
+        let dir = tempfile::tempdir().unwrap();
+        assert!(free_space(dir.path()).is_some_and(|free| free > 0));
+        assert_eq!(free_space(&dir.path().join("not-there")), None, "unknown never blocks");
     }
 
     #[test]

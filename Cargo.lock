@@ -2451,6 +2451,7 @@ dependencies = [
  "data-encoding",
  "iroh",
  "iroh-mdns-address-lookup",
+ "libc",
  "material-colors",
  "n0-future",
  "nectarlink-adb",
