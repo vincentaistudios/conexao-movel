@@ -38,6 +38,9 @@ use crate::{
 
 /// Per-device toggle name (off by default on the phone).
 pub const TOGGLE: &str = "storage";
+
+/// Most entries read from one folder (page after page).
+const MAX_LISTED: usize = 100_000;
 /// Per-device toggle name for away-mode / relay file access (off by default).
 pub const REMOTE_FILES_TOGGLE: &str = "remote_files";
 
@@ -279,14 +282,21 @@ pub(crate) async fn handle(shared: &Arc<Shared>, session: &Arc<Session>, env: &E
                             .then_with(|| a.name.to_lowercase().cmp(&b.name.to_lowercase()))
                             .then_with(|| a.name.cmp(&b.name))
                     });
-                    // Ensure the frame fits within MAX_FRAME_LEN.
+                    // From `offset`, as many as fit one frame; the rest are
+                    // another page (`more`).
+                    let mut entries: Vec<StorageEntry> =
+                        entries.into_iter().skip(usize::try_from(req.offset).unwrap_or(usize::MAX)).collect();
+                    let left = entries.len();
                     let reply = loop {
-                        let body = StorageEntries { entries: entries.clone() };
+                        let more = entries.len() < left;
+                        let body = StorageEntries { entries: entries.clone(), more };
                         let candidate = Envelope::new(types::STORAGE_ENTRIES, &body)?.reply_to(env.id);
                         if candidate.to_cbor().len() <= MAX_FRAME_LEN || entries.is_empty() {
                             break candidate;
                         }
-                        let new_len = (entries.len() * 3 / 4).max(entries.len().saturating_sub(1));
+                        // A quarter at a time: one at a time meant thousands of
+                        // 1 MiB encodings for a big folder.
+                        let new_len = (entries.len() * 3 / 4).min(entries.len().saturating_sub(1));
                         entries.truncate(new_len);
                     };
                     session.send(reply).await?;
@@ -700,10 +710,20 @@ pub(crate) async fn list(
     if !pc_allows(shared, &session.peer)? {
         return Err(Error::Denied);
     }
-    let req = Envelope::new(types::STORAGE_LIST, &StorageList { path })?;
-    let reply = session.request(req, REQUEST_TIMEOUT).await?;
-    let body: StorageEntries = reply.expect_body(types::STORAGE_ENTRIES)?;
-    Ok(body.entries.into_iter().filter_map(StorageEntry::sanitized).collect())
+    // Page by page: a folder of thousands of photos doesn't fit one answer.
+    let mut all: Vec<StorageEntry> = Vec::new();
+    loop {
+        let offset = all.len() as u64;
+        let req = Envelope::new(types::STORAGE_LIST, &StorageList { path: path.clone(), offset })?;
+        let reply = session.request(req, REQUEST_TIMEOUT).await?;
+        let body: StorageEntries = reply.expect_body(types::STORAGE_ENTRIES)?;
+        let got = body.entries.len();
+        all.extend(body.entries);
+        if !body.more || got == 0 || all.len() >= MAX_LISTED {
+            break;
+        }
+    }
+    Ok(all.into_iter().filter_map(StorageEntry::sanitized).collect())
 }
 
 pub(crate) async fn mkdir(shared: &Arc<Shared>, session: &Arc<Session>, path: String) -> Result<()> {

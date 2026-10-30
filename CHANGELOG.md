@@ -174,6 +174,12 @@ has a Stop button. Choosing another
 
 ### Fixed
 
+- **A big phone folder showed only part of its files** in File Explorer (a
+  camera folder of thousands of photos, say). Folders now come in pages, so
+  every file shows, and listing one no longer holds up the connection.
+- **A transfer too big for the receiving drive started anyway** and failed
+  partway. The receiver now checks the space first and the sender says
+  there isn't enough.
 - **The phone's keyboard didn't open after typing from the PC.** With
   Elevated, the PC's keys reach the phone through a virtual keyboard that
   stayed connected, so Android hid the on-screen keyboard in every app. It

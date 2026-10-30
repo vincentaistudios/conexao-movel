@@ -3340,6 +3340,33 @@ async fn a_phone_browses_a_pcs_shared_folders() {
     assert!(phone.node.storage_list(pc_id, "").await.is_err());
 }
 
+/// A folder whose entries don't fit one answer comes back whole, page by
+/// page (a camera folder of thousands of photos, say).
+#[tokio::test(flavor = "multi_thread")]
+async fn a_folder_too_big_for_one_answer_is_listed_whole() {
+    use nectarlink_core::{FolderStorage, STORAGE_MOUNT, STORAGE_READ};
+
+    let mut pc = device_with("Desktop", DeviceKind::Desktop, &[STORAGE_MOUNT, STORAGE_READ]).await;
+    let mut phone = device_with("Pixel", DeviceKind::Phone, &[STORAGE_READ]).await;
+    let shared = tempfile::tempdir().unwrap();
+    let camera = shared.path().join("Camera");
+    std::fs::create_dir_all(&camera).unwrap();
+    // Long names, so a few thousand entries pass one frame (1 MiB).
+    let count = 8_000;
+    for i in 0..count {
+        std::fs::write(camera.join(format!("{i:05}-{}.jpg", "x".repeat(140))), b"").unwrap();
+    }
+    *pc.platform.storage.lock().unwrap() = Some(FolderStorage::new(shared.path()));
+    pair_qr(&mut pc, &mut phone).await;
+    let pc_id = pc.node.device_id();
+
+    let listed = with_timeout("list a big folder", phone.node.storage_list(pc_id, "Camera")).await.unwrap();
+    assert_eq!(listed.len(), count, "every entry, across pages");
+    let mut names: Vec<_> = listed.iter().map(|e| e.name.clone()).collect();
+    names.dedup();
+    assert_eq!(names.len(), count, "no entry twice");
+}
+
 #[tokio::test(flavor = "multi_thread")]
 async fn phone_storage_lists_reads_ranges_writes_resumes_mutates_and_enforces_security() {
     use nectarlink_core::{FolderStorage, STORAGE_MOUNT, STORAGE_READ, STORAGE_WRITE};

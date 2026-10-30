@@ -4057,6 +4057,15 @@ pub fn is_valid_storage_id(id: &str) -> bool {
 #[derive(Clone, PartialEq, Eq, Serialize, Deserialize)]
 pub struct StorageList {
     pub path: String,
+    /// Entries to skip, for the next page of a folder whose entries don't
+    /// fit one answer. Absent (0) from devices before paging, which then get
+    /// the first page only, as before.
+    #[serde(default, skip_serializing_if = "is_zero_u64")]
+    pub offset: u64,
+}
+
+fn is_zero_u64(n: &u64) -> bool {
+    *n == 0
 }
 
 impl std::fmt::Debug for StorageList {
@@ -4114,6 +4123,9 @@ impl StorageEntry {
 pub struct StorageEntries {
     #[serde(default)]
     pub entries: Vec<StorageEntry>,
+    /// More entries follow: ask again with `offset` past these.
+    #[serde(default, skip_serializing_if = "std::ops::Not::not")]
+    pub more: bool,
 }
 
 /// Body of `storage.read` on a `storage/read` stream (`docs/protocol/storage.md` §4.1).
@@ -5341,7 +5353,7 @@ mod tests {
         assert_eq!(dir_entry.size, 0);
         assert_eq!(dir_entry.modified, 0);
 
-        let entries = StorageEntries { entries: vec![entry, dir_entry] };
+        let entries = StorageEntries { entries: vec![entry, dir_entry], more: false };
         let env = Envelope::new(types::STORAGE_ENTRIES, &entries).unwrap();
         let back: StorageEntries = Envelope::from_cbor(&env.to_cbor()).unwrap().body().unwrap();
         assert_eq!(back, entries);
