@@ -418,8 +418,11 @@ internal class PhoneCalls(
         if (trimmed.isEmpty()) return false
         lastDialed = trimmed to System.currentTimeMillis()
         val uri = Uri.fromParts("tel", trimmed, null)
+        // A code with * or # (call forwarding, USSD) runs the moment it's
+        // dialled: it only goes into the dialer, for the phone's user to press.
+        val code = trimmed.any { it == '*' || it == '#' }
         return runCatching {
-            if (granted(context, Manifest.permission.CALL_PHONE)) {
+            if (!code && granted(context, Manifest.permission.CALL_PHONE)) {
                 val tm = context.getSystemService(TelecomManager::class.java)
                 if (tm != null) {
                     try {
