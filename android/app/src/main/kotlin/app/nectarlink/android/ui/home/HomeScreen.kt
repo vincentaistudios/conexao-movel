@@ -116,6 +116,7 @@ import app.nectarlink.android.mirror.MirrorSession
 import app.nectarlink.android.notifications.NotificationListener
 import app.nectarlink.android.photos.RecentPhotos
 import app.nectarlink.android.recorder.RecorderSession
+import app.nectarlink.android.ui.power.PowerScheduleSheet
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.drawBehind
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
@@ -179,6 +180,7 @@ fun HomeScreen(
     onPairNew: () -> Unit,
     onRefresh: () -> Unit,
     onPower: (pcId: String, sleep: Boolean) -> Unit,
+    onPowerAction: (pcId: String, action: String) -> Unit = { id, act -> onPower(id, act == "sleep" || act == "shutdown") },
     onWake: (pcId: String) -> Unit,
     onSetReconnect: (pcId: String, on: Boolean) -> Unit,
     onRemote: (pcId: String) -> Unit,
@@ -249,6 +251,7 @@ fun HomeScreen(
     var showClipboardHistory by remember { mutableStateOf(false) }
     var showTimeline by remember { mutableStateOf(false) }
     var browseFilesPcId by remember { mutableStateOf<String?>(null) }
+    var powerSchedulePcId by remember { mutableStateOf<String?>(null) }
     var pulsingTarget by remember { mutableStateOf<GuideHighlightTarget?>(null) }
     // Keep a screen of cards composed on each side, so scrolling back does not rebuild them.
     @OptIn(androidx.compose.foundation.ExperimentalFoundationApi::class)
@@ -257,7 +260,7 @@ fun HomeScreen(
     )
     val reducedMotion = LocalReducedMotion.current
     val isGlass = LocalGlassTheme.current
-    val anyModalOpen = browseFilesPcId != null || showClipboardHistory || showTimeline
+    val anyModalOpen = browseFilesPcId != null || powerSchedulePcId != null || showClipboardHistory || showTimeline
 
     LaunchedEffect(highlightTarget) {
         val target = highlightTarget ?: return@LaunchedEffect
@@ -639,6 +642,7 @@ fun HomeScreen(
                     onWebcam = onWebcam,
                     onSetPcAudio = onSetPcAudio,
                     onBrowsePcFiles = { browseFilesPcId = it },
+                    onPowerSchedule = { powerSchedulePcId = it },
                     micOn = micStreamingTo == device.id,
                     onToggleMic = { on -> if (on) onStartMic(device.id) else onStopMic() },
                 )
@@ -757,6 +761,19 @@ fun HomeScreen(
                 onDownloadPcFile(browseDevice.id, remotePath, fileName, onSaved)
             },
             onDismiss = { browseFilesPcId = null },
+        )
+    }
+
+    val powerDevice = powerSchedulePcId?.let { state.device(it) }
+    if (powerDevice != null) {
+        PowerScheduleSheet(
+            device = powerDevice,
+            onWake = { onWake(powerDevice.id) },
+            onSleep = { onPowerAction(powerDevice.id, "sleep") },
+            onLock = { onPowerAction(powerDevice.id, "lock") },
+            onShutdown = { onPowerAction(powerDevice.id, "shutdown") },
+            onRestart = { onPowerAction(powerDevice.id, "reboot") },
+            onDismiss = { powerSchedulePcId = null },
         )
     }
 
@@ -1372,6 +1389,7 @@ private fun PcCard(
     onSetPcAudio: (String, Int?, Boolean?) -> Unit,
     onBrowsePcFiles: (String) -> Unit = {},
     onDesk: (String) -> Unit = {},
+    onPowerSchedule: (String) -> Unit = {},
     /** Whether this phone's microphone streams to this PC now. */
     micOn: Boolean = false,
     onToggleMic: (Boolean) -> Unit = {},
@@ -1741,6 +1759,25 @@ private fun PcCard(
                         )
                         Spacer(Modifier.width(6.dp))
                         ButtonLabel(stringResource(if (ringing) R.string.action_stop_ringing else R.string.action_ring_pc))
+                    }
+                }
+                Row(
+                    modifier = Modifier.fillMaxWidth(),
+                    horizontalArrangement = Arrangement.spacedBy(8.dp),
+                ) {
+                    FilledTonalButton(
+                        contentPadding = CardButtonPadding,
+                        colors = tonal,
+                        onClick = { onPowerSchedule(device.id) },
+                        modifier = Modifier.fillMaxWidth(),
+                    ) {
+                        Icon(
+                            painter = painterResource(R.drawable.ic_power),
+                            contentDescription = null,
+                            modifier = Modifier.size(15.dp),
+                        )
+                        Spacer(Modifier.width(6.dp))
+                        ButtonLabel(stringResource(R.string.power_schedule_button))
                     }
                 }
                 if (device.has("device.pc_actions")) {

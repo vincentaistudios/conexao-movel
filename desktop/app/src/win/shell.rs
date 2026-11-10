@@ -169,6 +169,36 @@ pub fn sleep() -> Result<(), String> {
     }
 }
 
+/// Shuts down the PC (`shutdown.exe /s /t 0`).
+pub fn shutdown() -> Result<(), String> {
+    use std::os::windows::process::CommandExt;
+    const CREATE_NO_WINDOW: u32 = 0x0800_0000;
+    std::process::Command::new("shutdown.exe")
+        .args(["/s", "/t", "0"])
+        .creation_flags(CREATE_NO_WINDOW)
+        .stdin(std::process::Stdio::null())
+        .stdout(std::process::Stdio::null())
+        .stderr(std::process::Stdio::null())
+        .spawn()
+        .map(|_| ())
+        .map_err(|e| format!("failed to shutdown: {e}"))
+}
+
+/// Reboots the PC (`shutdown.exe /r /t 0`).
+pub fn reboot() -> Result<(), String> {
+    use std::os::windows::process::CommandExt;
+    const CREATE_NO_WINDOW: u32 = 0x0800_0000;
+    std::process::Command::new("shutdown.exe")
+        .args(["/r", "/t", "0"])
+        .creation_flags(CREATE_NO_WINDOW)
+        .stdin(std::process::Stdio::null())
+        .stdout(std::process::Stdio::null())
+        .stderr(std::process::Stdio::null())
+        .spawn()
+        .map(|_| ())
+        .map_err(|e| format!("failed to reboot: {e}"))
+}
+
 /// Launches a `.exe` or `.lnk` file on the PC via `ShellExecuteW` with no
 /// command-line arguments (`lpParameters = None`).
 pub fn launch_app(path: &std::path::Path) -> Result<(), String> {

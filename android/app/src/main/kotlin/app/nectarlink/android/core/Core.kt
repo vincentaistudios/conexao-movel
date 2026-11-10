@@ -2042,13 +2042,30 @@ class Core(context: Context, private val scope: CoroutineScope) : EventListener 
 
     /** Locks a PC, or puts it to sleep; says how it went. */
     fun pcPower(id: String, sleep: Boolean) {
+        pcPower(id, if (sleep) "sleep" else "lock")
+    }
+
+    /**
+     * Executes an expanded power action (wake, sleep, shutdown, reboot, lock) on a paired PC.
+     */
+    fun pcPower(id: String, action: String) {
+        val normalizedAction = action.lowercase().trim()
+        if (normalizedAction == "wake") {
+            wake(id)
+            return
+        }
         scope.launch {
             startJob?.join()
             val node = node ?: return@launch
             val name = _state.value.nameOf(id).orEmpty()
             val message = try {
-                node.pcPower(id, sleep)
-                context.getString(if (sleep) R.string.pc_sleeping else R.string.pc_locked, name)
+                node.pcPower(id, normalizedAction)
+                when (normalizedAction) {
+                    "shutdown" -> context.getString(R.string.pc_shutting_down, name)
+                    "reboot" -> context.getString(R.string.pc_rebooting, name)
+                    "sleep" -> context.getString(R.string.pc_sleeping, name)
+                    else -> context.getString(R.string.pc_locked, name)
+                }
             } catch (e: NectarlinkException) {
                 if (e is NectarlinkException.Denied) context.getString(R.string.pc_actions_off, name) else describe(e)
             }
