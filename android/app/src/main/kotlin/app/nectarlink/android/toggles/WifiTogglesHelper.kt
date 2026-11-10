@@ -208,3 +208,4 @@ class WifiTogglesHelper(
         const val WIFI_SCAN_PUSH_DELAY_MS = 1000L
     }
 }
+
