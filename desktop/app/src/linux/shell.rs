@@ -354,6 +354,16 @@ pub fn sleep_system() -> Result<(), String> {
     sleep()
 }
 
+/// Shuts down the system (`systemctl poweroff`).
+pub fn shutdown() -> Result<(), String> {
+    spawn_detached("systemctl", &["poweroff"])
+}
+
+/// Reboots the system (`systemctl reboot`).
+pub fn reboot() -> Result<(), String> {
+    spawn_detached("systemctl", &["reboot"])
+}
+
 fn decode_file_uri(uri: &str) -> Option<PathBuf> {
     let rest = uri.strip_prefix("file://")?;
     let path_part =

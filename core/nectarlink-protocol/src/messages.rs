@@ -1141,7 +1141,7 @@ impl MediaWatch {
 
 // ---- Actions (docs/protocol/actions.md) ----
 
-/// Body of `pc.power`: `lock` or `sleep`.
+/// Body of `pc.power`: `lock`, `sleep`, `shutdown`, or `reboot`.
 #[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
 pub struct PcPower {
     pub action: String,

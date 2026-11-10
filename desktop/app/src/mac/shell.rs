@@ -72,6 +72,24 @@ pub fn sleep() -> Result<(), String> {
     std::process::Command::new("pmset").arg("sleepnow").spawn().map(|_| ()).map_err(|e| e.to_string())
 }
 
+/// Shuts down the Mac.
+pub fn shutdown() -> Result<(), String> {
+    std::process::Command::new("osascript")
+        .args(["-e", "tell application \"System Events\" to shut down"])
+        .spawn()
+        .map(|_| ())
+        .map_err(|e| e.to_string())
+}
+
+/// Reboots the Mac.
+pub fn reboot() -> Result<(), String> {
+    std::process::Command::new("osascript")
+        .args(["-e", "tell application \"System Events\" to restart"])
+        .spawn()
+        .map(|_| ())
+        .map_err(|e| e.to_string())
+}
+
 /// Opens a directory in Finder.
 pub fn open_folder(path: &Path) -> Result<(), String> {
     std::process::Command::new("open").arg(path).spawn().map(|_| ()).map_err(|e| e.to_string())

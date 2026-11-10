@@ -68,6 +68,7 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import app.nectarlink.android.R
 import app.nectarlink.android.core.Core
 import app.nectarlink.android.core.Device
+import app.nectarlink.android.ui.power.PowerScheduleSheet
 import app.nectarlink.android.ui.remote.RemoteMode
 import app.nectarlink.core.Link
 import app.nectarlink.core.MediaAction
@@ -128,6 +129,7 @@ fun DeskScreen(
 
     var draggingVolume by remember { mutableStateOf<Float?>(null) }
     var lastSentVolInt by remember { mutableIntStateOf(-1) }
+    var showPowerSchedule by remember { mutableStateOf(false) }
     val scope = rememberCoroutineScope()
 
     Surface(
@@ -181,11 +183,30 @@ fun DeskScreen(
                     }
                 }
 
-                OutlinedButton(
-                    onClick = onBack,
-                    border = BorderStroke(1.dp, Color(0xFF282C37)),
+                Row(
+                    horizontalArrangement = Arrangement.spacedBy(8.dp),
+                    verticalAlignment = Alignment.CenterVertically,
                 ) {
-                    Text(stringResource(R.string.desk_exit), color = Color(0xFFD1D5DB))
+                    OutlinedButton(
+                        onClick = { showPowerSchedule = true },
+                        border = BorderStroke(1.dp, Color(0xFF282C37)),
+                    ) {
+                        Icon(
+                            painter = painterResource(R.drawable.ic_power),
+                            contentDescription = null,
+                            tint = Color(0xFFD1D5DB),
+                            modifier = Modifier.size(16.dp),
+                        )
+                        Spacer(Modifier.width(6.dp))
+                        Text(stringResource(R.string.power_schedule_button), color = Color(0xFFD1D5DB))
+                    }
+
+                    OutlinedButton(
+                        onClick = onBack,
+                        border = BorderStroke(1.dp, Color(0xFF282C37)),
+                    ) {
+                        Text(stringResource(R.string.desk_exit), color = Color(0xFFD1D5DB))
+                    }
                 }
             }
 
@@ -451,14 +472,26 @@ fun DeskScreen(
                         modifier = Modifier.weight(1f),
                     )
                     DeskActionButton(
-                        label = stringResource(R.string.action_lock_pc),
-                        enabled = device.online,
+                        label = stringResource(R.string.power_schedule_button),
+                        enabled = true,
                         isSecondary = true,
-                        onClick = { core.pcPower(device.id, sleep = false) },
+                        onClick = { showPowerSchedule = true },
                         modifier = Modifier.weight(1f),
                     )
                 }
             }
+        }
+
+        if (showPowerSchedule) {
+            PowerScheduleSheet(
+                device = device,
+                onWake = { core.wake(device.id) },
+                onSleep = { core.pcPower(device.id, "sleep") },
+                onLock = { core.pcPower(device.id, "lock") },
+                onShutdown = { core.pcPower(device.id, "shutdown") },
+                onRestart = { core.pcPower(device.id, "reboot") },
+                onDismiss = { showPowerSchedule = false },
+            )
         }
     }
 }

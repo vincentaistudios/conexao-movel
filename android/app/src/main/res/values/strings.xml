@@ -298,7 +298,18 @@
     <string name="wake_not_ready">Connect to %1$s once so this phone learns its network address.</string>
     <string name="pc_locked">%1$s is locked.</string>
     <string name="pc_sleeping">%1$s is going to sleep.</string>
+    <string name="pc_shutting_down">%1$s is shutting down.</string>
+    <string name="pc_rebooting">%1$s is rebooting.</string>
     <string name="pc_actions_off">Locking and sleep are turned off for this phone on %1$s.</string>
+    <string name="power_schedule_warning_title">Power action: %1$s</string>
+    <string name="power_schedule_warning_shutdown">%1$s will shut down in 60 seconds.</string>
+    <string name="power_schedule_warning_reboot">%1$s will restart in 60 seconds.</string>
+    <string name="power_schedule_warning_sleep">%1$s will sleep in 60 seconds.</string>
+    <string name="power_schedule_warning_lock">%1$s will lock in 60 seconds.</string>
+    <string name="power_schedule_action_cancel">Cancel</string>
+    <string name="power_schedule_action_snooze">Snooze 10m</string>
+    <string name="channel_power_schedule">Power Schedules</string>
+    <string name="channel_power_schedule_desc">Notifications for scheduled PC power actions and sleep timers.</string>
     <string name="channel_links">Links from your PC</string>
     <!-- Play on phone: what a PC plays, streamed to the phone. -->
     <string name="watch_offer_title">Watch from %1$s</string>
@@ -1393,6 +1404,65 @@
     <string name="device_name_in_profile">%1$s (%2$s)</string>
     <string name="profile_work">Work</string>
     <string name="profile_other">Second profile</string>
+
+    <!-- Power & Schedule -->
+    <string name="power_schedule_title">Power &amp; Schedule</string>
+    <string name="power_schedule_button">Power &amp; Schedule</string>
+    <string name="power_schedule_device_subtitle">Power management and automated tasks</string>
+    <string name="power_section_immediate">Immediate Actions</string>
+    <string name="power_action_wake">Wake PC</string>
+    <string name="power_action_sleep">Sleep</string>
+    <string name="power_action_shutdown">Shut down</string>
+    <string name="power_action_restart">Restart</string>
+    <string name="power_action_lock">Lock PC</string>
+    <string name="power_dialog_shutdown_title">Shut down %1$s?</string>
+    <string name="power_dialog_shutdown_message">Are you sure you want to shut down this PC? Any unsaved work will be lost.</string>
+    <string name="power_dialog_shutdown_confirm">Shut down</string>
+    <string name="power_dialog_restart_title">Restart %1$s?</string>
+    <string name="power_dialog_restart_message">Are you sure you want to restart this PC? Any unsaved work will be lost.</string>
+    <string name="power_dialog_restart_confirm">Restart</string>
+    <string name="power_dialog_cancel">Cancel</string>
+    <string name="power_section_timer">Sleep Timer</string>
+    <string name="power_timer_subtitle">Automatically execute an action when time expires</string>
+    <string name="power_timer_pill_15m">15m</string>
+    <string name="power_timer_pill_30m">30m</string>
+    <string name="power_timer_pill_45m">45m</string>
+    <string name="power_timer_pill_1h">1h</string>
+    <string name="power_timer_pill_2h">2h</string>
+    <string name="power_timer_pill_custom">Custom</string>
+    <string name="power_timer_active_title">Timer Active</string>
+    <string name="power_timer_remaining">Remaining: %1$s</string>
+    <string name="power_timer_cancel">Cancel Timer</string>
+    <string name="power_timer_start">Start Timer</string>
+    <string name="power_timer_action_sleep">Sleep</string>
+    <string name="power_timer_action_shutdown">Shut down</string>
+    <string name="power_timer_custom_dialog_title">Custom Timer</string>
+    <string name="power_timer_custom_dialog_minutes">Minutes</string>
+    <string name="power_timer_custom_dialog_set">Set</string>
+    <string name="power_section_schedules">Recurring Schedules</string>
+    <string name="power_schedule_empty">No recurring power schedules yet.</string>
+    <string name="power_schedule_add">New Schedule</string>
+    <string name="power_schedule_dialog_title">New Power Schedule</string>
+    <string name="power_schedule_action_label">Action</string>
+    <string name="power_schedule_action_wake">Wake PC (WoL)</string>
+    <string name="power_schedule_action_sleep">Sleep</string>
+    <string name="power_schedule_action_shutdown">Shut down</string>
+    <string name="power_schedule_time_label">Time</string>
+    <string name="power_schedule_days_label">Repeat on</string>
+    <string name="power_schedule_days_weekdays">Weekdays</string>
+    <string name="power_schedule_days_everyday">Every day</string>
+    <string name="power_schedule_days_weekends">Weekends</string>
+    <string name="power_schedule_save">Save</string>
+    <string name="power_schedule_delete">Delete</string>
+    <string name="power_schedule_hour_label">Hour</string>
+    <string name="power_schedule_minute_label">Minute</string>
+    <string name="day_sun_letter">S</string>
+    <string name="day_mon_letter">M</string>
+    <string name="day_tue_letter">T</string>
+    <string name="day_wed_letter">W</string>
+    <string name="day_thu_letter">T</string>
+    <string name="day_fri_letter">F</string>
+    <string name="day_sat_letter">S</string>
 </resources>
 
 

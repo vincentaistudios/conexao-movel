@@ -828,6 +828,7 @@ private fun App(
                                     onPairNew = { pairing = true },
                                     onRefresh = core::refresh,
                                     onPower = core::pcPower,
+                                    onPowerAction = core::pcPower,
                                     onWake = core::wake,
                                     onSetReconnect = core::setReconnect,
                                     onRemote = { id ->

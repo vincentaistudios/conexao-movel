@@ -46,6 +46,9 @@
         tools:ignore="ProtectedPermissions" />
     <uses-permission android:name="android.permission.POST_NOTIFICATIONS" />
     <uses-permission android:name="android.permission.POST_PROMOTED_NOTIFICATIONS" />
+    <!-- Exact alarms for scheduled PC power actions and sleep timers. -->
+    <uses-permission android:name="android.permission.SCHEDULE_EXACT_ALARM" />
+    <uses-permission android:name="android.permission.USE_EXACT_ALARM" />
     <!-- Scanning the pairing QR code. -->
     <uses-permission android:name="android.permission.CAMERA" />
     <!-- Find my phone. -->
@@ -425,5 +428,15 @@
         <receiver
             android:name=".widget.PcWidgetProvider$ActionReceiver"
             android:exported="false" />
+
+        <!-- Scheduled power management and countdown sleep timers for paired PCs. -->
+        <receiver
+            android:name=".power.PowerScheduleReceiver"
+            android:exported="false">
+            <intent-filter>
+                <action android:name="android.intent.action.BOOT_COMPLETED" />
+                <action android:name="android.intent.action.MY_PACKAGE_REPLACED" />
+            </intent-filter>
+        </receiver>
     </application>
 </manifest>

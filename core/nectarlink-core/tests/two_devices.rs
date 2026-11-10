@@ -1792,9 +1792,14 @@ async fn phones_lock_pcs_and_links_open_on_either_side() {
 
     with_timeout("lock", phone.node.pc_power(pc_id, PowerAction::Lock)).await.expect("locked");
     with_timeout("sleep", phone.node.pc_power(pc_id, PowerAction::Sleep)).await.expect("asleep");
+    with_timeout("shutdown", phone.node.pc_power(pc_id, PowerAction::Shutdown)).await.expect("shutdown");
+    with_timeout("reboot", phone.node.pc_power(pc_id, PowerAction::Reboot)).await.expect("reboot");
     // The PC answers first and acts a moment later.
     tokio::time::sleep(Duration::from_millis(800)).await;
-    assert_eq!(*pc.platform.power.lock().unwrap(), [PowerAction::Lock, PowerAction::Sleep]);
+    assert_eq!(
+        *pc.platform.power.lock().unwrap(),
+        [PowerAction::Lock, PowerAction::Sleep, PowerAction::Shutdown, PowerAction::Reboot]
+    );
 
     // A phone doesn't lock or sleep on request.
     let phone_power = pc.node.pc_power(phone_id, PowerAction::Lock).await;

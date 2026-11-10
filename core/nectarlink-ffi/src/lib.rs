@@ -3904,11 +3904,13 @@ impl NectarlinkNode {
         self.node.set_away_mode(enabled);
     }
 
-    /// Locks a paired PC (`sleep`: puts it to sleep instead).
-    pub async fn pc_power(&self, id: String, sleep: bool) -> Result<()> {
+    /// Sends a power action ("lock", "sleep", "shutdown", "reboot") to a paired PC.
+    pub async fn pc_power(&self, id: String, action: String) -> Result<()> {
         let id = parse_id(&id)?;
+        let action = core::PowerAction::parse(action.trim().to_ascii_lowercase().as_str()).ok_or_else(|| {
+            NectarlinkError::Internal { reason: format!("unknown power action: {action}") }
+        })?;
         let node = self.node.clone();
-        let action = if sleep { core::PowerAction::Sleep } else { core::PowerAction::Lock };
         self.run(async move { Ok(node.pc_power(id, action).await?) }).await
     }
 

@@ -296,7 +296,18 @@
     <string name="wake_not_ready">Conecte-se a %1$s uma vez para que o celular reconheça o endereço de rede dele.</string>
     <string name="pc_locked">%1$s foi bloqueado.</string>
     <string name="pc_sleeping">%1$s está entrando em suspensão.</string>
+    <string name="pc_shutting_down">%1$s está desligando.</string>
+    <string name="pc_rebooting">%1$s está reiniciando.</string>
     <string name="pc_actions_off">As ações de bloquear e suspender estão desativadas para este celular em %1$s.</string>
+    <string name="power_schedule_warning_title">Ação de energia: %1$s</string>
+    <string name="power_schedule_warning_shutdown">%1$s será desligado em 60 segundos.</string>
+    <string name="power_schedule_warning_reboot">%1$s será reiniciado em 60 segundos.</string>
+    <string name="power_schedule_warning_sleep">%1$s entrará em suspensão em 60 segundos.</string>
+    <string name="power_schedule_warning_lock">%1$s será bloqueado em 60 segundos.</string>
+    <string name="power_schedule_action_cancel">Cancelar</string>
+    <string name="power_schedule_action_snooze">Adiar 10m</string>
+    <string name="channel_power_schedule">Agendamentos de Energia</string>
+    <string name="channel_power_schedule_desc">Notificações de ações de energia agendadas e temporizador de suspensão.</string>
     <string name="channel_links">Links do PC</string>
     <!-- Play on phone: what a PC plays, streamed to the phone. -->
     <string name="watch_offer_title">Assistir de %1$s</string>
@@ -1390,6 +1401,65 @@
     <string name="device_name_in_profile">%1$s (%2$s)</string>
     <string name="profile_work">Trabalho</string>
     <string name="profile_other">Segundo perfil</string>
+
+    <!-- Power & Schedule -->
+    <string name="power_schedule_title">Energia e Agendamento</string>
+    <string name="power_schedule_button">Energia e Agendamento</string>
+    <string name="power_schedule_device_subtitle">Gerenciamento de energia e tarefas automáticas</string>
+    <string name="power_section_immediate">Ações Imediatas</string>
+    <string name="power_action_wake">Ligar PC</string>
+    <string name="power_action_sleep">Suspender</string>
+    <string name="power_action_shutdown">Desligar</string>
+    <string name="power_action_restart">Reiniciar</string>
+    <string name="power_action_lock">Bloquear PC</string>
+    <string name="power_dialog_shutdown_title">Desligar %1$s?</string>
+    <string name="power_dialog_shutdown_message">Tem certeza de que deseja desligar este computador? Qualquer trabalho não salvo será perdido.</string>
+    <string name="power_dialog_shutdown_confirm">Desligar</string>
+    <string name="power_dialog_restart_title">Reiniciar %1$s?</string>
+    <string name="power_dialog_restart_message">Tem certeza de que deseja reiniciar este computador? Qualquer trabalho não salvo será perdido.</string>
+    <string name="power_dialog_restart_confirm">Reiniciar</string>
+    <string name="power_dialog_cancel">Cancelar</string>
+    <string name="power_section_timer">Temporizador de Desligamento</string>
+    <string name="power_timer_subtitle">Executa uma ação automaticamente ao terminar o tempo</string>
+    <string name="power_timer_pill_15m">15m</string>
+    <string name="power_timer_pill_30m">30m</string>
+    <string name="power_timer_pill_45m">45m</string>
+    <string name="power_timer_pill_1h">1h</string>
+    <string name="power_timer_pill_2h">2h</string>
+    <string name="power_timer_pill_custom">Personalizado</string>
+    <string name="power_timer_active_title">Temporizador Ativo</string>
+    <string name="power_timer_remaining">Restante: %1$s</string>
+    <string name="power_timer_cancel">Cancelar Temporizador</string>
+    <string name="power_timer_start">Iniciar Temporizador</string>
+    <string name="power_timer_action_sleep">Suspender</string>
+    <string name="power_timer_action_shutdown">Desligar</string>
+    <string name="power_timer_custom_dialog_title">Temporizador Personalizado</string>
+    <string name="power_timer_custom_dialog_minutes">Minutos</string>
+    <string name="power_timer_custom_dialog_set">Definir</string>
+    <string name="power_section_schedules">Agendamentos Recorrentes</string>
+    <string name="power_schedule_empty">Nenhum agendamento de energia recorrente cadastrado.</string>
+    <string name="power_schedule_add">Novo Agendamento</string>
+    <string name="power_schedule_dialog_title">Novo Agendamento de Energia</string>
+    <string name="power_schedule_action_label">Ação</string>
+    <string name="power_schedule_action_wake">Ligar PC (WoL)</string>
+    <string name="power_schedule_action_sleep">Suspender</string>
+    <string name="power_schedule_action_shutdown">Desligar</string>
+    <string name="power_schedule_time_label">Horário</string>
+    <string name="power_schedule_days_label">Repetir em</string>
+    <string name="power_schedule_days_weekdays">Dias Úteis</string>
+    <string name="power_schedule_days_everyday">Todos os Dias</string>
+    <string name="power_schedule_days_weekends">Fins de Semana</string>
+    <string name="power_schedule_save">Salvar</string>
+    <string name="power_schedule_delete">Excluir</string>
+    <string name="power_schedule_hour_label">Hora</string>
+    <string name="power_schedule_minute_label">Minuto</string>
+    <string name="day_sun_letter">D</string>
+    <string name="day_mon_letter">S</string>
+    <string name="day_tue_letter">T</string>
+    <string name="day_wed_letter">Q</string>
+    <string name="day_thu_letter">Q</string>
+    <string name="day_fri_letter">S</string>
+    <string name="day_sat_letter">S</string>
 </resources>
 
 
