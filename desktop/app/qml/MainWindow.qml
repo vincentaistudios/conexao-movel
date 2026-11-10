@@ -3,6 +3,7 @@ import QtQuick
 import QtQuick.Window
 import QtQuick.Effects
 import app.nectarlink
+import "components"
 
 // The main window: navigation rail, title bar and pages. Before any device
 // is paired it shows the welcome (pairing) screen instead.
@@ -119,7 +120,7 @@ NativeWindow {
 
     width: normalWidth
     height: normalHeight
-    title: "NectarLink"
+    title: "Conexão Móvel"
 
     function screenKey(s) {
         if (!s) return ""
@@ -562,19 +563,17 @@ NativeWindow {
         color: "transparent"
         property string hoveredNav: ""
 
-        Rectangle {
+        Item {
             id: mark
             anchors.horizontalCenter: parent.horizontalCenter
-            // Centered on the top bar, level with the page title and the window buttons.
             y: (Theme.topBarHeight - height) / 2
             width: 38; height: 38
-            radius: Theme.radiusSm
-            color: Theme.graphite ? Theme.surfaceContent : Theme.primary
-            Icon {
+            Image {
                 anchors.centerIn: parent
-                path: Icons.mark
-                stroke: 2.4
-                color: Theme.graphite ? Theme.surface : Theme.primaryContent
+                width: 34; height: 34
+                source: "file:///usr/share/icons/hicolor/scalable/apps/sys-device-link.svg"
+                smooth: true
+                mipmap: true
             }
         }
         Column {
@@ -649,6 +648,17 @@ NativeWindow {
                 onClicked: window.page = "deck"
             }
             NavItem {
+                iconPath: Icons.download
+                text: qsTr("Downloads")
+                selected: window.page === "downloads"
+                activeHover: rail.hoveredNav === "downloads"
+                onHoveredChanged: {
+                    if (hovered) rail.hoveredNav = "downloads"
+                    else if (rail.hoveredNav === "downloads") rail.hoveredNav = ""
+                }
+                onClicked: window.page = "downloads"
+            }
+            NavItem {
                 iconPath: Icons.book
                 text: qsTr("Guide")
                 selected: window.page === "guide"
@@ -712,6 +722,7 @@ NativeWindow {
                 anchors.verticalCenter: parent.verticalCenter
                 text: window.page === "home" ? qsTr("Home")
                     : window.page === "timeline" ? qsTr("Timeline")
+                    : window.page === "downloads" ? qsTr("Downloads de Mídia")
                     : window.page === "messages" ? qsTr("Messages")
                     : window.page === "calls" ? qsTr("Calls")
                     : window.page === "photos" ? qsTr("Photos")
@@ -926,15 +937,16 @@ NativeWindow {
                 source: {
                     if (!active) return ""
                     switch (window.page) {
-                    case "timeline": return "qrc:/qt/qml/app/nectarlink/qml/pages/TimelinePage.qml"
-                    case "messages": return "qrc:/qt/qml/app/nectarlink/qml/pages/MessagesPage.qml"
-                    case "calls": return "qrc:/qt/qml/app/nectarlink/qml/pages/CallsPage.qml"
-                    case "photos": return "qrc:/qt/qml/app/nectarlink/qml/pages/PhotosPage.qml"
-                    case "apps": return "qrc:/qt/qml/app/nectarlink/qml/pages/AppsPage.qml"
-                    case "deck": return "qrc:/qt/qml/app/nectarlink/qml/pages/DeckPage.qml"
-                    case "guide": return "qrc:/qt/qml/app/nectarlink/qml/pages/FeaturesGuidePage.qml"
-                    case "settings": return "qrc:/qt/qml/app/nectarlink/qml/pages/SettingsPage.qml"
-                    default: return "qrc:/qt/qml/app/nectarlink/qml/pages/HomePage.qml"
+                    case "downloads": return "pages/DownloadsPage.qml"
+                    case "timeline": return "pages/TimelinePage.qml"
+                    case "messages": return "pages/MessagesPage.qml"
+                    case "calls": return "pages/CallsPage.qml"
+                    case "photos": return "pages/PhotosPage.qml"
+                    case "apps": return "pages/AppsPage.qml"
+                    case "deck": return "pages/DeckPage.qml"
+                    case "guide": return "pages/FeaturesGuidePage.qml"
+                    case "settings": return "pages/SettingsPage.qml"
+                    default: return "pages/HomePage.qml"
                     }
                 }
                 onLoaded: {
@@ -978,22 +990,22 @@ NativeWindow {
     }
 
     StarPrompt {
-        eligible: AppController.status === "ready" && !window.showWalkthrough && window.active
-        onStarred: Qt.openUrlExternally("https://github.com/thtbee/nectarlink")
+        eligible: false
+        visible: false
     }
 
     // ---- First run ----
     Loader {
         anchors.fill: parent
         active: AppController.status !== "ready"
-        source: active ? "qrc:/qt/qml/app/nectarlink/qml/pages/WelcomePage.qml" : ""
+        source: active ? "pages/WelcomePage.qml" : ""
     }
 
     Loader {
         id: walkthroughLoader
         anchors.fill: parent
         active: window.showWalkthrough
-        source: active ? "qrc:/qt/qml/app/nectarlink/qml/pages/WalkthroughPage.qml" : ""
+        source: active ? "pages/WalkthroughPage.qml" : ""
         onLoaded: {
             if ("deviceId" in item)
                 item.deviceId = Qt.binding(() => window.currentDeviceId)
@@ -1021,7 +1033,7 @@ NativeWindow {
             id: pairingLoader
             width: parent.width
             active: pairingSheet.opened
-            source: active ? "qrc:/qt/qml/app/nectarlink/qml/pages/PairingPanel.qml" : ""
+            source: active ? "pages/PairingPanel.qml" : ""
             onLoaded: {
                 item.width = Qt.binding(() => pairingLoader.width)
                 item.running = Qt.binding(() => pairingSheet.opened)
@@ -1217,7 +1229,7 @@ NativeWindow {
         id: doctorLoader
         anchors.fill: parent
         active: false
-        source: active ? "qrc:/qt/qml/app/nectarlink/qml/components/DoctorSheet.qml" : ""
+        source: active ? "components/DoctorSheet.qml" : ""
         onLoaded: item.open()
     }
     Connections {
@@ -1244,7 +1256,7 @@ NativeWindow {
         id: commandPaletteLoader
         anchors.fill: parent
         active: AppController.commandPaletteOpen
-        source: active ? "qrc:/qt/qml/app/nectarlink/qml/components/CommandPalette.qml" : ""
+        source: active ? "components/CommandPalette.qml" : ""
     }
 
     Toast {
