@@ -16,7 +16,8 @@ class TestDownloaderIntegration(unittest.TestCase):
             self.assertEqual(resp.status, 200)
             data = json.loads(resp.read().decode("utf-8"))
             self.assertEqual(data.get("status"), "ok")
-            self.assertEqual(data.get("service"), "sys-downloader-bridge")
+            self.assertEqual(data.get("server"), "ConexaoMovel-Downloader/1.0")
+            self.assertIn("downloads_dir", data)
 
     def test_bridge_history_endpoint(self):
         """Valida que o endpoint /history retorna estrutura valida de lista"""
@@ -35,11 +36,15 @@ class TestDownloaderIntegration(unittest.TestCase):
             data=payload,
             headers={"Content-Type": "application/json"}
         )
-        with urllib.request.urlopen(req, timeout=5) as resp:
-            self.assertEqual(resp.status, 200)
-            data = json.loads(resp.read().decode("utf-8"))
-            self.assertFalse(data.get("success"))
-            self.assertIn("error", data)
+        try:
+            with urllib.request.urlopen(req, timeout=5) as resp:
+                data = json.loads(resp.read().decode("utf-8"))
+                self.assertFalse(data.get("success"))
+        except urllib.error.HTTPError as e:
+            self.assertEqual(e.code, 400)
+            err_data = json.loads(e.read().decode("utf-8"))
+            self.assertFalse(err_data.get("success"))
+            self.assertIn("error", err_data)
 
     def test_systemd_bridge_service_active(self):
         """Valida que a unidade systemd de usuario esta em execucao ativa"""

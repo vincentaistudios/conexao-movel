@@ -1,0 +1,55 @@
+# SPDX-License-Identifier: GPL-3.0-or-later
+# Orquestracao de simulacao e testes multiplataforma (Android e Windows via Docker/KVM)
+services:
+  mobile-android:
+    image: reddroid/reddroid:12.0.0-latest
+    container_name: sim-android
+    privileged: true
+    devices:
+      - /dev/kvm:/dev/kvm
+    ports:
+      - "5555:5555"
+    environment:
+      - androidboot.redroid_width=${SIM_WIDTH:-1080}
+      - androidboot.redroid_height=${SIM_HEIGHT:-2400}
+      - androidboot.redroid_dpi=${SIM_DPI:-420}
+    deploy:
+      resources:
+        limits:
+          memory: 2G
+          cpus: '2.0'
+    networks:
+      - sim_bridge
+    profiles:
+      - mobile
+      - all
+
+  desktop-windows:
+    image: dockurr/windows:latest
+    container_name: sim-windows
+    privileged: true
+    devices:
+      - /dev/kvm:/dev/kvm
+    environment:
+      - VERSION=${WIN_VERSION:-11}
+      - RAM_SIZE=${WIN_RAM:-4G}
+      - CPU_CORES=${WIN_CPUS:-2}
+    ports:
+      - "8006:8006"
+      - "3389:3389/tcp"
+    volumes:
+      - /home/Vincent/Downloads/Compartilhar-com-Amigos:/shared:ro
+    deploy:
+      resources:
+        limits:
+          memory: 4G
+          cpus: '2.0'
+    networks:
+      - sim_bridge
+    profiles:
+      - windows
+      - all
+
+networks:
+  sim_bridge:
+    driver: bridge

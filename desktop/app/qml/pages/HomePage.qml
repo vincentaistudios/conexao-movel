@@ -1281,7 +1281,7 @@ Item {
             Grid {
                 id: actions
                 width: parent.width
-                columns: width > 640 ? 4 : 2
+                columns: width > 900 ? 5 : (width > 640 ? 4 : 2)
                 spacing: 12
                 readonly property real tileWidth: (width - spacing * (columns - 1)) / columns
 
@@ -1349,6 +1349,16 @@ Item {
                         if (home.ringing) ringTimeout.restart()
                         AppController.ring(home.deviceId, home.ringing)
                     }
+                }
+                ActionTile {
+                    width: actions.tileWidth
+                    deviceOnline: true
+                    queueableWhenOffline: true
+                    feature: ({ state: "available" })
+                    title: qsTr("Baixar mídia")
+                    subtitle: ""
+                    iconPath: Icons.download
+                    onClicked: window.page = "downloads"
                 }
             }
             FileDialog {
