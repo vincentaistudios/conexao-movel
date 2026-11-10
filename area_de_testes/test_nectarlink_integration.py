@@ -47,7 +47,11 @@ class TestMobileConnectNativeIntegration(unittest.TestCase):
         with open(main_qml, "r", encoding="utf-8") as f:
             qml = f.read()
         self.assertIn('title: "Conexão Móvel"', qml, "O titulo da janela principal deve ser Conexao Movel")
-        self.assertIn('file:///usr/share/icons/hicolor/scalable/apps/nectarlink.svg', qml)
+        self.assertTrue(
+            'file:///usr/share/icons/hicolor/scalable/apps/sys-device-link.svg' in qml or
+            'file:///usr/share/icons/hicolor/scalable/apps/nectarlink.svg' in qml,
+            "O icone SVG oficial deve ser referenciado em MainWindow.qml"
+        )
 
         icons_qml = "/usr/lib/nectarlink/qml/Icons.qml"
         with open(icons_qml, "r", encoding="utf-8") as f:

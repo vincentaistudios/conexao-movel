@@ -998,6 +998,10 @@ impl From<PhoneToggles> for core::PhoneToggles {
             brightness: t.brightness,
             wifi: t.wifi,
             bluetooth: t.bluetooth,
+            wifi_ssid: None,
+            wifi_signal: None,
+            wifi_networks: None,
+            bt_devices: None,
         }
     }
 }

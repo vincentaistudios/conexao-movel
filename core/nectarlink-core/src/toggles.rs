@@ -69,8 +69,13 @@ pub fn required_capability(id: &str) -> Option<&'static str> {
         toggle_ids::FLASHLIGHT => TOGGLES_FLASHLIGHT,
         toggle_ids::VOLUME => TOGGLES_VOLUME,
         toggle_ids::BRIGHTNESS => TOGGLES_BRIGHTNESS,
-        toggle_ids::WIFI | toggle_ids::HOTSPOT => TOGGLES_WIFI,
-        toggle_ids::BLUETOOTH => TOGGLES_BLUETOOTH,
+        toggle_ids::WIFI
+        | toggle_ids::HOTSPOT
+        | toggle_ids::WIFI_SCAN
+        | toggle_ids::WIFI_CONNECT => TOGGLES_WIFI,
+        toggle_ids::BLUETOOTH
+        | toggle_ids::BT_CONNECT
+        | toggle_ids::BT_DISCONNECT => TOGGLES_BLUETOOTH,
         toggle_ids::PC_ACTIVE => TOGGLES_READ,
         _ => return None,
     })
