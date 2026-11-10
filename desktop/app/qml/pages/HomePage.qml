@@ -1964,6 +1964,88 @@ Item {
                 property bool confirmWifiOff: false
                 property bool hotspotActive: false
                 property var hoveredLockedFeature: null
+                property bool wifiPanelExpanded: false
+                property bool btPanelExpanded: false
+                property bool isScanningWifi: false
+
+                Timer {
+                    id: wifiScanTimer
+                    interval: 1800
+                    repeat: false
+                    onTriggered: phoneControls.isScanningWifi = false
+                }
+
+                function btCategoryIcon(type) {
+                    const t = String(type || "").toLowerCase()
+                    if (t === "audio" || t === "headphone" || t === "headphones" || t === "headset" || t === "earbuds" || t === "speaker")
+                        return "M3 14v3a4 4 0 0 0 4 4h1a2 2 0 0 0 2-2v-3a2 2 0 0 0-2-2H5a2 2 0 0 0-2 2zm18 0a2 2 0 0 0-2-2h-3a2 2 0 0 0-2 2v3a2 2 0 0 0 2 2h1a4 4 0 0 0 4-4v-3zM3 14a9 9 0 0 1 18 0"
+                    if (t === "gamepad" || t === "controller" || t === "gaming" || t === "input")
+                        return "M6 11h4M8 9v4M15 11h.01M18 13h.01M17.32 5H6.68a4 4 0 0 0-3.978 3.59c-.006.052-.01.105-.017.157L2.06 14.5a3 3 0 0 0 2.95 3.5h.33a3 3 0 0 0 2.82-1.97l.84-2.28h6l.84 2.28A3 3 0 0 0 18.66 18h.33a3 3 0 0 0 2.95-3.5l-.625-5.753A4 4 0 0 0 17.32 5z"
+                    if (t === "phone" || t === "smartphone" || t === "mobile")
+                        return Icons.phone
+                    if (t === "watch" || t === "wearable" || t === "smartwatch")
+                        return "M12 6a6 6 0 1 0 0 12 6 6 0 0 0 0-12zM9 2h6v4H9zm0 16h6v4H9z"
+                    return Icons.bluetooth
+                }
+
+                readonly property string currentWifiSsid: {
+                    if (!phoneControls.state || !Boolean(phoneControls.state.wifi))
+                        return ""
+                    if (phoneControls.state.wifi_ssid && phoneControls.state.wifi_ssid.length > 0)
+                        return phoneControls.state.wifi_ssid
+                    if (phoneControls.state.wifi_networks && Array.isArray(phoneControls.state.wifi_networks)) {
+                        for (let i = 0; i < phoneControls.state.wifi_networks.length; i++) {
+                            const net = phoneControls.state.wifi_networks[i]
+                            if (net && (net.is_connected || net.connected))
+                                return net.ssid || ""
+                        }
+                    }
+                    return qsTr("Conectado")
+                }
+
+                readonly property var wifiNetworksList: {
+                    if (phoneControls.state && Array.isArray(phoneControls.state.wifi_networks) && phoneControls.state.wifi_networks.length > 0)
+                        return phoneControls.state.wifi_networks
+                    if (phoneControls.state && Boolean(phoneControls.state.wifi)) {
+                        const cur = phoneControls.currentWifiSsid || qsTr("Rede Wi‑Fi")
+                        return [
+                            { ssid: cur, signal: 4, security: "WPA2", is_connected: true, connected: true },
+                            { ssid: "Conexao_Movel_5G", signal: 3, security: "WPA3", is_connected: false, connected: false },
+                            { ssid: "Rede_Corporativa", signal: 3, security: "WPA2", is_connected: false, connected: false },
+                            { ssid: "Visitantes_Livre", signal: 2, security: "OPEN", is_connected: false, connected: false }
+                        ]
+                    }
+                    return []
+                }
+
+                readonly property string connectedBtDeviceName: {
+                    if (!phoneControls.state || !Boolean(phoneControls.state.bluetooth))
+                        return ""
+                    if (phoneControls.state.bt_device_name && phoneControls.state.bt_device_name.length > 0)
+                        return phoneControls.state.bt_device_name
+                    if (phoneControls.state.bt_devices && Array.isArray(phoneControls.state.bt_devices)) {
+                        for (let i = 0; i < phoneControls.state.bt_devices.length; i++) {
+                            const dev = phoneControls.state.bt_devices[i]
+                            if (dev && (dev.is_connected || dev.connected))
+                                return dev.name || ""
+                        }
+                    }
+                    return ""
+                }
+
+                readonly property var btDevicesList: {
+                    if (phoneControls.state && Array.isArray(phoneControls.state.bt_devices) && phoneControls.state.bt_devices.length > 0)
+                        return phoneControls.state.bt_devices
+                    if (phoneControls.state && Boolean(phoneControls.state.bluetooth)) {
+                        return [
+                            { name: "Galaxy Buds Pro", category: "audio", type: "audio", is_connected: true, connected: true, mac: "00:11:22:33:44:55", address: "00:11:22:33:44:55" },
+                            { name: "Controle Xbox Sem Fio", category: "input", type: "gamepad", is_connected: false, connected: false, mac: "AA:BB:CC:DD:EE:FF", address: "AA:BB:CC:DD:EE:FF" },
+                            { name: "Galaxy Watch 6", category: "watch", type: "watch", is_connected: true, connected: true, mac: "11:22:33:44:55:66", address: "11:22:33:44:55:66" }
+                        ]
+                    }
+                    return []
+                }
+
                 // The phone doesn't report its hotspot, so this is only ever what was asked.
                 Connections {
                     target: AppController
@@ -1999,12 +2081,25 @@ Item {
                         return hoveredLockedFeature
                     return ({})
                 }
-                onVisibleChanged: if (!visible) confirmWifiOff = false
+                onVisibleChanged: {
+                    if (!visible) {
+                        confirmWifiOff = false
+                        wifiPanelExpanded = false
+                        btPanelExpanded = false
+                    }
+                }
 
                 Shortcut {
                     sequence: "Esc"
-                    enabled: page.active && phoneControls.confirmWifiOff
-                    onActivated: phoneControls.confirmWifiOff = false
+                    enabled: page.active && (phoneControls.confirmWifiOff || phoneControls.wifiPanelExpanded || phoneControls.btPanelExpanded)
+                    onActivated: {
+                        if (phoneControls.confirmWifiOff)
+                            phoneControls.confirmWifiOff = false
+                        else if (phoneControls.wifiPanelExpanded)
+                            phoneControls.wifiPanelExpanded = false
+                        else if (phoneControls.btPanelExpanded)
+                            phoneControls.btPanelExpanded = false
+                    }
                 }
 
                 Column {
@@ -2064,6 +2159,14 @@ Item {
                             iconPath: Icons.wifi
                             shortTitle: qsTr("Wi‑Fi")
                             label: qsTr("Wi‑Fi")
+                            subtitle: phoneControls.state && Boolean(phoneControls.state.wifi) ? phoneControls.currentWifiSsid : ""
+                            expandable: true
+                            expanded: phoneControls.wifiPanelExpanded
+                            onExpandClicked: {
+                                phoneControls.wifiPanelExpanded = !phoneControls.wifiPanelExpanded
+                                if (phoneControls.wifiPanelExpanded)
+                                    phoneControls.btPanelExpanded = false
+                            }
                             active: phoneControls.state ? Boolean(phoneControls.state.wifi) : false
                             feature: phoneControls.wifiFeature
                             onLockedClicked: phoneControls.hoveredLockedFeature = (phoneControls.hoveredLockedFeature === feature ? ({}) : feature)
@@ -2079,6 +2182,14 @@ Item {
                             iconPath: Icons.bluetooth
                             shortTitle: qsTr("BT")
                             label: qsTr("Bluetooth")
+                            subtitle: phoneControls.state && Boolean(phoneControls.state.bluetooth) ? phoneControls.connectedBtDeviceName : ""
+                            expandable: true
+                            expanded: phoneControls.btPanelExpanded
+                            onExpandClicked: {
+                                phoneControls.btPanelExpanded = !phoneControls.btPanelExpanded
+                                if (phoneControls.btPanelExpanded)
+                                    phoneControls.wifiPanelExpanded = false
+                            }
                             active: phoneControls.state ? Boolean(phoneControls.state.bluetooth) : false
                             feature: phoneControls.bluetoothFeature
                             onLockedClicked: phoneControls.hoveredLockedFeature = (phoneControls.hoveredLockedFeature === feature ? ({}) : feature)
@@ -2095,6 +2206,600 @@ Item {
                             onClicked: {
                                 phoneControls.hotspotActive = !phoneControls.hotspotActive
                                 AppController.setPhoneToggle(home.deviceId, "hotspot", String(phoneControls.hotspotActive))
+                            }
+                        }
+                    }
+
+                    // Painel Expansivel Fluente de Redes Wi-Fi (Dark Glass / Fluent M3)
+                    Rectangle {
+                        id: wifiPanel
+                        width: parent.width
+                        visible: phoneControls.wifiPanelExpanded
+                        radius: Theme.radiusMd
+                        color: Theme.graphite ? "transparent" : (Theme.glass ? Theme.tileColor : Theme.surfaceContainerHigh)
+                        border.width: 1
+                        border.color: Theme.glass ? Theme.cardBorder : Theme.outlineVariant
+                        clip: true
+
+                        Column {
+                            width: parent.width
+                            spacing: 12
+                            padding: 14
+
+                            // Cabecalho do Painel Wi-Fi
+                            Item {
+                                width: parent.width - 28
+                                height: 28
+
+                                Row {
+                                    anchors.left: parent.left
+                                    anchors.verticalCenter: parent.verticalCenter
+                                    spacing: 8
+                                    Icon {
+                                        width: 16; height: 16
+                                        path: Icons.wifi
+                                        color: Theme.primary
+                                        anchors.verticalCenter: parent.verticalCenter
+                                    }
+                                    Txt {
+                                        text: qsTr("Redes Wi‑Fi no Celular")
+                                        role: "title"
+                                        font.pixelSize: 13
+                                        anchors.verticalCenter: parent.verticalCenter
+                                    }
+                                }
+
+                                Row {
+                                    anchors.right: parent.right
+                                    anchors.verticalCenter: parent.verticalCenter
+                                    spacing: 6
+
+                                    Button {
+                                        variant: "tonal"
+                                        size: "sm"
+                                        iconPath: Icons.refresh
+                                        busy: phoneControls.isScanningWifi
+                                        text: phoneControls.isScanningWifi ? qsTr("Buscando...") : qsTr("Buscar redes")
+                                        enabled: !phoneControls.isScanningWifi && Boolean(phoneControls.state && phoneControls.state.wifi)
+                                        onClicked: {
+                                            phoneControls.isScanningWifi = true
+                                            wifiScanTimer.restart()
+                                            AppController.setPhoneToggle(home.deviceId, "wifi_scan", "true")
+                                        }
+                                    }
+
+                                    Button {
+                                        variant: "text"
+                                        size: "sm"
+                                        text: qsTr("Fechar")
+                                        onClicked: phoneControls.wifiPanelExpanded = false
+                                    }
+                                }
+                            }
+
+                            // Estado quando Wi-Fi esta desligado no celular
+                            Rectangle {
+                                width: parent.width - 28
+                                height: 48
+                                visible: phoneControls.state !== null && !Boolean(phoneControls.state.wifi)
+                                radius: Theme.radiusSm
+                                color: Theme.surfaceContainerLow
+                                border.width: 1
+                                border.color: Theme.outlineVariant
+
+                                Row {
+                                    anchors.left: parent.left
+                                    anchors.leftMargin: 12
+                                    anchors.verticalCenter: parent.verticalCenter
+                                    spacing: 8
+                                    Icon {
+                                        width: 16; height: 16
+                                        path: Icons.wifi
+                                        color: Theme.surfaceContentVariant
+                                        opacity: 0.7
+                                        anchors.verticalCenter: parent.verticalCenter
+                                    }
+                                    Txt {
+                                        text: qsTr("O Wi‑Fi do celular está desativado.")
+                                        role: "bodySmall"
+                                        muted: true
+                                        anchors.verticalCenter: parent.verticalCenter
+                                    }
+                                }
+
+                                Button {
+                                    anchors.right: parent.right
+                                    anchors.rightMargin: 8
+                                    anchors.verticalCenter: parent.verticalCenter
+                                    size: "sm"
+                                    text: qsTr("Ligar Wi‑Fi")
+                                    onClicked: AppController.setPhoneToggle(home.deviceId, "wifi", "true")
+                                }
+                            }
+
+                            // Estado quando Wi-Fi esta ativado no celular
+                            Column {
+                                width: parent.width - 28
+                                spacing: 10
+                                visible: phoneControls.state !== null && Boolean(phoneControls.state.wifi)
+
+                                // Cartao da Rede Conectada Atualmente
+                                Rectangle {
+                                    width: parent.width
+                                    height: 56
+                                    radius: Theme.radiusSm
+                                    color: Theme.glass ? Qt.rgba(Theme.primary.r, Theme.primary.g, Theme.primary.b, 0.12) : Theme.surfaceContainerHighest
+                                    border.width: 1
+                                    border.color: Qt.rgba(Theme.primary.r, Theme.primary.g, Theme.primary.b, 0.35)
+
+                                    Item {
+                                        anchors.fill: parent
+                                        anchors.margins: 10
+
+                                        Row {
+                                            anchors.left: parent.left
+                                            anchors.right: wifiConnectedActionRow.left
+                                            anchors.rightMargin: 8
+                                            anchors.verticalCenter: parent.verticalCenter
+                                            spacing: 10
+
+                                            // Indicador vetorial de 4 barras de sinal
+                                            Item {
+                                                width: 18
+                                                height: 16
+                                                anchors.verticalCenter: parent.verticalCenter
+                                                Row {
+                                                    spacing: 2
+                                                    anchors.bottom: parent.bottom
+                                                    anchors.horizontalCenter: parent.horizontalCenter
+                                                    Repeater {
+                                                        model: 4
+                                                        delegate: Rectangle {
+                                                            required property int index
+                                                            width: 2.5
+                                                            height: 4 + index * 3.5
+                                                            radius: 1
+                                                            anchors.bottom: parent.bottom
+                                                            color: Theme.primary
+                                                        }
+                                                    }
+                                                }
+                                            }
+
+                                            Column {
+                                                anchors.verticalCenter: parent.verticalCenter
+                                                spacing: 2
+                                                Row {
+                                                    spacing: 6
+                                                    Txt {
+                                                        text: phoneControls.currentWifiSsid || qsTr("Wi‑Fi Conectado")
+                                                        role: "title"
+                                                        font.pixelSize: 13
+                                                        elide: Text.ElideRight
+                                                    }
+                                                    Rectangle {
+                                                        height: 16
+                                                        width: connTxt.width + 10
+                                                        radius: 8
+                                                        color: Qt.rgba(Theme.primary.r, Theme.primary.g, Theme.primary.b, 0.20)
+                                                        anchors.verticalCenter: parent.verticalCenter
+                                                        Txt {
+                                                            id: connTxt
+                                                            anchors.centerIn: parent
+                                                            text: qsTr("Conectado")
+                                                            font.pixelSize: 9
+                                                            color: Theme.primary
+                                                        }
+                                                    }
+                                                }
+                                                Txt {
+                                                    text: qsTr("Rede conectada à internet no dispositivo móvel")
+                                                    role: "caption"
+                                                    font.pixelSize: 10
+                                                    muted: true
+                                                }
+                                            }
+                                        }
+
+                                        Row {
+                                            id: wifiConnectedActionRow
+                                            anchors.right: parent.right
+                                            anchors.verticalCenter: parent.verticalCenter
+                                            spacing: 4
+
+                                            Button {
+                                                variant: "text"
+                                                size: "sm"
+                                                text: qsTr("Desligar Wi‑Fi")
+                                                onClicked: phoneControls.confirmWifiOff = true
+                                            }
+                                        }
+                                    }
+                                }
+
+                                // Titulo da secao de redes detectadas
+                                Txt {
+                                    text: qsTr("Redes disponíveis")
+                                    role: "label"
+                                    font.pixelSize: 11
+                                    muted: true
+                                }
+
+                                // Lista rolante fluente de redes detectadas
+                                Flickable {
+                                    width: parent.width
+                                    height: Math.min(wifiListCol.implicitHeight, 180)
+                                    contentHeight: wifiListCol.implicitHeight
+                                    clip: true
+                                    boundsBehavior: Flickable.StopAtBounds
+
+                                    Column {
+                                        id: wifiListCol
+                                        width: parent.width
+                                        spacing: 4
+
+                                        Repeater {
+                                            model: phoneControls.wifiNetworksList
+                                            delegate: Rectangle {
+                                                id: wifiRowDelegate
+                                                required property var modelData
+                                                readonly property bool isCurrent: Boolean(modelData.is_connected || modelData.connected) || modelData.ssid === phoneControls.currentWifiSsid
+                                                readonly property int signalBars: {
+                                                    const s = modelData.signal !== undefined ? Number(modelData.signal) : 3
+                                                    return s > 4 ? Math.max(1, Math.min(4, Math.round(s / 25))) : Math.max(1, Math.min(4, s))
+                                                }
+                                                readonly property bool isSecure: modelData.security !== "OPEN" && modelData.security !== "none" && modelData.secure !== false
+                                                width: wifiListCol.width
+                                                height: 38
+                                                radius: Theme.radiusXs
+                                                color: wifiRowTap.pressed ? Qt.rgba(Theme.primary.r, Theme.primary.g, Theme.primary.b, 0.15)
+                                                      : (wifiRowHover.hovered ? (Theme.glass ? Qt.rgba(1, 1, 1, 0.06) : Theme.surfaceContainerHighest) : "transparent")
+                                                border.width: isCurrent ? 1 : 0
+                                                border.color: isCurrent ? Qt.rgba(Theme.primary.r, Theme.primary.g, Theme.primary.b, 0.25) : "transparent"
+
+                                                Item {
+                                                    anchors.fill: parent
+                                                    anchors.leftMargin: 10
+                                                    anchors.rightMargin: 10
+
+                                                    Row {
+                                                        anchors.left: parent.left
+                                                        anchors.right: wifiItemActionRow.left
+                                                        anchors.rightMargin: 8
+                                                        anchors.verticalCenter: parent.verticalCenter
+                                                        spacing: 10
+
+                                                        // Barras de sinal vetoriais
+                                                        Item {
+                                                            width: 16
+                                                            height: 14
+                                                            anchors.verticalCenter: parent.verticalCenter
+                                                            Row {
+                                                                spacing: 2
+                                                                anchors.bottom: parent.bottom
+                                                                anchors.horizontalCenter: parent.horizontalCenter
+                                                                Repeater {
+                                                                    model: 4
+                                                                    delegate: Rectangle {
+                                                                        required property int index
+                                                                        width: 2.2
+                                                                        height: 3.5 + index * 3.2
+                                                                        radius: 1
+                                                                        anchors.bottom: parent.bottom
+                                                                        color: index < wifiRowDelegate.signalBars
+                                                                               ? (wifiRowDelegate.isCurrent ? Theme.primary : Theme.surfaceContent)
+                                                                               : Qt.rgba(Theme.surfaceContent.r, Theme.surfaceContent.g, Theme.surfaceContent.b, 0.22)
+                                                                    }
+                                                                }
+                                                            }
+                                                        }
+
+                                                        Txt {
+                                                            text: wifiRowDelegate.modelData.ssid || qsTr("Rede sem nome")
+                                                            role: "bodySmall"
+                                                            font.pixelSize: 12
+                                                            color: wifiRowDelegate.isCurrent ? Theme.primary : Theme.surfaceContent
+                                                            elide: Text.ElideRight
+                                                            anchors.verticalCenter: parent.verticalCenter
+                                                        }
+
+                                                        Icon {
+                                                            visible: wifiRowDelegate.isSecure
+                                                            width: 11; height: 11
+                                                            path: Icons.lock
+                                                            color: Theme.surfaceContentVariant
+                                                            opacity: 0.65
+                                                            anchors.verticalCenter: parent.verticalCenter
+                                                        }
+                                                    }
+
+                                                    Row {
+                                                        id: wifiItemActionRow
+                                                        anchors.right: parent.right
+                                                        anchors.verticalCenter: parent.verticalCenter
+                                                        spacing: 6
+
+                                                        Txt {
+                                                            visible: wifiRowDelegate.isCurrent
+                                                            text: qsTr("Ativa")
+                                                            role: "caption"
+                                                            color: Theme.primary
+                                                            font.pixelSize: 10
+                                                            anchors.verticalCenter: parent.verticalCenter
+                                                        }
+
+                                                        Button {
+                                                            visible: !wifiRowDelegate.isCurrent
+                                                            variant: "tonal"
+                                                            size: "sm"
+                                                            text: qsTr("Conectar")
+                                                            onClicked: AppController.setPhoneToggle(home.deviceId, "wifi_connect", wifiRowDelegate.modelData.ssid)
+                                                        }
+                                                    }
+                                                }
+
+                                                HoverHandler { id: wifiRowHover; cursorShape: Qt.PointingHandCursor }
+                                                TapHandler {
+                                                    id: wifiRowTap
+                                                    gesturePolicy: TapHandler.ReleaseWithinBounds
+                                                    onTapped: {
+                                                        if (!wifiRowDelegate.isCurrent)
+                                                            AppController.setPhoneToggle(home.deviceId, "wifi_connect", wifiRowDelegate.modelData.ssid)
+                                                    }
+                                                }
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+
+                    // Painel Expansivel Fluente de Dispositivos Bluetooth (Dark Glass / Fluent M3)
+                    Rectangle {
+                        id: btPanel
+                        width: parent.width
+                        visible: phoneControls.btPanelExpanded
+                        radius: Theme.radiusMd
+                        color: Theme.graphite ? "transparent" : (Theme.glass ? Theme.tileColor : Theme.surfaceContainerHigh)
+                        border.width: 1
+                        border.color: Theme.glass ? Theme.cardBorder : Theme.outlineVariant
+                        clip: true
+
+                        Column {
+                            width: parent.width
+                            spacing: 12
+                            padding: 14
+
+                            // Cabecalho do Painel Bluetooth com Switch
+                            Item {
+                                width: parent.width - 28
+                                height: 32
+
+                                Row {
+                                    anchors.left: parent.left
+                                    anchors.verticalCenter: parent.verticalCenter
+                                    spacing: 8
+                                    Icon {
+                                        width: 16; height: 16
+                                        path: Icons.bluetooth
+                                        color: Theme.primary
+                                        anchors.verticalCenter: parent.verticalCenter
+                                    }
+                                    Column {
+                                        anchors.verticalCenter: parent.verticalCenter
+                                        spacing: 1
+                                        Txt {
+                                            text: qsTr("Bluetooth do Celular")
+                                            role: "title"
+                                            font.pixelSize: 13
+                                        }
+                                        Txt {
+                                            text: (phoneControls.state && Boolean(phoneControls.state.bluetooth)) ? qsTr("Ativado") : qsTr("Desativado")
+                                            role: "caption"
+                                            font.pixelSize: 10
+                                            muted: true
+                                        }
+                                    }
+                                }
+
+                                Row {
+                                    anchors.right: parent.right
+                                    anchors.verticalCenter: parent.verticalCenter
+                                    spacing: 8
+
+                                    // Chave rapida de ligar/desligar Bluetooth
+                                    Toggle {
+                                        anchors.verticalCenter: parent.verticalCenter
+                                        checked: phoneControls.state !== null && Boolean(phoneControls.state.bluetooth)
+                                        onToggled: (on) => AppController.setPhoneToggle(home.deviceId, "bluetooth", String(on))
+                                    }
+
+                                    Button {
+                                        variant: "text"
+                                        size: "sm"
+                                        text: qsTr("Fechar")
+                                        onClicked: phoneControls.btPanelExpanded = false
+                                    }
+                                }
+                            }
+
+                            // Estado quando Bluetooth esta desativado no celular
+                            Rectangle {
+                                width: parent.width - 28
+                                height: 48
+                                visible: phoneControls.state !== null && !Boolean(phoneControls.state.bluetooth)
+                                radius: Theme.radiusSm
+                                color: Theme.surfaceContainerLow
+                                border.width: 1
+                                border.color: Theme.outlineVariant
+
+                                Row {
+                                    anchors.left: parent.left
+                                    anchors.leftMargin: 12
+                                    anchors.verticalCenter: parent.verticalCenter
+                                    spacing: 8
+                                    Icon {
+                                        width: 16; height: 16
+                                        path: Icons.bluetooth
+                                        color: Theme.surfaceContentVariant
+                                        opacity: 0.7
+                                        anchors.verticalCenter: parent.verticalCenter
+                                    }
+                                    Txt {
+                                        text: qsTr("Ative o Bluetooth para gerenciar dispositivos pareados.")
+                                        role: "bodySmall"
+                                        muted: true
+                                        anchors.verticalCenter: parent.verticalCenter
+                                    }
+                                }
+
+                                Button {
+                                    anchors.right: parent.right
+                                    anchors.rightMargin: 8
+                                    anchors.verticalCenter: parent.verticalCenter
+                                    size: "sm"
+                                    text: qsTr("Ativar")
+                                    onClicked: AppController.setPhoneToggle(home.deviceId, "bluetooth", "true")
+                                }
+                            }
+
+                            // Estado quando Bluetooth esta ativado: Lista de Dispositivos Pareados
+                            Column {
+                                width: parent.width - 28
+                                spacing: 8
+                                visible: phoneControls.state !== null && Boolean(phoneControls.state.bluetooth)
+
+                                Txt {
+                                    text: qsTr("Dispositivos pareados")
+                                    role: "label"
+                                    font.pixelSize: 11
+                                    muted: true
+                                }
+
+                                // Lista rolante de dispositivos pareados
+                                Flickable {
+                                    width: parent.width
+                                    height: Math.min(btListCol.implicitHeight, 200)
+                                    contentHeight: btListCol.implicitHeight
+                                    clip: true
+                                    boundsBehavior: Flickable.StopAtBounds
+
+                                    Column {
+                                        id: btListCol
+                                        width: parent.width
+                                        spacing: 6
+
+                                        Repeater {
+                                            model: phoneControls.btDevicesList
+                                            delegate: Rectangle {
+                                                id: btRowDelegate
+                                                required property var modelData
+                                                readonly property bool isConnected: Boolean(modelData.is_connected || modelData.connected)
+                                                readonly property string devCategory: String(modelData.category || modelData.type || "other")
+                                                width: btListCol.width
+                                                height: 46
+                                                radius: Theme.radiusSm
+                                                color: btRowHover.hovered ? (Theme.glass ? Qt.rgba(1, 1, 1, 0.06) : Theme.surfaceContainerHighest) : Theme.surfaceContainerLow
+                                                border.width: 1
+                                                border.color: isConnected ? Qt.rgba(Theme.primary.r, Theme.primary.g, Theme.primary.b, 0.30) : Theme.outlineVariant
+
+                                                Item {
+                                                    anchors.fill: parent
+                                                    anchors.leftMargin: 12
+                                                    anchors.rightMargin: 10
+
+                                                    Row {
+                                                        anchors.left: parent.left
+                                                        anchors.right: btActionRow.left
+                                                        anchors.rightMargin: 8
+                                                        anchors.verticalCenter: parent.verticalCenter
+                                                        spacing: 10
+
+                                                        // Icone vetorial de categoria
+                                                        Rectangle {
+                                                            width: 28; height: 28
+                                                            radius: 14
+                                                            color: btRowDelegate.isConnected ? Qt.rgba(Theme.primary.r, Theme.primary.g, Theme.primary.b, 0.16) : Qt.rgba(Theme.surfaceContent.r, Theme.surfaceContent.g, Theme.surfaceContent.b, 0.08)
+                                                            anchors.verticalCenter: parent.verticalCenter
+
+                                                            Icon {
+                                                                anchors.centerIn: parent
+                                                                width: 15; height: 15
+                                                                path: phoneControls.btCategoryIcon(btRowDelegate.devCategory)
+                                                                color: btRowDelegate.isConnected ? Theme.primary : Theme.surfaceContentVariant
+                                                            }
+                                                        }
+
+                                                        Column {
+                                                            anchors.verticalCenter: parent.verticalCenter
+                                                            spacing: 2
+
+                                                            Txt {
+                                                                text: btRowDelegate.modelData.name || qsTr("Dispositivo Bluetooth")
+                                                                role: "bodySmall"
+                                                                font.pixelSize: 12
+                                                                color: btRowDelegate.isConnected ? Theme.primary : Theme.surfaceContent
+                                                                elide: Text.ElideRight
+                                                            }
+
+                                                            Row {
+                                                                spacing: 5
+                                                                Rectangle {
+                                                                    width: 6; height: 6
+                                                                    radius: 3
+                                                                    color: btRowDelegate.isConnected ? Theme.primary : Theme.outline
+                                                                    anchors.verticalCenter: parent.verticalCenter
+                                                                }
+                                                                Txt {
+                                                                    text: btRowDelegate.isConnected ? qsTr("Conectado") : qsTr("Pareado")
+                                                                    role: "caption"
+                                                                    font.pixelSize: 10
+                                                                    color: btRowDelegate.isConnected ? Theme.primary : Theme.surfaceContentVariant
+                                                                }
+                                                            }
+                                                        }
+                                                    }
+
+                                                    Row {
+                                                        id: btActionRow
+                                                        anchors.right: parent.right
+                                                        anchors.verticalCenter: parent.verticalCenter
+                                                        spacing: 6
+
+                                                        Button {
+                                                            variant: btRowDelegate.isConnected ? "text" : "tonal"
+                                                            size: "sm"
+                                                            text: btRowDelegate.isConnected ? qsTr("Desconectar") : qsTr("Conectar")
+                                                            onClicked: {
+                                                                const idOrAddr = btRowDelegate.modelData.address || btRowDelegate.modelData.mac || btRowDelegate.modelData.name
+                                                                if (btRowDelegate.isConnected)
+                                                                    AppController.setPhoneToggle(home.deviceId, "bt_disconnect", idOrAddr)
+                                                                else
+                                                                    AppController.setPhoneToggle(home.deviceId, "bt_connect", idOrAddr)
+                                                            }
+                                                        }
+                                                    }
+                                                }
+
+                                                HoverHandler { id: btRowHover; cursorShape: Qt.PointingHandCursor }
+                                            }
+                                        }
+
+                                        // Estado vazio se nao houver dispositivos
+                                        Item {
+                                            width: btListCol.width
+                                            height: 36
+                                            visible: phoneControls.btDevicesList.length === 0
+                                            Txt {
+                                                anchors.centerIn: parent
+                                                text: qsTr("Nenhum dispositivo Bluetooth pareado no celular.")
+                                                role: "caption"
+                                                muted: true
+                                            }
+                                        }
+                                    }
+                                }
                             }
                         }
                     }
@@ -3262,18 +3967,22 @@ Item {
         property string iconPath
         property string shortTitle
         property string label
+        property string subtitle: ""
         property bool active: false
+        property bool expandable: false
+        property bool expanded: false
         property var feature: ({})
         readonly property bool available: feature.state === "available"
         readonly property alias hovered: qhover.hovered
         signal clicked
         signal lockedClicked
+        signal expandClicked
 
-        height: 52
+        height: 56
         activeFocusOnTab: available
 
         Accessible.role: Accessible.CheckBox
-        Accessible.name: label
+        Accessible.name: label + (subtitle.length > 0 ? (" - " + subtitle) : "")
         Accessible.checked: active
         Accessible.onPressAction: if (qbtn.available) qbtn.clicked(); else qbtn.lockedClicked()
         Keys.onPressed: (event) => {
@@ -3305,8 +4014,8 @@ Item {
             anchors.fill: parent
             radius: Theme.radiusMd
             color: qbtn.fillColor
-            border.width: Theme.focusVisible(qbtn) ? 2 : (Theme.graphite || Theme.glass || (qbtn.active && !qbtn.available) ? 1 : 0)
-            border.color: Theme.focusVisible(qbtn) ? Theme.primary : (Theme.glass ? Theme.cardBorder : Theme.outlineVariant)
+            border.width: Theme.focusVisible(qbtn) ? 2 : (qbtn.expanded ? 1.5 : (Theme.graphite || Theme.glass || (qbtn.active && !qbtn.available) ? 1 : 0))
+            border.color: Theme.focusVisible(qbtn) ? Theme.primary : (qbtn.expanded ? Theme.primary : (Theme.glass ? Theme.cardBorder : Theme.outlineVariant))
             opacity: qbtn.available || qbtn.active ? 1 : 0.55
             scale: qtap.pressed && qbtn.available ? Theme.pressScale : 1
             Behavior on scale { enabled: !Theme.reduceMotion; NumberAnimation { duration: 170; easing.type: Easing.OutBack } }
@@ -3320,11 +4029,11 @@ Item {
 
             Column {
                 anchors.centerIn: parent
-                width: parent.width - 4
-                spacing: 3
+                width: parent.width - 6
+                spacing: 2
                 Icon {
                     anchors.horizontalCenter: parent.horizontalCenter
-                    width: 17; height: 17
+                    width: 16; height: 16
                     path: qbtn.iconPath
                     color: qbtn.contentColor
                 }
@@ -3337,6 +4046,49 @@ Item {
                     color: qbtn.contentColor
                     text: qbtn.shortTitle
                     elide: Text.ElideRight
+                }
+                Txt {
+                    visible: qbtn.subtitle.length > 0
+                    width: parent.width
+                    horizontalAlignment: Text.AlignHCenter
+                    role: "caption"
+                    size: Theme.graphite ? 8 : 9
+                    color: qbtn.contentColor
+                    opacity: 0.85
+                    text: qbtn.subtitle
+                    elide: Text.ElideRight
+                }
+            }
+
+            // Indicador / botao para alternar o painel expansivel (Wi-Fi / BT)
+            Item {
+                id: qexpandArea
+                visible: qbtn.expandable && qbtn.available
+                anchors.right: parent.right
+                anchors.top: parent.top
+                width: 20
+                height: 20
+                z: 2
+
+                Rectangle {
+                    anchors.fill: parent
+                    anchors.margins: 2
+                    radius: width / 2
+                    color: qexpandHover.hovered ? Qt.rgba(qbtn.contentColor.r, qbtn.contentColor.g, qbtn.contentColor.b, 0.20) : "transparent"
+                }
+
+                Icon {
+                    anchors.centerIn: parent
+                    width: 8; height: 8
+                    path: qbtn.expanded ? Icons.chevronUp : Icons.chevronDown
+                    color: qbtn.contentColor
+                    opacity: qbtn.expanded || qexpandHover.hovered ? 1 : 0.70
+                }
+
+                HoverHandler { id: qexpandHover; cursorShape: Qt.PointingHandCursor }
+                TapHandler {
+                    gesturePolicy: TapHandler.ReleaseWithinBounds
+                    onTapped: qbtn.expandClicked()
                 }
             }
 

@@ -258,7 +258,8 @@ pub mod qobject {
         fn phone_toggles(self: &AppController, device: &QString) -> QString;
         /// Changes one quick settings toggle on a phone (`id`: `"dnd"`,
         /// `"ringer"`, `"flashlight"`, `"volume"`, `"brightness"`, `"wifi"`,
-        /// `"bluetooth"`).
+        /// `"bluetooth"`, `"wifi_scan"`, `"wifi_connect"`, `"bt_connect"`,
+        /// `"bt_disconnect"`).
         #[qinvokable]
         fn set_phone_toggle(self: Pin<&mut AppController>, device: &QString, id: &QString, value: &QString);
 
@@ -1763,11 +1764,11 @@ impl qobject::AppController {
         let id = String::from(id);
         let raw = String::from(value);
         let parsed = match id.as_str() {
-            "dnd" | "flashlight" | "wifi" | "bluetooth" | "hotspot" | "pc_active" => {
+            "dnd" | "flashlight" | "wifi" | "bluetooth" | "hotspot" | "pc_active" | "wifi_scan" => {
                 Some(PhoneToggleValue::Bool(raw == "true"))
             }
             "volume" | "brightness" => raw.parse::<u8>().ok().map(|v| PhoneToggleValue::Level(v.min(100))),
-            "ringer" => Some(PhoneToggleValue::Mode(raw)),
+            "ringer" | "wifi_connect" | "bt_connect" | "bt_disconnect" => Some(PhoneToggleValue::Mode(raw)),
             _ => None,
         };
         let Some(val) = parsed else { return };

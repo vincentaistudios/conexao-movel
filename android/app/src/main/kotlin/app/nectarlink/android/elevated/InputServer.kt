@@ -936,14 +936,30 @@ object InputServer {
             }
         }
 
+        private val MAC_REGEX = Regex("^(?:[0-9A-Fa-f]{2}[:-]){5}[0-9A-Fa-f]{2}$")
+
         private fun allowedCommand(cmd: String): Boolean {
             if (cmd in allowed) return true
             if (cmd.startsWith(BRIGHTNESS_PREFIX)) {
                 val v = cmd.removePrefix(BRIGHTNESS_PREFIX).toIntOrNull()
                 return v != null && v in 0..255
             }
+            if (cmd == "cmd wifi list-scan-results") return true
+            for (prefix in BT_CMD_PREFIXES) {
+                if (cmd.startsWith(prefix)) {
+                    val mac = cmd.removePrefix(prefix).trim()
+                    return MAC_REGEX.matches(mac)
+                }
+            }
             return false
         }
+
+        private val BT_CMD_PREFIXES = listOf(
+            "cmd bluetooth_manager connect ",
+            "cmd bluetooth_manager disconnect ",
+            "cmd bluetooth connect ",
+            "cmd bluetooth disconnect ",
+        )
 
         /** The only shell commands the app may run through this. */
         private val allowed = setOf(

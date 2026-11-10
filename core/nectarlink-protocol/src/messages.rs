@@ -3498,8 +3498,14 @@ pub mod toggle_ids {
     pub const BLUETOOTH: &str = "bluetooth";
     pub const HOTSPOT: &str = "hotspot";
     pub const PC_ACTIVE: &str = "pc_active";
-    pub const ALL: &[&str] =
-        &[DND, RINGER, FLASHLIGHT, VOLUME, BRIGHTNESS, WIFI, BLUETOOTH, HOTSPOT, PC_ACTIVE];
+    pub const WIFI_SCAN: &str = "wifi_scan";
+    pub const WIFI_CONNECT: &str = "wifi_connect";
+    pub const BT_CONNECT: &str = "bt_connect";
+    pub const BT_DISCONNECT: &str = "bt_disconnect";
+    pub const ALL: &[&str] = &[
+        DND, RINGER, FLASHLIGHT, VOLUME, BRIGHTNESS, WIFI, BLUETOOTH, HOTSPOT, PC_ACTIVE,
+        WIFI_SCAN, WIFI_CONNECT, BT_CONNECT, BT_DISCONNECT,
+    ];
 }
 
 /// Ringer modes for [`PhoneToggles::ringer`] and `phone.toggle.set` (`id = "ringer"`).
@@ -3507,6 +3513,25 @@ pub mod ringer_modes {
     pub const RING: &str = "ring";
     pub const VIBRATE: &str = "vibrate";
     pub const SILENT: &str = "silent";
+}
+
+/// Wi-Fi network information.
+#[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
+pub struct WifiNetworkInfo {
+    pub ssid: String,
+    pub signal_level: u8,
+    pub is_connected: bool,
+    pub is_saved: bool,
+    pub is_secure: bool,
+}
+
+/// Bluetooth device information.
+#[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
+pub struct BtDeviceInfo {
+    pub name: String,
+    pub address: String,
+    pub is_connected: bool,
+    pub device_type: String,
 }
 
 /// Body of `phone.toggles` (`docs/protocol/toggles.md` §2.1): a phone's
@@ -3525,6 +3550,14 @@ pub struct PhoneToggles {
     pub brightness: u8,
     pub wifi: bool,
     pub bluetooth: bool,
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub wifi_ssid: Option<String>,
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub wifi_signal: Option<u8>,
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub wifi_networks: Option<Vec<WifiNetworkInfo>>,
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub bt_devices: Option<Vec<BtDeviceInfo>>,
 }
 
 impl PhoneToggles {
@@ -3573,10 +3606,17 @@ impl PhoneToggleSet {
                 | toggle_ids::WIFI
                 | toggle_ids::BLUETOOTH
                 | toggle_ids::HOTSPOT
-                | toggle_ids::PC_ACTIVE,
+                | toggle_ids::PC_ACTIVE
+                | toggle_ids::WIFI_SCAN,
                 PhoneToggleValue::Bool(_),
             ) => true,
             (toggle_ids::VOLUME | toggle_ids::BRIGHTNESS, PhoneToggleValue::Level(n)) => *n <= 100,
+            (
+                toggle_ids::WIFI_CONNECT
+                | toggle_ids::BT_CONNECT
+                | toggle_ids::BT_DISCONNECT,
+                PhoneToggleValue::Mode(_),
+            ) => true,
             (toggle_ids::RINGER, PhoneToggleValue::Mode(m)) => {
                 matches!(m.as_str(), ringer_modes::RING | ringer_modes::VIBRATE | ringer_modes::SILENT)
             }
@@ -5302,11 +5342,64 @@ mod tests {
             brightness: 50,
             wifi: true,
             bluetooth: true,
+            wifi_ssid: None,
+            wifi_signal: None,
+            wifi_networks: None,
+            bt_devices: None,
         };
         assert!(state.is_valid());
         let env = Envelope::new(types::PHONE_TOGGLES, &state).unwrap();
         let back: PhoneToggles = Envelope::from_cbor(&env.to_cbor()).unwrap().body().unwrap();
         assert_eq!(back, state);
+
+        // Extended toggles with Wi-Fi and Bluetooth info round-trip properly.
+        let extended = PhoneToggles {
+            dnd: false,
+            ringer: ringer_modes::RING.into(),
+            flashlight: Some(true),
+            volume: 50,
+            brightness: 80,
+            wifi: true,
+            bluetooth: true,
+            wifi_ssid: Some("HomeNetwork".into()),
+            wifi_signal: Some(4),
+            wifi_networks: Some(vec![
+                WifiNetworkInfo {
+                    ssid: "HomeNetwork".into(),
+                    signal_level: 4,
+                    is_connected: true,
+                    is_saved: true,
+                    is_secure: true,
+                },
+                WifiNetworkInfo {
+                    ssid: "GuestNetwork".into(),
+                    signal_level: 2,
+                    is_connected: false,
+                    is_saved: false,
+                    is_secure: false,
+                },
+            ]),
+            bt_devices: Some(vec![
+                BtDeviceInfo {
+                    name: "Headphones".into(),
+                    address: "00:11:22:33:44:55".into(),
+                    is_connected: true,
+                    device_type: "audio".into(),
+                },
+            ]),
+        };
+        assert!(extended.is_valid());
+        let env_ext = Envelope::new(types::PHONE_TOGGLES, &extended).unwrap();
+        let back_ext: PhoneToggles = Envelope::from_cbor(&env_ext.to_cbor()).unwrap().body().unwrap();
+        assert_eq!(back_ext, extended);
+
+        // Backwards compatibility with wire payload without extended fields.
+        let env_legacy = Envelope::new(types::PHONE_TOGGLES, &state).unwrap();
+        let legacy: PhoneToggles = Envelope::from_cbor(&env_legacy.to_cbor()).unwrap().body().unwrap();
+        assert_eq!(legacy.wifi_ssid, None);
+        assert_eq!(legacy.wifi_signal, None);
+        assert_eq!(legacy.wifi_networks, None);
+        assert_eq!(legacy.bt_devices, None);
 
         // Without flash hardware, `flashlight` is omitted on the wire.
         let no_flash = PhoneToggles { flashlight: None, ..state.clone() };
@@ -5322,7 +5415,13 @@ mod tests {
         assert_eq!(PhoneToggles { volume: 120, brightness: 200, ..state }.sanitized().unwrap().volume, 100);
 
         // `phone.toggle.set` validation for every toggle ID and value kind.
-        for id in [toggle_ids::DND, toggle_ids::FLASHLIGHT, toggle_ids::WIFI, toggle_ids::BLUETOOTH] {
+        for id in [
+            toggle_ids::DND,
+            toggle_ids::FLASHLIGHT,
+            toggle_ids::WIFI,
+            toggle_ids::BLUETOOTH,
+            toggle_ids::WIFI_SCAN,
+        ] {
             let set = PhoneToggleSet { id: id.into(), value: PhoneToggleValue::Bool(true) };
             assert!(set.is_valid(), "{id}");
             let env = Envelope::new(types::PHONE_TOGGLE_SET, &set).unwrap();
@@ -5349,6 +5448,14 @@ mod tests {
             assert!(set.is_valid());
             let env = Envelope::new(types::PHONE_TOGGLE_SET, &set).unwrap();
             assert_eq!(Envelope::from_cbor(&env.to_cbor()).unwrap().body::<PhoneToggleSet>().unwrap(), set);
+        }
+        for id in [toggle_ids::WIFI_CONNECT, toggle_ids::BT_CONNECT, toggle_ids::BT_DISCONNECT] {
+            let set = PhoneToggleSet { id: id.into(), value: PhoneToggleValue::Mode("test_target".into()) };
+            assert!(set.is_valid(), "{id}");
+            let env = Envelope::new(types::PHONE_TOGGLE_SET, &set).unwrap();
+            assert_eq!(Envelope::from_cbor(&env.to_cbor()).unwrap().body::<PhoneToggleSet>().unwrap(), set);
+            assert!(!PhoneToggleSet { id: id.into(), value: PhoneToggleValue::Bool(true) }.is_valid());
+            assert!(!PhoneToggleSet { id: id.into(), value: PhoneToggleValue::Level(1) }.is_valid());
         }
         assert!(
             !PhoneToggleSet { id: toggle_ids::RINGER.into(), value: PhoneToggleValue::Mode("mute".into()) }

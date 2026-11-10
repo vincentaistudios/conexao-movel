@@ -3,6 +3,7 @@ package app.nectarlink.android.toggles
 
 import android.app.NotificationManager
 import android.bluetooth.BluetoothAdapter
+import android.bluetooth.BluetoothDevice
 import android.bluetooth.BluetoothManager
 import android.content.BroadcastReceiver
 import android.content.Context
@@ -12,6 +13,7 @@ import android.database.ContentObserver
 import android.hardware.camera2.CameraCharacteristics
 import android.hardware.camera2.CameraManager
 import android.media.AudioManager
+import android.net.ConnectivityManager
 import android.net.Uri
 import android.net.wifi.WifiManager
 import android.os.Build
@@ -26,8 +28,8 @@ import app.nectarlink.core.PhoneToggles as CorePhoneToggles
 import kotlin.math.roundToInt
 
 /**
- * Reads, watches, and changes the phone's quick settings for paired PCs
- * (`docs/protocol/toggles.md`).
+ * Leitura, monitoramento e alteracao das configuracoes rapidas do telefone para
+ * computadores pareados (docs/protocol/toggles.md).
  */
 class PhoneToggles(
     context: Context,
@@ -41,6 +43,10 @@ class PhoneToggles(
     private val camera = this.context.getSystemService(CameraManager::class.java)
     private val wifi = this.context.getSystemService(WifiManager::class.java)
     private val bluetooth = this.context.getSystemService(BluetoothManager::class.java)
+    private val connectivity = this.context.getSystemService(ConnectivityManager::class.java)
+
+    private val wifiHelper = WifiTogglesHelper(this.context, wifi, connectivity)
+    private val btHelper = BluetoothTogglesHelper(this.context, bluetooth)
 
     private val torchCameraId: String? by lazy { findTorchCamera() }
     @Volatile private var torchOn: Boolean = false
@@ -79,7 +85,7 @@ class PhoneToggles(
         started = true
         if (torchCameraId != null) {
             runCatching { camera?.registerTorchCallback(torchCallback, mainHandler) }
-                .onFailure { Log.w(TAG, "torch callback failed", it) }
+                .onFailure { Log.w(TAG, "falha ao registrar callback de lanterna", it) }
         }
         runCatching {
             context.contentResolver.registerContentObserver(
@@ -92,7 +98,7 @@ class PhoneToggles(
                 false,
                 settingsObserver,
             )
-        }.onFailure { Log.w(TAG, "settings observer failed", it) }
+        }.onFailure { Log.w(TAG, "falha ao registrar observer de configuracoes", it) }
 
         val filter = IntentFilter().apply {
             addAction(NotificationManager.ACTION_INTERRUPTION_FILTER_CHANGED)
@@ -100,7 +106,13 @@ class PhoneToggles(
             addAction(AudioManager.RINGER_MODE_CHANGED_ACTION)
             addAction(VOLUME_CHANGED_ACTION)
             addAction(WifiManager.WIFI_STATE_CHANGED_ACTION)
+            addAction(WifiManager.NETWORK_STATE_CHANGED_ACTION)
+            addAction(WifiManager.SCAN_RESULTS_AVAILABLE_ACTION)
             addAction(BluetoothAdapter.ACTION_STATE_CHANGED)
+            addAction(BluetoothAdapter.ACTION_CONNECTION_STATE_CHANGED)
+            addAction(BluetoothDevice.ACTION_BOND_STATE_CHANGED)
+            addAction(BluetoothDevice.ACTION_ACL_CONNECTED)
+            addAction(BluetoothDevice.ACTION_ACL_DISCONNECTED)
         }
         ContextCompat.registerReceiver(context, receiver, filter, ContextCompat.RECEIVER_EXPORTED)
         pushNow()
@@ -118,7 +130,7 @@ class PhoneToggles(
         runCatching { context.unregisterReceiver(receiver) }
     }
 
-    /** What `toggles.*` capabilities this phone currently offers. */
+    /** Capacidades toggles.* oferecidas pelo telefone no momento. */
     fun capabilities(): List<String> = buildList {
         add("toggles.read")
         add("toggles.ringer")
@@ -126,24 +138,26 @@ class PhoneToggles(
         if (torchCameraId != null) add("toggles.flashlight")
         if (canChangeDnd(context)) add("toggles.dnd")
         if (canChangeBrightness(context)) add("toggles.brightness")
-        if (Elevated.running) {
+        if (Elevated.running || canChangeWifi(context)) {
             add("toggles.wifi")
+        }
+        if (Elevated.running || canChangeBluetooth()) {
             add("toggles.bluetooth")
         }
     }
 
-    /** Reads the current state of all phone quick settings. */
+    /** Leitura do estado consolidado de todas as configuracoes rapidas. */
     fun snapshot(): CorePhoneToggles = CorePhoneToggles(
         dnd = readDnd(),
         ringer = readRinger(),
         flashlight = if (torchCameraId != null) torchOn else null,
         volume = readVolume().toUByte(),
         brightness = readBrightness().toUByte(),
-        wifi = readWifi(),
-        bluetooth = readBluetooth(),
+        wifi = wifiHelper.readWifi(),
+        bluetooth = btHelper.readBluetooth(),
     )
 
-    /** Forces an immediate snapshot push to `nectarlink-core`. */
+    /** Envia imediatamente o snapshot atual para o nectarlink-core. */
     @Synchronized
     fun pushNow() {
         val current = snapshot()
@@ -151,51 +165,82 @@ class PhoneToggles(
         onChanged(current)
     }
 
-    /** Changes one quick setting on the phone (`phone.toggle.set`). */
+    /** Obtem o SSID conectado atual via helper de Wi-Fi. */
+    fun readWifiSsid(): String? = wifiHelper.readWifiSsid()
+
+    /** Calcula o nivel de sinal da conexao Wi-Fi ativa (0..100). */
+    fun readWifiSignal(): Int = wifiHelper.readWifiSignal()
+
+    /** Realiza varredura de redes Wi-Fi acessiveis com deduplicacao. */
+    fun readWifiNetworks(): List<Map<String, Any>> = wifiHelper.readWifiNetworks()
+
+    /** Enumera dispositivos Bluetooth pareados/conectados. */
+    fun readBtDevices(): List<Map<String, Any>> = btHelper.readBtDevices()
+
     fun set(id: String, value: PhoneToggleValue): Boolean {
         val ok = runCatching {
-            when (id) {
-                "dnd" -> {
+            when {
+                id == "dnd" -> {
                     val on = (value as? PhoneToggleValue.Bool)?.on ?: return false
                     setDnd(on)
                 }
-                "ringer" -> {
+                id == "ringer" -> {
                     val mode = (value as? PhoneToggleValue.Mode)?.mode ?: return false
                     setRinger(mode)
                 }
-                "flashlight" -> {
+                id == "flashlight" -> {
                     val on = (value as? PhoneToggleValue.Bool)?.on ?: return false
                     setFlashlight(on)
                 }
-                "volume" -> {
-                    val level = (value as? PhoneToggleValue.Level)?.level?.toInt() ?: return false
+                id == "volume" -> {
+                    val level = (value as? PhoneToggleValue.Percent)?.percent?.toInt() ?: return false
                     setVolume(level)
                 }
-                "brightness" -> {
-                    val level = (value as? PhoneToggleValue.Level)?.level?.toInt() ?: return false
+                id == "brightness" -> {
+                    val level = (value as? PhoneToggleValue.Percent)?.percent?.toInt() ?: return false
                     setBrightness(level)
                 }
-                "wifi" -> {
+                id == "wifi" -> {
                     val on = (value as? PhoneToggleValue.Bool)?.on ?: return false
-                    Elevated.runCommand(if (on) "svc wifi enable" else "svc wifi disable")
+                    wifiHelper.setWifi(on)
                 }
-                "bluetooth" -> {
+                id == "bluetooth" -> {
                     val on = (value as? PhoneToggleValue.Bool)?.on ?: return false
-                    Elevated.runCommand(if (on) "svc bluetooth enable" else "svc bluetooth disable")
+                    btHelper.setBluetooth(on)
                 }
-                "hotspot" -> {
+                id == "wifi_scan" -> {
+                    wifiHelper.triggerWifiScan(mainHandler) { pushNow() }
+                }
+                id == "bt_connect" -> {
+                    val targetMac = if (value is PhoneToggleValue.Bool) {
+                        ""
+                    } else {
+                        (value as? PhoneToggleValue.Mode)?.mode.orEmpty()
+                    }
+                    btHelper.connectBluetoothDevice(targetMac)
+                }
+                id == "bt_disconnect" -> {
+                    val targetMac = if (value is PhoneToggleValue.Bool) {
+                        ""
+                    } else {
+                        (value as? PhoneToggleValue.Mode)?.mode.orEmpty()
+                    }
+                    btHelper.disconnectBluetoothDevice(targetMac)
+                }
+                id == "hotspot" -> {
                     val on = (value as? PhoneToggleValue.Bool)?.on ?: return false
                     Elevated.runCommand(if (on) "hotspot on" else "hotspot off")
                 }
-                "pc_active" -> {
+                id == "pc_active" -> {
                     val on = (value as? PhoneToggleValue.Bool)?.on ?: return false
                     app.nectarlink.android.notifications.NotificationListener.setPcActive(on)
                     true
                 }
                 else -> false
             }
-        }.onFailure { Log.w(TAG, "toggle $id failed", it) }.getOrDefault(false)
-        if (ok && id != "pc_active") {
+        }.onFailure { Log.w(TAG, "toggle $id falhou", it) }.getOrDefault(false)
+
+        if (ok && id != "pc_active" && id != "wifi_scan") {
             pushIfChanged()
             schedulePush()
             mainHandler.removeCallbacks(followUpRunnable)
@@ -251,7 +296,6 @@ class PhoneToggles(
             }
             else -> return false
         }
-        // Leaving silent mode when DND was turned on by silent ringer requires policy access too.
         if (am.ringerMode == AudioManager.RINGER_MODE_SILENT &&
             notifications?.isNotificationPolicyAccessGranted == false
         ) {
@@ -293,10 +337,8 @@ class PhoneToggles(
         val index = min + ((clamped / 100f) * (max - min)).roundToInt()
         val wanted = index.coerceIn(min, max)
         am.setStreamVolume(AudioManager.STREAM_MUSIC, wanted, 0)
-        // Some phones ignore this without a word (FuntouchOS, #266). Elevated's
-        // helper can still get there with the volume keys.
-        if (am.getStreamVolume(AudioManager.STREAM_MUSIC) != wanted && app.nectarlink.android.elevated.Elevated.running) {
-            app.nectarlink.android.elevated.Elevated.setMusicVolume(wanted)
+        if (am.getStreamVolume(AudioManager.STREAM_MUSIC) != wanted && Elevated.running) {
+            Elevated.setMusicVolume(wanted)
         }
         return true
     }
@@ -322,14 +364,6 @@ class PhoneToggles(
         }
         return false
     }
-
-    private fun readWifi(): Boolean = runCatching { wifi?.isWifiEnabled == true }.getOrDefault(false)
-
-    private fun readBluetooth(): Boolean =
-        runCatching { bluetooth?.adapter?.isEnabled }.getOrNull()
-            ?: runCatching {
-                Settings.Global.getInt(context.contentResolver, Settings.Global.BLUETOOTH_ON, 0) != 0
-            }.getOrDefault(false)
 
     private fun findTorchCamera(): String? = runCatching {
         if (Build.HARDWARE == "ranchu" || Build.HARDWARE == "goldfish" || Build.MODEL.contains("sdk_gphone")) {
@@ -364,6 +398,11 @@ class PhoneToggles(
 
         fun canChangeBrightness(context: Context): Boolean =
             hasWriteSettings(context) || Elevated.running
+
+        fun canChangeWifi(context: Context): Boolean =
+            Elevated.running || Build.VERSION.SDK_INT < Build.VERSION_CODES.Q
+
+        fun canChangeBluetooth(): Boolean = true
 
         fun dndSettingsIntent(): Intent =
             Intent(Settings.ACTION_NOTIFICATION_POLICY_ACCESS_SETTINGS)
