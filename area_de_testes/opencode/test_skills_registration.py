@@ -4,8 +4,11 @@ test_skills_registration.py
 Valida a presenca, integridade e conformidade das skills do Antigravity e OpenCode.
 """
 
+import json
 import os
+import shutil
 import stat
+import subprocess
 import unittest
 from pathlib import Path
 
@@ -80,6 +83,44 @@ class TestSkillsRegistration(unittest.TestCase):
         self.assertTrue(bin_path.exists(), "Binario /usr/local/bin/opencode ausente")
         self.assertTrue(os.access(bin_path, os.X_OK), "Binario nao executavel")
 
+    def test_opencode_desktop_shortcut_and_icons(self):
+        desktop_file = Path.home() / ".local" / "share" / "applications" / "opencode.desktop"
+        self.assertTrue(desktop_file.exists(), f"Atalho .desktop ausente: {desktop_file}")
+        content = desktop_file.read_text(encoding="utf-8")
+        self.assertIn("Name=OpenCode", content)
+        self.assertIn("Icon=opencode", content)
+        self.assertIn("sys-opencode", content)
+        self.assertIn("open code", content.lower())
+
+        launcher = Path("/usr/local/bin/sys-opencode")
+        self.assertTrue(launcher.exists() and os.access(launcher, os.X_OK))
+
+        icons_base = Path.home() / ".local" / "share" / "icons" / "hicolor"
+        for rel in ("scalable/apps/opencode.svg", "48x48/apps/opencode.png", "256x256/apps/opencode.png"):
+            self.assertTrue((icons_base / rel).exists(), f"Icone ausente: {icons_base / rel}")
+
+        if shutil.which("desktop-file-validate"):
+            proc = subprocess.run(["desktop-file-validate", str(desktop_file)], capture_output=True, text=True)
+            self.assertEqual(proc.returncode, 0, f"desktop-file-validate falhou: {proc.stdout} {proc.stderr}")
+
+    def test_opencode_global_rules_and_config_schema(self):
+        agents_md = self.opencode_dir / "AGENTS.md"
+        self.assertTrue(agents_md.exists(), f"Arquivo global AGENTS.md ausente: {agents_md}")
+        agents_text = agents_md.read_text(encoding="utf-8")
+        self.assertIn("GEMINI.md", agents_text)
+        self.assertIn("pt-BR", agents_text)
+        self.assertIn("area_de_testes", agents_text)
+
+        config_json = json.loads((self.opencode_dir / "opencode.json").read_text(encoding="utf-8"))
+        self.assertEqual(config_json.get("model"), "groq/llama-3.3-70b-versatile")
+        self.assertIn("groq", config_json.get("providers", {}))
+        self.assertIn("google", config_json.get("providers", {}))
+        self.assertIn(
+            str(Path.home() / ".gemini" / "config" / "plugins" / "agent-orchestrator" / "rules" / "AGENTS.md"),
+            config_json.get("instructions", []),
+        )
+
 
 if __name__ == "__main__":
     unittest.main()
+
