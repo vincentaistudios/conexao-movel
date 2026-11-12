@@ -115,15 +115,18 @@ class TestSkillsRegistration(unittest.TestCase):
         config_json = json.loads((self.opencode_dir / "opencode.json").read_text(encoding="utf-8"))
         self.assertEqual(config_json.get("model"), "auto-free/smart")
         providers = config_json.get("providers", {})
-        for expected_provider in ("auto-free", "groq", "google"):
+        for expected_provider in ("auto-free", "groq", "google", "openrouter"):
             self.assertIn(expected_provider, providers)
         self.assertEqual(providers["auto-free"].get("package"), "@ai-sdk/openai-compatible")
         self.assertEqual(providers["auto-free"].get("settings", {}).get("baseURL"), "http://127.0.0.1:4041/auto/v1")
+        self.assertEqual(providers["auto-free"]["models"]["smart"]["limit"]["context"], 1000000)
+        self.assertEqual(providers["openrouter"].get("settings", {}).get("baseURL"), "http://127.0.0.1:4041/openrouter/v1")
 
         agents = config_json.get("agents", {})
         for expected_agent in (
             "build",
             "groq-fast",
+            "nemotron-1m",
             "free-200k",
             "title",
             "summary",
@@ -136,6 +139,7 @@ class TestSkillsRegistration(unittest.TestCase):
         ):
             self.assertIn(expected_agent, agents)
         self.assertEqual(agents["title"].get("model"), "groq/openai/gpt-oss-20b")
+        self.assertEqual(agents["nemotron-1m"].get("model"), "opencode/nemotron-3.5-super-vl-free")
         self.assertEqual(agents["free-200k"].get("model"), "opencode/deepseek-v4.1-flash-free")
 
         groq_settings = providers["groq"].get("settings", {})
@@ -154,7 +158,9 @@ class TestSkillsRegistration(unittest.TestCase):
         self.assertGreaterEqual(health.get("groq", {}).get("active", 0), 1)
         self.assertEqual(health.get("gemini", {}).get("total"), 3)
         self.assertGreaterEqual(health.get("gemini", {}).get("active", 0), 1)
+        self.assertGreaterEqual(health.get("openrouter", {}).get("total", 0), 1)
         self.assertIn("/auto/v1/chat/completions", health.get("auto", {}).get("routes", []))
+        self.assertIn("/openrouter/v1", health.get("auto", {}).get("routes", []))
 
 
 if __name__ == "__main__":
