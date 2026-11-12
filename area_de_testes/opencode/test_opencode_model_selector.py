@@ -45,12 +45,18 @@ class TestOpenCodeModelSelector(unittest.TestCase):
     def test_classify_mission_wide_context_ui(self):
         profile, queue = route_to_opencode.classify_mission("Ajustar layout responsivo QML", 0)
         self.assertEqual(profile, "wide_context_ui")
-        self.assertEqual(queue[0], "google/gemini-3.5-flash")
+        self.assertEqual(queue[0], "opencode/mimo-v2.6-flash-free")
+        self.assertIn("google/gemini-3.5-flash", queue)
 
     def test_classify_mission_many_files_fallback_to_wide_context(self):
         profile, queue = route_to_opencode.classify_mission("Verificar alteracao em modulo", 6)
         self.assertEqual(profile, "wide_context_ui")
-        self.assertEqual(queue[0], "google/gemini-3.5-flash")
+        self.assertEqual(queue[0], "opencode/mimo-v2.6-flash-free")
+
+    def test_classify_mission_default_prefers_groq_first(self):
+        profile, queue = route_to_opencode.classify_mission("Implementar utilitario simples", 0)
+        self.assertEqual(profile, "default")
+        self.assertEqual(queue[0], "groq/openai/gpt-oss-120b")
 
     def test_rate_limit_detection(self):
         self.assertTrue(route_to_opencode.is_rate_limit_error("Error: 429 Too Many Requests"))
