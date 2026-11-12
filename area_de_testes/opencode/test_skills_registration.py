@@ -125,6 +125,8 @@ class TestSkillsRegistration(unittest.TestCase):
         )
         groq_settings = config_json["providers"]["groq"].get("settings", {})
         self.assertEqual(groq_settings.get("baseURL"), "http://127.0.0.1:4041/openai/v1")
+        google_settings = config_json["providers"]["google"].get("settings", {})
+        self.assertEqual(google_settings.get("baseURL"), "http://127.0.0.1:4041/gemini/v1beta")
 
     def test_opencode_rotator_gateway_and_key_pool(self):
         rotator = Path("/usr/local/bin/sys-opencode-rotator")
@@ -135,6 +137,8 @@ class TestSkillsRegistration(unittest.TestCase):
         self.assertEqual(health.get("status"), "ok")
         self.assertEqual(health.get("groq", {}).get("total"), 9)
         self.assertGreaterEqual(health.get("groq", {}).get("active", 0), 1)
+        self.assertEqual(health.get("gemini", {}).get("total"), 3)
+        self.assertGreaterEqual(health.get("gemini", {}).get("active", 0), 1)
 
 
 if __name__ == "__main__":
