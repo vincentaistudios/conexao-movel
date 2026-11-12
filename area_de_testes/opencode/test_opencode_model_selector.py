@@ -62,17 +62,20 @@ class TestOpenCodeModelSelector(unittest.TestCase):
         self.assertFalse(route_to_opencode.is_rate_limit_error("SyntaxError: invalid syntax"))
         self.assertFalse(route_to_opencode.is_rate_limit_error("Compilation error: exit code 1"))
 
-    def test_multi_key_groq_rotation_plan(self):
+    def test_multi_key_groq_and_gemini_rotation_plan(self):
         plan = route_to_opencode.build_attempt_plan(
             ["groq/openai/gpt-oss-20b", "google/gemini-3.5-flash"],
             ["gsk_key_1", "gsk_key_2"],
+            ["gem_key_1", "gem_key_2", "gem_key_3"],
         )
         self.assertEqual(
             plan,
             [
                 ("groq/openai/gpt-oss-20b", "gsk_key_1"),
                 ("groq/openai/gpt-oss-20b", "gsk_key_2"),
-                ("google/gemini-3.5-flash", None),
+                ("google/gemini-3.5-flash", "gem_key_1"),
+                ("google/gemini-3.5-flash", "gem_key_2"),
+                ("google/gemini-3.5-flash", "gem_key_3"),
             ],
         )
 
