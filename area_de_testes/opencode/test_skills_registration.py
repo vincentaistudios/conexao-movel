@@ -112,9 +112,12 @@ class TestSkillsRegistration(unittest.TestCase):
         self.assertIn("area_de_testes", agents_text)
 
         config_json = json.loads((self.opencode_dir / "opencode.json").read_text(encoding="utf-8"))
-        self.assertEqual(config_json.get("model"), "groq/llama-3.3-70b-versatile")
+        self.assertEqual(config_json.get("model"), "google/gemini-3.5-flash")
         self.assertIn("groq", config_json.get("providers", {}))
         self.assertIn("google", config_json.get("providers", {}))
+        agents = config_json.get("agents", {})
+        for expected_agent in ("groq-fast", "arquiteto", "desenvolvedor", "qa-tester", "auditor-seguranca", "ux-especialista"):
+            self.assertIn(expected_agent, agents)
         self.assertIn(
             str(Path.home() / ".gemini" / "config" / "plugins" / "agent-orchestrator" / "rules" / "AGENTS.md"),
             config_json.get("instructions", []),
