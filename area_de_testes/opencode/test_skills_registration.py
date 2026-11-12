@@ -10,6 +10,7 @@ import shutil
 import stat
 import subprocess
 import unittest
+import urllib.request
 from pathlib import Path
 
 REQUIRED_SKILLS = [
@@ -122,6 +123,18 @@ class TestSkillsRegistration(unittest.TestCase):
             str(Path.home() / ".gemini" / "config" / "plugins" / "agent-orchestrator" / "rules" / "AGENTS.md"),
             config_json.get("instructions", []),
         )
+        groq_settings = config_json["providers"]["groq"].get("settings", {})
+        self.assertEqual(groq_settings.get("baseURL"), "http://127.0.0.1:4041/openai/v1")
+
+    def test_opencode_rotator_gateway_and_key_pool(self):
+        rotator = Path("/usr/local/bin/sys-opencode-rotator")
+        self.assertTrue(rotator.exists() and os.access(rotator, os.X_OK))
+        with urllib.request.urlopen("http://127.0.0.1:4041/health", timeout=3) as resp:
+            self.assertEqual(resp.status, 200)
+            health = json.loads(resp.read().decode("utf-8"))
+        self.assertEqual(health.get("status"), "ok")
+        self.assertEqual(health.get("groq", {}).get("total"), 9)
+        self.assertGreaterEqual(health.get("groq", {}).get("active", 0), 1)
 
 
 if __name__ == "__main__":
