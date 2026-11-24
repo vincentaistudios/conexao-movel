@@ -253,6 +253,7 @@ class Core(context: Context, private val scope: CoroutineScope) : EventListener 
     private val _messages = MutableSharedFlow<String>(extraBufferCapacity = 8)
     private val _queuedNotices = MutableSharedFlow<OfflineQueuedNotice>(extraBufferCapacity = 8)
     private val _clipSuggestions = MutableSharedFlow<ClipSuggestionNotice>(extraBufferCapacity = 4)
+    private val _spikeAutoEvents = MutableSharedFlow<SpikeAutoEvent>(extraBufferCapacity = 16)
     @Volatile private var node: NectarlinkNode? = null
     @Volatile private var startJob: Job? = null
     @Volatile private var runJob: Job? = null
@@ -352,6 +353,15 @@ class Core(context: Context, private val scope: CoroutineScope) : EventListener 
 
     /** Context action suggestions for newly received clipboard text. */
     val clipSuggestions: SharedFlow<ClipSuggestionNotice> = _clipSuggestions.asSharedFlow()
+
+    /** Tactical Valorant Spike automatic detection events received from connected PCs. */
+    val spikeAutoEvents: SharedFlow<SpikeAutoEvent> = _spikeAutoEvents.asSharedFlow()
+
+    sealed class SpikeAutoEvent {
+        data class Planted(val plantedAtMs: Long, val deviceId: String) : SpikeAutoEvent()
+        data class Defused(val deviceId: String) : SpikeAutoEvent()
+        data class Reset(val deviceId: String) : SpikeAutoEvent()
+    }
 
     data class OfflineQueuedNotice(
         val message: String,
@@ -825,6 +835,29 @@ class Core(context: Context, private val scope: CoroutineScope) : EventListener 
                 }
             }
             is Event.NotificationPosted -> scope.launch(Dispatchers.Default) {
+                val notif = event.notification
+                val app = notif.app.orEmpty()
+                val text = notif.text.orEmpty()
+                val title = notif.title.orEmpty()
+
+                if (app.contains("VALORANT", ignoreCase = true) || text.startsWith("spike:") || title.contains("Spike", ignoreCase = true)) {
+                    when {
+                        text.contains("spike:planted") || title.contains("Spike Plantada", ignoreCase = true) -> {
+                            val timestamp = notif.key.split(":").getOrNull(2)?.toLongOrNull() ?: System.currentTimeMillis()
+                            _spikeAutoEvents.tryEmit(SpikeAutoEvent.Planted(timestamp, event.id))
+                            return@launch
+                        }
+                        text.contains("spike:defused") || title.contains("Spike Desarmada", ignoreCase = true) -> {
+                            _spikeAutoEvents.tryEmit(SpikeAutoEvent.Defused(event.id))
+                            return@launch
+                        }
+                        text.contains("spike:reset") || title.contains("Spike Reset", ignoreCase = true) -> {
+                            _spikeAutoEvents.tryEmit(SpikeAutoEvent.Reset(event.id))
+                            return@launch
+                        }
+                    }
+                }
+
                 val (peer, name) = peerOf(event.id)
                 pcNotificationPoster.post(event.id, event.notification, peer, name)
             }

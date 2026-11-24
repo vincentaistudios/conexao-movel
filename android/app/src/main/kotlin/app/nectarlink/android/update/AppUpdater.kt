@@ -235,7 +235,7 @@ class AppUpdater(context: Context) {
      */
     private fun latest(): Update? {
         val feed = runCatching { fetchFeed(_channel.value) }.getOrNull()
-        return if (feed != null) feedUpdate(feed, _channel.value) else latestRelease()
+        return if (feed != null) feedUpdate(feed, BuildConfig.VERSION_NAME) else latestRelease()
     }
 
     /**

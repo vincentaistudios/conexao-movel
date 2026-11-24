@@ -63,6 +63,7 @@ mod updater;
 mod version;
 mod webcam;
 pub mod window_switcher;
+pub mod spike_watcher;
 #[cfg(windows)]
 mod win;
 #[cfg(target_os = "linux")]
@@ -629,6 +630,7 @@ fn main() -> ExitCode {
     webcam::init(&settings);
     phone_mic::init(&settings);
     local_api::init(&settings);
+    spike_watcher::start_watcher();
     win::widget::write_state_snapshot(&data_dir);
     win::tray::update_hotkeys(
         &settings.continuity_photo_hotkey,
