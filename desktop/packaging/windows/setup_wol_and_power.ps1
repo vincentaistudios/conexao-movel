@@ -1,4 +1,5 @@
-﻿<#
+# SPDX-License-Identifier: GPL-3.0-or-later
+<#
 .SYNOPSIS
   Configura Wake-on-LAN (WoL), gerenciamento de energia e regras de rede no Windows.
 
