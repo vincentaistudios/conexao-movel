@@ -1,0 +1,28 @@
+{
+  "schema": 1,
+  "channel": "stable",
+  "version": "0.1.8",
+  "name": "Pollen",
+  "published": "2026-11-24T14:49:36Z",
+  "notes": "https://github.com/vincentaistudios/conexao-movel/releases/tag/v0.1.8",
+  "files": [
+    {
+      "name": "ConexaoMovel-Windows-setup.exe",
+      "url": "https://github.com/vincentaistudios/conexao-movel/releases/download/v0.1.8/ConexaoMovel-Windows-setup.exe",
+      "sha256": "fd12b7a4775699c91e46ed04363111e08421c7f820d09de0335d85990cb4abf8",
+      "size": 38472829
+    },
+    {
+      "name": "ConexaoMovel-android.apk",
+      "url": "https://github.com/vincentaistudios/conexao-movel/releases/download/v0.1.8/ConexaoMovel-android.apk",
+      "sha256": "746b38d421a11d937965c3cd97628f4f2e2d8d94e5040cd81d59e92614b7d62e",
+      "size": 62932692
+    },
+    {
+      "name": "ConexaoMovel-linux-x86_64",
+      "url": "https://github.com/vincentaistudios/conexao-movel/releases/download/v0.1.8/ConexaoMovel-linux-x86_64",
+      "sha256": "83c3ae93dd19c91cd0827cc1e1fa01b2abbee3172228143fa4004d0b1c312322",
+      "size": 47501304
+    }
+  ]
+}
