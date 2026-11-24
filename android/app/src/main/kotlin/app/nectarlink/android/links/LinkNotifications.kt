@@ -26,15 +26,20 @@ import app.nectarlink.core.trackingSearchUrl
  */
 object LinkNotifications {
     /** Also Play on phone's offers ([app.nectarlink.android.media.WatchOffers]). */
-    internal const val CHANNEL = "links"
+    internal const val CHANNEL = "links_v2"
     private const val TAG = "link"
     private const val CLIP_TAG = "clip_suggestion"
     private const val CLIP_NOTIFICATION_ID = 0x434C4950 // "CLIP"
 
     fun createChannel(context: Context) {
-        context.getSystemService(NotificationManager::class.java).createNotificationChannel(
-            NotificationChannel(CHANNEL, context.getString(R.string.channel_links), NotificationManager.IMPORTANCE_HIGH),
-        )
+        val channel = NotificationChannel(
+            CHANNEL,
+            context.getString(R.string.channel_links),
+            NotificationManager.IMPORTANCE_HIGH,
+        ).apply {
+            app.nectarlink.android.notifications.NotificationSoundHelper.configureChannel(this)
+        }
+        context.getSystemService(NotificationManager::class.java).createNotificationChannel(channel)
     }
 
     /** Shows a link, video with timestamp, or map location from a PC; false if notifications are off. */
@@ -77,7 +82,7 @@ object LinkNotifications {
             app.nectarlink.core.HandoffKind.VIDEO_LINK -> context.getString(R.string.handoff_action_continue_video)
             else -> context.getString(R.string.clip_action_open)
         }
-        val notification = NotificationCompat.Builder(context, CHANNEL)
+        val builder = NotificationCompat.Builder(context, CHANNEL)
             .setSmallIcon(R.drawable.ic_notification)
             .setContentTitle(title)
             .setContentText(shown)
@@ -87,7 +92,8 @@ object LinkNotifications {
             .setAutoCancel(true)
             .setCategory(NotificationCompat.CATEGORY_RECOMMENDATION)
             .setPriority(NotificationCompat.PRIORITY_HIGH)
-            .build()
+        app.nectarlink.android.notifications.NotificationSoundHelper.applyBuilderSound(builder)
+        val notification = builder.build()
         return runCatching { NotificationManagerCompat.from(context).notify(TAG, url.hashCode(), notification) }.isSuccess
     }
 

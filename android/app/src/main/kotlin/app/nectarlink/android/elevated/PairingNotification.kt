@@ -28,7 +28,7 @@ import kotlinx.coroutines.launch
  * still open behind it.
  */
 object PairingNotification {
-    private const val CHANNEL = "elevated"
+    private const val CHANNEL = "elevated_v2"
     private const val ID = 7
     private const val KEY_CODE = "code"
     /** How long the receiver waits for pairing before letting Android move on. */
@@ -40,9 +40,14 @@ object PairingNotification {
         if (ContextCompat.checkSelfPermission(context, Manifest.permission.POST_NOTIFICATIONS) != PackageManager.PERMISSION_GRANTED) {
             return false
         }
-        context.getSystemService(NotificationManager::class.java).createNotificationChannel(
-            NotificationChannel(CHANNEL, context.getString(R.string.channel_elevated), NotificationManager.IMPORTANCE_HIGH),
-        )
+        val channel = NotificationChannel(
+            CHANNEL,
+            context.getString(R.string.channel_elevated),
+            NotificationManager.IMPORTANCE_HIGH,
+        ).apply {
+            app.nectarlink.android.notifications.NotificationSoundHelper.configureChannel(this)
+        }
+        context.getSystemService(NotificationManager::class.java).createNotificationChannel(channel)
         val reply = PendingIntent.getBroadcast(
             context, ID, Intent(context, Receiver::class.java),
             PendingIntent.FLAG_MUTABLE or PendingIntent.FLAG_UPDATE_CURRENT,
@@ -50,7 +55,7 @@ object PairingNotification {
         val action = NotificationCompat.Action.Builder(0, context.getString(R.string.elevated_pair_action), reply)
             .addRemoteInput(RemoteInput.Builder(KEY_CODE).setLabel(context.getString(R.string.elevated_pair_hint)).build())
             .build()
-        val notification = NotificationCompat.Builder(context, CHANNEL)
+        val builder = NotificationCompat.Builder(context, CHANNEL)
             .setSmallIcon(R.drawable.ic_notification)
             .setContentTitle(context.getString(R.string.elevated_pair_title))
             .setContentText(text)
@@ -58,7 +63,8 @@ object PairingNotification {
             .addAction(action)
             .setOnlyAlertOnce(true)
             .setPriority(NotificationCompat.PRIORITY_HIGH)
-            .build()
+        app.nectarlink.android.notifications.NotificationSoundHelper.applyBuilderSound(builder)
+        val notification = builder.build()
         return runCatching { NotificationManagerCompat.from(context).notify(ID, notification) }.isSuccess
     }
 

@@ -17,10 +17,15 @@ import androidx.core.app.NotificationManagerCompat
 import androidx.core.content.ContextCompat
 import app.nectarlink.android.NectarlinkApplication
 import app.nectarlink.android.R
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.SupervisorJob
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.withTimeoutOrNull
 
 /**
- * Handles power scheduling alarms, Wake-on-LAN dispatch, and countdown notifications
- * with interactive Cancel and Snooze options before executing sleep, shutdown, reboot, or lock.
+ * Gerencia alarmes de agendamento de energia, disparo Wake-on-LAN e notificacoes
+ * de contagem regressiva com opcoes de Cancelar e Adiar antes de executar acoes no PC.
  */
 class PowerScheduleReceiver : BroadcastReceiver() {
 
@@ -30,41 +35,33 @@ class PowerScheduleReceiver : BroadcastReceiver() {
             ACTION_EXECUTE_POWER -> handleExecutePower(context, intent)
             ACTION_CANCEL_POWER -> handleCancelPower(context, intent)
             ACTION_SNOOZE_POWER -> handleSnoozePower(context, intent)
-            Intent.ACTION_BOOT_COMPLETED,
-            Intent.ACTION_MY_PACKAGE_REPLACED -> {
-                val manager = PowerSchedulerManager(context)
-                manager.rescheduleAll()
-            }
         }
     }
 
     private fun handleScheduleTrigger(context: Context, intent: Intent) {
-        val scheduleId = intent.getStringExtra(EXTRA_SCHEDULE_ID) ?: return
-        val pcId = intent.getStringExtra(EXTRA_PC_ID) ?: return
-        val pcName = intent.getStringExtra(EXTRA_PC_NAME) ?: pcId
-        val action = PowerActionType.fromString(intent.getStringExtra(EXTRA_ACTION) ?: "Lock")
+        val scheduleId = intent.getStringExtra(EXTRA_SCHEDULE_ID)?.takeIf { it.isNotBlank() } ?: return
+        val pcId = intent.getStringExtra(EXTRA_PC_ID)?.takeIf { it.isNotBlank() } ?: return
+        val pcName = intent.getStringExtra(EXTRA_PC_NAME)?.takeIf { it.isNotBlank() } ?: pcId
+        val action = PowerActionType.fromStringOrNull(intent.getStringExtra(EXTRA_ACTION)) ?: return
         val isSleepTimer = intent.getBooleanExtra(EXTRA_IS_SLEEP_TIMER, false)
 
         val manager = PowerSchedulerManager(context)
+        if (!isTaskActive(manager, scheduleId, pcId, isSleepTimer)) return
 
         if (action == PowerActionType.Wake) {
-            val app = context.applicationContext as? NectarlinkApplication
-            app?.core?.start()
-            app?.core?.wake(pcId)
-
-            if (isSleepTimer) {
-                manager.clearSleepTimer(pcId)
-            } else {
-                manager.recordTrigger(scheduleId)
-                val schedule = manager.getSchedule(scheduleId)
-                if (schedule != null && schedule.daysOfWeek.isNotEmpty() && schedule.enabled) {
-                    manager.scheduleAlarm(schedule)
+            dispatchAsyncPowerAction(context, scheduleId, pcId, isSleepTimer) {
+                val app = context.applicationContext as? NectarlinkApplication
+                app?.core?.let { core ->
+                    core.start()
+                    core.wakeNow(pcId)
                 }
             }
             return
         }
 
-        // For Shutdown, Reboot, Sleep, or Lock: post warning notification 60s ahead
+        // Pre-aquecimento do no durante o aviso de 60s para garantir conexao pronta na execucao
+        (context.applicationContext as? NectarlinkApplication)?.core?.start()
+
         val notifId = getNotificationId(scheduleId)
         createNotificationChannel(context)
 
@@ -73,7 +70,7 @@ class PowerScheduleReceiver : BroadcastReceiver() {
             PowerActionType.Reboot -> context.getString(R.string.power_schedule_warning_reboot, pcName)
             PowerActionType.Sleep -> context.getString(R.string.power_schedule_warning_sleep, pcName)
             PowerActionType.Lock -> context.getString(R.string.power_schedule_warning_lock, pcName)
-            PowerActionType.Wake -> ""
+            PowerActionType.Wake -> return
         }
 
         val cancelIntent = Intent(context, PowerScheduleReceiver::class.java).apply {
@@ -108,7 +105,7 @@ class PowerScheduleReceiver : BroadcastReceiver() {
             PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE,
         )
 
-        val notification = NotificationCompat.Builder(context, CHANNEL_ID)
+        val builder = NotificationCompat.Builder(context, CHANNEL_ID)
             .setSmallIcon(R.drawable.ic_notification)
             .setContentTitle(context.getString(R.string.power_schedule_warning_title, pcName))
             .setContentText(contentText)
@@ -118,13 +115,13 @@ class PowerScheduleReceiver : BroadcastReceiver() {
             .setAutoCancel(false)
             .addAction(0, context.getString(R.string.power_schedule_action_cancel), cancelPendingIntent)
             .addAction(0, context.getString(R.string.power_schedule_action_snooze), snoozePendingIntent)
-            .build()
+        app.nectarlink.android.notifications.NotificationSoundHelper.applyBuilderSound(builder)
+        val notification = builder.build()
 
         if (hasNotificationPermission(context)) {
             NotificationManagerCompat.from(context).notify(notifId, notification)
         }
 
-        // Schedule final execution 60 seconds from now
         val executeIntent = Intent(context, PowerScheduleReceiver::class.java).apply {
             this.action = ACTION_EXECUTE_POWER
             data = Uri.parse("nectarlink://power_execute/$scheduleId")
@@ -146,33 +143,91 @@ class PowerScheduleReceiver : BroadcastReceiver() {
     }
 
     private fun handleExecutePower(context: Context, intent: Intent) {
-        val scheduleId = intent.getStringExtra(EXTRA_SCHEDULE_ID) ?: return
-        val pcId = intent.getStringExtra(EXTRA_PC_ID) ?: return
-        val action = PowerActionType.fromString(intent.getStringExtra(EXTRA_ACTION) ?: "Lock")
+        val scheduleId = intent.getStringExtra(EXTRA_SCHEDULE_ID)?.takeIf { it.isNotBlank() } ?: return
+        val pcId = intent.getStringExtra(EXTRA_PC_ID)?.takeIf { it.isNotBlank() } ?: return
+        val action = PowerActionType.fromStringOrNull(intent.getStringExtra(EXTRA_ACTION)) ?: return
         val notifId = intent.getIntExtra(EXTRA_NOTIFICATION_ID, getNotificationId(scheduleId))
         val isSleepTimer = intent.getBooleanExtra(EXTRA_IS_SLEEP_TIMER, false)
 
         NotificationManagerCompat.from(context).cancel(notifId)
 
-        val app = context.applicationContext as? NectarlinkApplication
-        app?.core?.start()
-        app?.core?.pcPower(pcId, action.name)
-
+        // Validacao fail-closed: garante que o agendamento ou temporizador nao foi cancelado/excluido na janela de 60s
         val manager = PowerSchedulerManager(context)
-        if (isSleepTimer) {
-            manager.clearSleepTimer(pcId)
-        } else {
-            manager.recordTrigger(scheduleId)
-            val schedule = manager.getSchedule(scheduleId)
-            if (schedule != null && schedule.daysOfWeek.isNotEmpty() && schedule.enabled) {
-                manager.scheduleAlarm(schedule)
+        if (!isTaskActive(manager, scheduleId, pcId, isSleepTimer)) return
+
+        dispatchAsyncPowerAction(context, scheduleId, pcId, isSleepTimer) {
+            val app = context.applicationContext as? NectarlinkApplication
+            app?.core?.let { core ->
+                core.start()
+                core.pcPowerNow(pcId, action.name)
             }
         }
     }
 
+    private fun isTaskActive(
+        manager: PowerSchedulerManager,
+        scheduleId: String,
+        pcId: String,
+        isSleepTimer: Boolean,
+    ): Boolean {
+        return if (isSleepTimer) {
+            manager.getSleepTimerEntry(pcId) != null
+        } else {
+            manager.getSchedule(scheduleId)?.enabled == true
+        }
+    }
+
+    /**
+     * Usa goAsync() em Dispatchers.IO para manter o BroadcastReceiver ativo em modo Doze
+     * ate a conclusao do disparo de energia e atualizacao do estado do agendamento.
+     */
+    private fun dispatchAsyncPowerAction(
+        context: Context,
+        scheduleId: String,
+        pcId: String,
+        isSleepTimer: Boolean,
+        block: suspend () -> Unit,
+    ) {
+        val pendingResult = goAsync()
+        receiverScope.launch {
+            try {
+                withTimeoutOrNull(GO_ASYNC_TIMEOUT_MS) {
+                    block()
+                }
+            } finally {
+                runCatching {
+                    finalizeScheduleExecution(context, scheduleId, pcId, isSleepTimer)
+                }
+                pendingResult.finish()
+            }
+        }
+    }
+
+    private fun finalizeScheduleExecution(
+        context: Context,
+        scheduleId: String,
+        pcId: String,
+        isSleepTimer: Boolean,
+    ) {
+        val manager = PowerSchedulerManager(context)
+        if (isSleepTimer) {
+            manager.clearSleepTimer(pcId)
+            return
+        }
+        manager.recordTrigger(scheduleId)
+        val schedule = manager.getSchedule(scheduleId) ?: return
+        if (!schedule.enabled) return
+        if (schedule.daysOfWeek.isEmpty()) {
+            // Desativa automaticamente agendamentos de disparo unico apos execucao
+            manager.toggleSchedule(scheduleId, false)
+        } else {
+            manager.scheduleAlarm(schedule)
+        }
+    }
+
     private fun handleCancelPower(context: Context, intent: Intent) {
-        val scheduleId = intent.getStringExtra(EXTRA_SCHEDULE_ID) ?: return
-        val pcId = intent.getStringExtra(EXTRA_PC_ID) ?: return
+        val scheduleId = intent.getStringExtra(EXTRA_SCHEDULE_ID)?.takeIf { it.isNotBlank() } ?: return
+        val pcId = intent.getStringExtra(EXTRA_PC_ID)?.takeIf { it.isNotBlank() } ?: return
         val notifId = intent.getIntExtra(EXTRA_NOTIFICATION_ID, getNotificationId(scheduleId))
         val isSleepTimer = intent.getBooleanExtra(EXTRA_IS_SLEEP_TIMER, false)
 
@@ -183,23 +238,35 @@ class PowerScheduleReceiver : BroadcastReceiver() {
         if (isSleepTimer) {
             manager.clearSleepTimer(pcId)
         } else {
-            val schedule = manager.getSchedule(scheduleId)
-            if (schedule != null && schedule.daysOfWeek.isNotEmpty() && schedule.enabled) {
+            val schedule = manager.getSchedule(scheduleId) ?: return
+            if (!schedule.enabled) return
+            if (schedule.daysOfWeek.isEmpty()) {
+                manager.toggleSchedule(scheduleId, false)
+            } else {
                 manager.scheduleAlarm(schedule)
             }
         }
     }
 
     private fun handleSnoozePower(context: Context, intent: Intent) {
-        val scheduleId = intent.getStringExtra(EXTRA_SCHEDULE_ID) ?: return
-        val pcId = intent.getStringExtra(EXTRA_PC_ID) ?: return
-        val pcName = intent.getStringExtra(EXTRA_PC_NAME) ?: pcId
-        val action = PowerActionType.fromString(intent.getStringExtra(EXTRA_ACTION) ?: "Lock")
+        val scheduleId = intent.getStringExtra(EXTRA_SCHEDULE_ID)?.takeIf { it.isNotBlank() } ?: return
+        val pcId = intent.getStringExtra(EXTRA_PC_ID)?.takeIf { it.isNotBlank() } ?: return
+        val pcName = intent.getStringExtra(EXTRA_PC_NAME)?.takeIf { it.isNotBlank() } ?: pcId
+        val action = PowerActionType.fromStringOrNull(intent.getStringExtra(EXTRA_ACTION)) ?: return
         val notifId = intent.getIntExtra(EXTRA_NOTIFICATION_ID, getNotificationId(scheduleId))
         val isSleepTimer = intent.getBooleanExtra(EXTRA_IS_SLEEP_TIMER, false)
 
         cancelExecuteAlarm(context, scheduleId)
         NotificationManagerCompat.from(context).cancel(notifId)
+
+        val manager = PowerSchedulerManager(context)
+        if (isSleepTimer) {
+            // Persiste novo horario adiado e agenda com URI/requestCode canonicos do sleep timer
+            manager.rescheduleSleepTimerSnooze(pcId, pcName, action, SNOOZE_DELAY_MS)
+            return
+        }
+
+        if (manager.getSchedule(scheduleId)?.enabled != true) return
 
         val triggerIntent = Intent(context, PowerScheduleReceiver::class.java).apply {
             this.action = ACTION_SCHEDULE_TRIGGER
@@ -208,7 +275,7 @@ class PowerScheduleReceiver : BroadcastReceiver() {
             putExtra(EXTRA_PC_ID, pcId)
             putExtra(EXTRA_PC_NAME, pcName)
             putExtra(EXTRA_ACTION, action.name)
-            putExtra(EXTRA_IS_SLEEP_TIMER, isSleepTimer)
+            putExtra(EXTRA_IS_SLEEP_TIMER, false)
         }
 
         val triggerPendingIntent = PendingIntent.getBroadcast(
@@ -251,7 +318,7 @@ class PowerScheduleReceiver : BroadcastReceiver() {
             } else {
                 alarmManager.setExactAndAllowWhileIdle(AlarmManager.RTC_WAKEUP, triggerAtMillis, pendingIntent)
             }
-        } catch (e: SecurityException) {
+        } catch (_: SecurityException) {
             alarmManager.setAndAllowWhileIdle(AlarmManager.RTC_WAKEUP, triggerAtMillis, pendingIntent)
         }
     }
@@ -264,7 +331,7 @@ class PowerScheduleReceiver : BroadcastReceiver() {
                 NotificationManager.IMPORTANCE_HIGH,
             ).apply {
                 description = context.getString(R.string.channel_power_schedule_desc)
-                enableVibration(true)
+                app.nectarlink.android.notifications.NotificationSoundHelper.configureChannel(this)
             }
             val nm = context.getSystemService(NotificationManager::class.java)
             nm?.createNotificationChannel(channel)
@@ -280,7 +347,7 @@ class PowerScheduleReceiver : BroadcastReceiver() {
     }
 
     private fun getNotificationId(scheduleId: String): Int {
-        return 0x505752 + (scheduleId.hashCode() and 0x000FFFFF) // "PWR" base
+        return 0x505752 + (scheduleId.hashCode() and 0x000FFFFF)
     }
 
     companion object {
@@ -296,8 +363,10 @@ class PowerScheduleReceiver : BroadcastReceiver() {
         const val EXTRA_IS_SLEEP_TIMER = "is_sleep_timer"
         const val EXTRA_NOTIFICATION_ID = "notification_id"
 
-        const val CHANNEL_ID = "power_schedule"
+        const val CHANNEL_ID = "power_schedule_v2"
         private const val WARNING_DELAY_MS = 60_000L
         private const val SNOOZE_DELAY_MS = 10 * 60_000L
+        private const val GO_ASYNC_TIMEOUT_MS = 8_000L
+        private val receiverScope = CoroutineScope(SupervisorJob() + Dispatchers.IO)
     }
 }

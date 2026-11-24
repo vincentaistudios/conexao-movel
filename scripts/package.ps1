@@ -221,6 +221,12 @@ Copy-Item (Join-Path $crt.FullName '*.dll') $stage
 Copy-Item (Join-Path $root 'LICENSE') (Join-Path $stage 'LICENSE.txt')
 Invoke-Native "writing the notices" { cargo xtask notices (Join-Path $stage 'THIRD-PARTY-NOTICES.txt') }
 
+# Wake-on-LAN and power automation script.
+$wolScript = Join-Path $root 'desktop\packaging\windows\setup_wol_and_power.ps1'
+if (Test-Path $wolScript) {
+    Copy-Item $wolScript $stage
+}
+
 # The icon build.rs drew for the .exe, and Sparse Package assets for Windows Share sheet.
 $icon = Get-ChildItem (Join-Path $targetDir 'build') -Recurse -Filter 'nectarlink.ico' |
     Sort-Object LastWriteTime -Descending | Select-Object -First 1

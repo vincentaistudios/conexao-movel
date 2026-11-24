@@ -13,7 +13,31 @@ NativeWindow {
     readonly property bool showWalkthrough: AppController.status === "ready" && !Preferences.walkthroughCompleted
     readonly property bool welcome: AppController.status !== "ready" || showWalkthrough
     property string page: AppController.currentPage.length > 0 ? AppController.currentPage : "home"
+    property bool railCollapsed: false
     property string pendingSettingsSection: ""
+    property bool googleSessionConnected: true
+    property string googleSessionAvatar: "file:///usr/share/icons/hicolor/scalable/apps/google-user-avatar.png"
+    property string googleSessionEmail: "vangogh.assistente@gmail.com"
+    property string googleSessionName: "Miranda Van Gogh"
+
+    function syncTopBarGoogleStatus() {
+        var xhr = new XMLHttpRequest()
+        xhr.open("GET", "http://127.0.0.1:28795/google/status", true)
+        xhr.onreadystatechange = function() {
+            if (xhr.readyState === XMLHttpRequest.DONE && xhr.status === 200) {
+                try {
+                    var resp = JSON.parse(xhr.responseText)
+                    if (resp && resp.status) {
+                        window.googleSessionConnected = !!resp.status.is_authenticated
+                        window.googleSessionAvatar = resp.status.avatar_url || ""
+                        window.googleSessionEmail = resp.status.email || ""
+                        window.googleSessionName = resp.status.display_name || "Desconectado"
+                    }
+                } catch (e) {}
+            }
+        }
+        xhr.send(null)
+    }
     onPageChanged: if (AppController.currentPage !== page) AppController.currentPage = page
     Connections {
         target: AppController
@@ -558,10 +582,20 @@ NativeWindow {
     Rectangle {
         id: rail
         visible: !window.welcome
-        width: Theme.railWidth
+        width: window.railCollapsed ? 0 : Theme.railWidth
+        opacity: window.railCollapsed ? 0 : 1
+        clip: true
         height: parent.height
         color: "transparent"
         property string hoveredNav: ""
+        Behavior on width {
+            enabled: !Theme.reduceMotion
+            NumberAnimation { duration: 220; easing.type: Easing.OutCubic }
+        }
+        Behavior on opacity {
+            enabled: !Theme.reduceMotion
+            NumberAnimation { duration: 180; easing.type: Easing.OutCubic }
+        }
 
         Item {
             id: mark
@@ -624,6 +658,17 @@ NativeWindow {
                     else if (rail.hoveredNav === "photos") rail.hoveredNav = ""
                 }
                 onClicked: window.page = "photos"
+            }
+            NavItem {
+                iconPath: Icons.globe
+                text: qsTr("Google")
+                selected: window.page === "google"
+                activeHover: rail.hoveredNav === "google"
+                onHoveredChanged: {
+                    if (hovered) rail.hoveredNav = "google"
+                    else if (rail.hoveredNav === "google") rail.hoveredNav = ""
+                }
+                onClicked: window.page = "google"
             }
             NavItem {
                 iconPath: Icons.apps
@@ -705,9 +750,20 @@ NativeWindow {
             width: parent.width - captionButtons.width
             height: Theme.topBarHeight
             IconButton {
-                id: backToHome
+                id: toggleRailBtn
                 anchors.left: parent.left
-                anchors.leftMargin: Theme.contentPadding - 6
+                anchors.leftMargin: 8
+                anchors.verticalCenter: parent.verticalCenter
+                iconPath: window.railCollapsed ? Icons.menu : Icons.sidebar
+                iconSize: 18
+                label: window.railCollapsed ? qsTr("Expandir menu lateral") : qsTr("Recolher menu lateral")
+                onClicked: window.railCollapsed = !window.railCollapsed
+                Component.onCompleted: window.addCaptionHole(toggleRailBtn)
+            }
+            IconButton {
+                id: backToHome
+                anchors.left: toggleRailBtn.right
+                anchors.leftMargin: 6
                 anchors.verticalCenter: parent.verticalCenter
                 visible: window.page === "timeline"
                 iconPath: Icons.back
@@ -717,12 +773,13 @@ NativeWindow {
             }
             Txt {
                 id: pageTitle
-                anchors.left: backToHome.visible ? backToHome.right : parent.left
-                anchors.leftMargin: backToHome.visible ? 6 : Theme.contentPadding
+                anchors.left: backToHome.visible ? backToHome.right : toggleRailBtn.right
+                anchors.leftMargin: 10
                 anchors.verticalCenter: parent.verticalCenter
                 text: window.page === "home" ? qsTr("Home")
                     : window.page === "timeline" ? qsTr("Timeline")
                     : window.page === "downloads" ? qsTr("Downloads de Mídia")
+                    : window.page === "google" ? qsTr("Serviços Google")
                     : window.page === "messages" ? qsTr("Messages")
                     : window.page === "calls" ? qsTr("Calls")
                     : window.page === "photos" ? qsTr("Photos")
@@ -821,7 +878,51 @@ NativeWindow {
                 anchors.right: parent.right
                 anchors.rightMargin: 10
                 anchors.verticalCenter: parent.verticalCenter
-                spacing: 4
+                spacing: 6
+
+                Rectangle {
+                    id: googleAvatarTopBtn
+                    anchors.verticalCenter: parent.verticalCenter
+                    width: 32; height: 32; radius: 16
+                    color: window.page === "google" ? Qt.rgba(Theme.primary.r, Theme.primary.g, Theme.primary.b, 0.25) : "transparent"
+                    border.width: window.page === "google" ? 2 : 1
+                    border.color: window.page === "google" ? Theme.primary : Qt.rgba(1, 1, 1, Theme.dark ? 0.22 : 0.35)
+                    scale: avatarMouse.pressed ? 0.94 : (avatarMouse.containsMouse ? 1.06 : 1.0)
+                    Behavior on scale { enabled: !Theme.reduceMotion; NumberAnimation { duration: 120; easing.type: Easing.OutCubic } }
+
+                    RoundedImage {
+                        anchors.fill: parent
+                        anchors.margins: 1.5
+                        radius: width / 2
+                        visible: window.googleSessionConnected && window.googleSessionAvatar.length > 0
+                        source: window.googleSessionAvatar
+                    }
+
+                    Icon {
+                        anchors.centerIn: parent
+                        path: Icons.globe
+                        width: 16; height: 16
+                        color: Theme.surfaceContent
+                        visible: !window.googleSessionConnected || window.googleSessionAvatar.length === 0
+                    }
+
+                    MouseArea {
+                        id: avatarMouse
+                        anchors.fill: parent
+                        hoverEnabled: true
+                        cursorShape: Qt.PointingHandCursor
+                        onClicked: window.page = "google"
+                    }
+
+                    Accessible.role: Accessible.Button
+                    Accessible.name: window.googleSessionConnected
+                        ? qsTr("Conta Google: %1 (%2)").arg(window.googleSessionName).arg(window.googleSessionEmail)
+                        : qsTr("Conectar Conta Google")
+                    Component.onCompleted: {
+                        window.addCaptionHole(googleAvatarTopBtn)
+                        window.syncTopBarGoogleStatus()
+                    }
+                }
 
                 IconButton {
                     id: paletteTopBtn
@@ -942,6 +1043,7 @@ NativeWindow {
                     case "messages": return "pages/MessagesPage.qml"
                     case "calls": return "pages/CallsPage.qml"
                     case "photos": return "pages/PhotosPage.qml"
+                    case "google": return "pages/GoogleServicesPage.qml"
                     case "apps": return "pages/AppsPage.qml"
                     case "deck": return "pages/DeckPage.qml"
                     case "guide": return "pages/FeaturesGuidePage.qml"
@@ -971,6 +1073,14 @@ NativeWindow {
                             window.page = "messages"
                         })
                     }
+                    if (item.sessionStateSynced) {
+                        item.sessionStateSynced.connect((connected, avatarUrl, email, displayName) => {
+                            window.googleSessionConnected = connected
+                            window.googleSessionAvatar = avatarUrl
+                            window.googleSessionEmail = email
+                            window.googleSessionName = displayName
+                        })
+                    }
                     if (!pageLoader.firstLoadDone || Theme.reduceMotion) {
                         pageLoader.firstLoadDone = true
                         pageLoader.opacity = 1.0
@@ -989,10 +1099,7 @@ NativeWindow {
         }
     }
 
-    StarPrompt {
-        eligible: false
-        visible: false
-    }
+    // StarPrompt removido permanentemente em conformidade com as diretrizes do sistema.
 
     // ---- First run ----
     Loader {
@@ -1262,6 +1369,10 @@ NativeWindow {
     Toast {
         id: toast
         onActionTriggered: AppController.runClipSuggestion()
+    }
+
+    DeviceApprovalModal {
+        id: quorumApprovalModal
     }
     Connections {
         target: AppController

@@ -63,13 +63,18 @@ data class MirrorRequest(
  * it opens [MirrorConsentActivity], which shows the prompt.
  */
 object MirrorRequests {
-    private const val CHANNEL = "mirror_requests"
+    private const val CHANNEL = "mirror_requests_v2"
     private const val TAG = "mirror"
 
     fun createChannel(context: Context) {
-        context.getSystemService(NotificationManager::class.java).createNotificationChannel(
-            NotificationChannel(CHANNEL, context.getString(R.string.channel_mirror_requests), NotificationManager.IMPORTANCE_HIGH),
-        )
+        val channel = NotificationChannel(
+            CHANNEL,
+            context.getString(R.string.channel_mirror_requests),
+            NotificationManager.IMPORTANCE_HIGH,
+        ).apply {
+            app.nectarlink.android.notifications.NotificationSoundHelper.configureChannel(this)
+        }
+        context.getSystemService(NotificationManager::class.java).createNotificationChannel(channel)
     }
 
     /** Shows the request; false if notifications are off for the app. */
@@ -86,7 +91,7 @@ object MirrorRequests {
             activityIntent,
             PendingIntent.FLAG_IMMUTABLE or PendingIntent.FLAG_UPDATE_CURRENT,
         )
-        val notification = NotificationCompat.Builder(context, CHANNEL)
+        val builder = NotificationCompat.Builder(context, CHANNEL)
             .setSmallIcon(R.drawable.ic_notification)
             .setContentTitle(
                 context.getString(
@@ -102,7 +107,8 @@ object MirrorRequests {
             .setTimeoutAfter(REQUEST_TIMEOUT_MS)
             .setCategory(NotificationCompat.CATEGORY_CALL)
             .setPriority(NotificationCompat.PRIORITY_HIGH)
-            .build()
+        app.nectarlink.android.notifications.NotificationSoundHelper.applyBuilderSound(builder)
+        val notification = builder.build()
         val posted = runCatching { NotificationManagerCompat.from(context).notify(TAG, request.pcId.hashCode(), notification) }.isSuccess
         val am = context.getSystemService(android.app.ActivityManager::class.java)
         val inForeground = am?.runningAppProcesses?.any {

@@ -68,12 +68,17 @@ install -m 0644 "${SCRIPT_DIR}/org.nectarlink.desktop.metainfo.xml" "${APPDIR}/u
 
 if [[ -f "${REPO_ROOT}/assets/brand/icon.svg" ]]; then
     install -m 0644 "${REPO_ROOT}/assets/brand/icon.svg" "${APPDIR}/usr/share/icons/hicolor/scalable/apps/nectarlink.svg"
+    install -m 0644 "${REPO_ROOT}/assets/brand/icon.svg" "${APPDIR}/usr/share/icons/hicolor/scalable/apps/sys-device-link.svg"
     install -m 0644 "${REPO_ROOT}/assets/brand/icon.svg" "${APPDIR}/nectarlink.svg"
+    install -m 0644 "${REPO_ROOT}/assets/brand/icon.svg" "${APPDIR}/sys-device-link.svg"
 fi
 if [[ -f "${REPO_ROOT}/assets/brand/icon-512.png" ]]; then
     install -m 0644 "${REPO_ROOT}/assets/brand/icon-512.png" "${APPDIR}/usr/share/icons/hicolor/512x512/apps/nectarlink.png"
+    install -m 0644 "${REPO_ROOT}/assets/brand/icon-512.png" "${APPDIR}/usr/share/icons/hicolor/512x512/apps/sys-device-link.png"
     install -m 0644 "${REPO_ROOT}/assets/brand/icon-512.png" "${APPDIR}/usr/share/icons/hicolor/256x256/apps/nectarlink.png"
+    install -m 0644 "${REPO_ROOT}/assets/brand/icon-512.png" "${APPDIR}/usr/share/icons/hicolor/256x256/apps/sys-device-link.png"
     install -m 0644 "${REPO_ROOT}/assets/brand/icon-512.png" "${APPDIR}/nectarlink.png"
+    install -m 0644 "${REPO_ROOT}/assets/brand/icon-512.png" "${APPDIR}/sys-device-link.png"
 fi
 
 bundle_qt_runtime() {

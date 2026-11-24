@@ -11,7 +11,8 @@ use std::{
 use nectarlink_protocol::{
     DeviceId, Envelope, ErrorCode,
     messages::{
-        LinkOpen, PcPower, PcWakeInfo, TaskNotify, magic_packet, parse_mac, task_notify, types, wake,
+        LinkOpen, MediaDownloadReply, MediaDownloadRpc, PcPower, PcWakeInfo, TaskNotify, magic_packet,
+        media_download, parse_mac, task_notify, types, wake,
     },
 };
 
@@ -88,14 +89,19 @@ impl CurrentWakeInfo {
     }
 }
 
-/// Sends this PC's `pc.wake_info` to a connected phone session. When the user
-/// turned `pc_actions` off for that phone, sends an empty `PcWakeInfo` so the
-/// phone clears any stored wake addresses for this PC.
+/// Envia o `pc.wake_info` deste PC para a sessao do telefone conectado.
+/// Quando o dispositivo movel estiver pareado, transmite o endereco MAC real
+/// e os broadcasts da interface fisica de rede ativa sem bloquear ou esvaziar por toggles.
 pub(crate) async fn send_wake_info(shared: &Arc<Shared>, session: &Session) {
     let Some(info) = shared.wake_info.get() else {
         return;
     };
-    let payload = if shared.toggle_on(&session.peer, POWER_TOGGLE) { info } else { PcWakeInfo::default() };
+    let is_paired = shared.store.is_paired(&session.peer).unwrap_or(false);
+    if !is_paired {
+        return;
+    }
+    // Para dispositivos pareados, garante o envio dos dados reais da interface fisica ativa.
+    let payload = info;
     if let Ok(env) = Envelope::new(types::PC_WAKE_INFO, &payload) {
         let _ = session.send(env).await;
     }
@@ -224,6 +230,31 @@ pub(crate) async fn pc_power(shared: &Arc<Shared>, session: &Session, action: Po
     let env = Envelope::new(types::PC_POWER, &PcPower { action: action.as_str().into() })?;
     session.request(env, crate::session::REQUEST_TIMEOUT).await?.expect(types::OK)?;
     Ok(())
+}
+
+/// Generous timeout for `media.download_rpc` (`inspect` with `yt-dlp` can take several seconds).
+pub(crate) const MEDIA_DOWNLOAD_RPC_TIMEOUT: Duration = Duration::from_secs(35);
+
+pub(crate) async fn media_download_rpc(
+    session: &Session,
+    op: String,
+    payload_json: String,
+) -> Result<String> {
+    let req = MediaDownloadRpc { op, payload_json };
+    if !req.is_valid() {
+        return Err(Error::Internal("invalid media download rpc request".into()));
+    }
+    let env = Envelope::new(types::MEDIA_DOWNLOAD_RPC, &req)?;
+    let reply: MediaDownloadReply =
+        session.request(env, MEDIA_DOWNLOAD_RPC_TIMEOUT).await?.expect_body(types::MEDIA_DOWNLOAD_REPLY)?;
+    if !reply.is_valid() {
+        return Err(Error::Internal("invalid media download rpc reply".into()));
+    }
+    if reply.ok {
+        Ok(reply.body_json)
+    } else {
+        Err(Error::Internal(reply.error.unwrap_or_else(|| "media downloader error".into())))
+    }
 }
 
 pub(crate) fn is_transient_send_error(err: &Error) -> bool {
@@ -510,6 +541,50 @@ pub(crate) async fn handle(shared: &Arc<Shared>, session: &Arc<Session>, env: &E
                 session.send(reply.reply_to(env.id)).await?;
             }
             return Ok(true);
+        }
+        types::MEDIA_DOWNLOAD_RPC => {
+            let is_paired = shared.store.get_peer(&peer)?.is_some();
+            let reply_body = if !is_paired {
+                MediaDownloadReply {
+                    ok: false,
+                    body_json: String::new(),
+                    error: Some("peer is not paired".into()),
+                }
+            } else {
+                let req: MediaDownloadRpc = env.body()?;
+                if !req.is_valid() {
+                    MediaDownloadReply {
+                        ok: false,
+                        body_json: String::new(),
+                        error: Some("invalid operation or payload size".into()),
+                    }
+                } else {
+                    let platform = shared.platform.clone();
+                    let op = req.op;
+                    let payload_json = req.payload_json;
+                    match tokio::task::spawn_blocking(move || {
+                        platform.media_download_rpc(&peer, &op, &payload_json)
+                    })
+                    .await
+                    .unwrap_or_else(|e| Err(e.to_string()))
+                    {
+                        Ok(body_json) if body_json.len() <= media_download::MAX_BODY_BYTES => {
+                            MediaDownloadReply { ok: true, body_json, error: None }
+                        }
+                        Ok(_) => MediaDownloadReply {
+                            ok: false,
+                            body_json: String::new(),
+                            error: Some("media downloader reply exceeds size limit".into()),
+                        },
+                        Err(err) => MediaDownloadReply {
+                            ok: false,
+                            body_json: String::new(),
+                            error: Some(err.chars().take(1024).collect()),
+                        },
+                    }
+                }
+            };
+            Envelope::new(types::MEDIA_DOWNLOAD_REPLY, &reply_body)?
         }
         _ => return Ok(false),
     };

@@ -56,27 +56,27 @@
     <message>
         <location filename="rust_strings.h" line="17"/>
         <source>NectarLink · %1</source>
-        <translation>NectarLink · %1</translation>
+        <translation>Conexão Móvel · %1</translation>
     </message>
     <message>
         <location filename="rust_strings.h" line="18"/>
         <source>NectarLink · %1 devices connected</source>
-        <translation>NectarLink · %1 dispositivos conectados</translation>
+        <translation>Conexão Móvel · %1 dispositivos conectados</translation>
     </message>
     <message>
         <location filename="rust_strings.h" line="19"/>
         <source>NectarLink · 1 device connected</source>
-        <translation>NectarLink · 1 dispositivo conectado</translation>
+        <translation>Conexão Móvel · 1 dispositivo conectado</translation>
     </message>
     <message>
         <location filename="rust_strings.h" line="20"/>
         <source>NectarLink · no devices paired</source>
-        <translation>NectarLink · nenhum dispositivo pareado</translation>
+        <translation>Conexão Móvel · nenhum dispositivo pareado</translation>
     </message>
     <message>
         <location filename="rust_strings.h" line="21"/>
         <source>NectarLink · not connected</source>
-        <translation>NectarLink · desconectado</translation>
+        <translation>Conexão Móvel · desconectado</translation>
     </message>
     <message>
         <location filename="rust_strings.h" line="22"/>
@@ -86,7 +86,7 @@
     <message>
         <location filename="rust_strings.h" line="23"/>
         <source>Open NectarLink</source>
-        <translation>Abrir o NectarLink</translation>
+        <translation>Abrir o Conexão Móvel</translation>
     </message>
     <message>
         <location filename="rust_strings.h" line="24"/>
@@ -101,7 +101,7 @@
     <message>
         <location filename="rust_strings.h" line="26"/>
         <source>Quit NectarLink</source>
-        <translation>Sair do NectarLink</translation>
+        <translation>Sair do Conexão Móvel</translation>
     </message>
     <message>
         <location filename="rust_strings.h" line="27"/>
@@ -209,7 +209,7 @@
     <message>
         <location filename="../qml/pages/AppsPage.qml" line="94"/>
         <source>Set up Wireless debugging in NectarLink on the phone to open its apps here.</source>
-        <translation>Configure a Depuração por Wi-Fi no NectarLink do celular para abrir os apps aqui.</translation>
+        <translation>Configure a Depuração por Wi-Fi no Conexão Móvel do celular para abrir os apps aqui.</translation>
     </message>
     <message>
         <location filename="../qml/pages/AppsPage.qml" line="147"/>
@@ -392,7 +392,7 @@
     <message>
         <location filename="../qml/components/CallCard.qml" line="209"/>
         <source>Mute, speaker and keypad need Elevated on the phone (Android 12 or later).</source>
-        <translation>Silenciar o microfone, usar o viva-voz e o teclado numérico exigem o Elevated no celular (Android 12 ou posterior).</translation>
+        <translation>Silenciar o microfone, usar o viva-voz e o teclado numérico exigem o Acesso Avançado no celular (Android 12 ou posterior).</translation>
     </message>
     <message>
         <location filename="../qml/components/CallCard.qml" line="232"/>
@@ -820,7 +820,7 @@
     <message>
         <location filename="rust_strings.h" line="65"/>
         <source>Update NectarLink on %1 to send it images.</source>
-        <translation>Atualize o NectarLink em %1 para enviar imagens.</translation>
+        <translation>Atualize o Conexão Móvel em %1 para enviar imagens.</translation>
     </message>
     <message>
         <location filename="rust_strings.h" line="66"/>
@@ -1078,7 +1078,7 @@
     <message>
         <location filename="rust_strings.h" line="107"/>
         <source>Opened Recordings folder. Start a voice note in NectarLink on %1 to send it here.</source>
-        <translation>Pasta Gravações aberta. Inicie uma nota de voz no NectarLink em %1 para enviá-la para cá.</translation>
+        <translation>Pasta Gravações aberta. Inicie uma nota de voz no Conexão Móvel em %1 para enviá-la para cá.</translation>
     </message>
     <message>
         <location filename="rust_strings.h" line="108"/>
@@ -1253,7 +1253,7 @@
     <message>
         <location filename="rust_strings.h" line="142"/>
         <source>Stream %1&apos;s camera into the NectarLink virtual webcam</source>
-        <translation>Transmitir a câmera de %1 para a webcam virtual do NectarLink</translation>
+        <translation>Transmitir a câmera de %1 para a webcam virtual do Conexão Móvel</translation>
     </message>
     <message>
         <location filename="rust_strings.h" line="143"/>
@@ -1843,7 +1843,7 @@
     <message>
         <location filename="../qml/pages/DeckPage.qml" line="820"/>
         <source>Requires &quot;Allow running Deck commands&quot; to be turned on for the phone in Settings → Devices.</source>
-        <translation>É preciso ativar “Executar comandos do shell do Deck” para o celular em Configurações → Dispositivos.</translation>
+        <translation>É preciso ativar “Executar comandos do shell do Painel de Atalhos” para o celular em Configurações → Dispositivos.</translation>
     </message>
     <message>
         <location filename="../qml/pages/DeckPage.qml" line="828"/>
@@ -1896,12 +1896,12 @@
     <message>
         <location filename="../qml/pages/DeckPage.qml" line="1053"/>
         <source>Reset Deck to defaults?</source>
-        <translation>Restaurar o Deck para os padrões?</translation>
+        <translation>Restaurar o Painel de Atalhos para os padrões?</translation>
     </message>
     <message>
         <location filename="../qml/pages/DeckPage.qml" line="1059"/>
         <source>This replaces your custom pages and tiles with the default 11-tile Deck.</source>
-        <translation>Isso substitui suas páginas e botões personalizados pelo Deck padrão com 11 botões.</translation>
+        <translation>Isso substitui suas páginas e botões personalizados pelo Painel de Atalhos padrão com 11 botões.</translation>
     </message>
     <message>
         <location filename="../qml/pages/DeckPage.qml" line="1067"/>
@@ -1914,12 +1914,12 @@
     <message>
         <location filename="rust_strings.h" line="192"/>
         <source>%1 Open NectarLink on the phone and keep both on the same network. If the phone asks to run in the background, allow it.</source>
-        <translation>%1 Abra o NectarLink no celular e mantenha os dois dispositivos na mesma rede. Se o celular pedir para manter o app em segundo plano, permita.</translation>
+        <translation>%1 Abra o Conexão Móvel no celular e mantenha os dois dispositivos na mesma rede. Se o celular pedir para manter o app em segundo plano, permita.</translation>
     </message>
     <message>
         <location filename="rust_strings.h" line="193"/>
         <source>%1 announces itself at %2, which isn&apos;t in a private range such as 192.168.x.x. NectarLink connects on such a network once both apps are up to date. Until then, turn on Connect over mobile data on both, or connect with a USB cable.</source>
-        <translation>%1 se anuncia em %2, que não pertence a uma faixa privada, como 192.168.x.x. O NectarLink consegue se conectar a esse tipo de rede quando os dois apps estiverem atualizados. Até lá, ative Conectar usando dados móveis nos dois dispositivos ou conecte-os por USB.</translation>
+        <translation>%1 se anuncia em %2, que não pertence a uma faixa privada, como 192.168.x.x. O Conexão Móvel consegue se conectar a esse tipo de rede quando os dois apps estiverem atualizados. Até lá, ative Conectar usando dados móveis nos dois dispositivos ou conecte-os por USB.</translation>
     </message>
     <message>
         <location filename="rust_strings.h" line="194"/>
@@ -1974,7 +1974,7 @@
     <message>
         <location filename="rust_strings.h" line="204"/>
         <source>A firewall rule blocks incoming NectarLink connections. Allow it, and your phone can connect.</source>
-        <translation>Uma regra do firewall está bloqueando conexões de entrada do NectarLink. Permita-as para que o celular consiga se conectar.</translation>
+        <translation>Uma regra do firewall está bloqueando conexões de entrada do Conexão Móvel. Permita-as para que o celular consiga se conectar.</translation>
     </message>
     <message>
         <location filename="rust_strings.h" line="205"/>
@@ -2044,47 +2044,47 @@
     <message>
         <location filename="rust_strings.h" line="218"/>
         <source>NectarLink can&apos;t show its icon in the top bar</source>
-        <translation>O NectarLink não consegue mostrar o ícone na barra superior</translation>
+        <translation>O Conexão Móvel não consegue mostrar o ícone na barra superior</translation>
     </message>
     <message>
         <location filename="rust_strings.h" line="219"/>
         <source>NectarLink is in the top bar</source>
-        <translation>O NectarLink está na barra superior</translation>
+        <translation>O Conexão Móvel está na barra superior</translation>
     </message>
     <message>
         <location filename="rust_strings.h" line="220"/>
         <source>NectarLink isn&apos;t allowed through Windows Firewall</source>
-        <translation>O NectarLink não tem permissão no Firewall do Windows</translation>
+        <translation>O Conexão Móvel não tem permissão no Firewall do Windows</translation>
     </message>
     <message>
         <location filename="rust_strings.h" line="221"/>
         <source>NectarLink isn&apos;t allowed through the firewall</source>
-        <translation>O NectarLink não tem permissão no firewall</translation>
+        <translation>O Conexão Móvel não tem permissão no firewall</translation>
     </message>
     <message>
         <location filename="rust_strings.h" line="222"/>
         <source>On Huawei / Honor: open Settings → Battery → App launch, turn off Manage automatically for NectarLink, and keep Auto-launch, Secondary launch, and Run in background on.</source>
-        <translation>Em celulares Huawei / Honor: abra Configurações → Bateria → Inicialização de apps, desative Gerenciar automaticamente para o NectarLink e mantenha Inicialização automática, Inicialização secundária e Executar em segundo plano ativadas.</translation>
+        <translation>Em celulares Huawei / Honor: abra Configurações → Bateria → Inicialização de apps, desative Gerenciar automaticamente para o Conexão Móvel e mantenha Inicialização automática, Inicialização secundária e Executar em segundo plano ativadas.</translation>
     </message>
     <message>
         <location filename="rust_strings.h" line="223"/>
         <source>On OnePlus / OxygenOS: open Settings → Apps → App management → NectarLink → Battery usage and turn on Allow background activity and Allow auto-launch.</source>
-        <translation>Em celulares OnePlus / OxygenOS: abra Configurações → Apps → Gerenciamento de apps → NectarLink → Uso da bateria e ative Permitir atividade em segundo plano e Permitir inicialização automática.</translation>
+        <translation>Em celulares OnePlus / OxygenOS: abra Configurações → Apps → Gerenciamento de apps → Conexão Móvel → Uso da bateria e ative Permitir atividade em segundo plano e Permitir inicialização automática.</translation>
     </message>
     <message>
         <location filename="rust_strings.h" line="224"/>
         <source>On Oppo / Realme: open Settings → Apps → App management → NectarLink → Battery usage and turn on Allow background activity and Allow auto-launch.</source>
-        <translation>Em celulares Oppo / Realme: abra Configurações → Apps → Gerenciamento de apps → NectarLink → Uso da bateria e ative Permitir atividade em segundo plano e Permitir inicialização automática.</translation>
+        <translation>Em celulares Oppo / Realme: abra Configurações → Apps → Gerenciamento de apps → Conexão Móvel → Uso da bateria e ative Permitir atividade em segundo plano e Permitir inicialização automática.</translation>
     </message>
     <message>
         <location filename="rust_strings.h" line="225"/>
         <source>On Pixel: open Settings → Apps → See all apps → NectarLink → App battery usage, tap Allow background usage, and choose Unrestricted.</source>
-        <translation>Em celulares Pixel: abra Configurações → Apps → Ver todos os apps → NectarLink → Uso da bateria do app, toque em Permitir uso em segundo plano e escolha Sem restrições.</translation>
+        <translation>Em celulares Pixel: abra Configurações → Apps → Ver todos os apps → Conexão Móvel → Uso da bateria do app, toque em Permitir uso em segundo plano e escolha Sem restrições.</translation>
     </message>
     <message>
         <location filename="rust_strings.h" line="226"/>
         <source>On Samsung: open Settings → Apps → NectarLink → Battery and choose Unrestricted, then in Device care → Battery → Background usage limits make sure NectarLink is never put to sleep.</source>
-        <translation>Em celulares Samsung: abra Configurações → Apps → NectarLink → Bateria e escolha Sem restrições. Depois, em Assistência do aparelho → Bateria → Limites de uso em segundo plano, confira se o NectarLink nunca é suspenso.</translation>
+        <translation>Em celulares Samsung: abra Configurações → Apps → Conexão Móvel → Bateria e escolha Sem restrições. Depois, em Assistência do aparelho → Bateria → Limites de uso em segundo plano, confira se o Conexão Móvel nunca é suspenso.</translation>
     </message>
     <message>
         <location filename="rust_strings.h" line="227"/>
@@ -2094,12 +2094,12 @@
     <message>
         <location filename="rust_strings.h" line="228"/>
         <source>On Vivo / OriginOS / Funtouch: open Settings → Battery → Background power consumption management → NectarLink and choose Unrestricted, and allow Autostart.</source>
-        <translation>Em celulares Vivo / OriginOS / Funtouch: abra Configurações → Bateria → Gerenciamento de consumo em segundo plano → NectarLink, escolha Sem restrições e permita a inicialização automática.</translation>
+        <translation>Em celulares Vivo / OriginOS / Funtouch: abra Configurações → Bateria → Gerenciamento de consumo em segundo plano → Conexão Móvel, escolha Sem restrições e permita a inicialização automática.</translation>
     </message>
     <message>
         <location filename="rust_strings.h" line="229"/>
         <source>On Xiaomi / HyperOS / MIUI: open Settings → Apps → Manage apps → NectarLink, turn on Autostart, and set Battery saver to No restrictions.</source>
-        <translation>Em celulares Xiaomi / HyperOS / MIUI: abra Configurações → Apps → Gerenciar apps → NectarLink, ative Inicialização automática e escolha Sem restrições em Economia de bateria.</translation>
+        <translation>Em celulares Xiaomi / HyperOS / MIUI: abra Configurações → Apps → Gerenciar apps → Conexão Móvel, ative Inicialização automática e escolha Sem restrições em Economia de bateria.</translation>
     </message>
     <message>
         <location filename="rust_strings.h" line="230"/>
@@ -2154,7 +2154,7 @@
     <message>
         <location filename="rust_strings.h" line="240"/>
         <source>The firewall blocks NectarLink</source>
-        <translation>O firewall bloqueia o NectarLink</translation>
+        <translation>O firewall bloqueia o Conexão Móvel</translation>
     </message>
     <message>
         <location filename="rust_strings.h" line="241"/>
@@ -2204,7 +2204,7 @@
     <message>
         <location filename="rust_strings.h" line="250"/>
         <source>Windows Firewall blocks NectarLink</source>
-        <translation>O Firewall do Windows bloqueia o NectarLink</translation>
+        <translation>O Firewall do Windows bloqueia o Conexão Móvel</translation>
     </message>
     <message>
         <location filename="rust_strings.h" line="251"/>
@@ -2342,6 +2342,11 @@
         <source>The device&apos;s app doesn&apos;t support that yet.</source>
         <translation>O app do dispositivo ainda não suporta isso.</translation>
     </message>
+    <message>
+        <location filename="rust_strings.h" line="266"/>
+        <source>This action requires Elevated mode active on the phone (Settings › Elevated).</source>
+        <translation>Esta ação requer o Modo Elevado ativo no celular (Configurações › Modo Elevado).</translation>
+    </message>
 </context>
 <context>
     <name>FeaturesGuidePage</name>
@@ -2471,7 +2476,7 @@
     <message>
         <location filename="../qml/pages/FeaturesGuidePage.qml" line="555"/>
         <source>Needs Elevated</source>
-        <translation>Requer o Elevated</translation>
+        <translation>Requer o Acesso Avançado</translation>
     </message>
     <message>
         <location filename="../qml/pages/FeaturesGuidePage.qml" line="557"/>
@@ -2486,7 +2491,7 @@
     <message>
         <location filename="../qml/pages/FeaturesGuidePage.qml" line="586"/>
         <source>Every feature in NectarLink, what it needs, and where to find it.</source>
-        <translation>Todos os recursos do NectarLink, do que cada um precisa e onde encontrá-lo.</translation>
+        <translation>Todos os recursos do Conexão Móvel, do que cada um precisa e onde encontrá-lo.</translation>
     </message>
     <message>
         <location filename="../qml/pages/FeaturesGuidePage.qml" line="625"/>
@@ -2647,7 +2652,7 @@
     <message>
         <location filename="../qml/pages/FeaturesGuidePage.qml" line="169"/>
         <source>Clipboard toggle on Home; Elevated or quick tile for background phone copy</source>
-        <translation>Opção Área de transferência no Início; Elevated ou o atalho das Configurações rápidas para copiar do celular em segundo plano</translation>
+        <translation>Opção Área de transferência no Início; Acesso Avançado ou o atalho das Configurações rápidas para copiar do celular em segundo plano</translation>
     </message>
     <message>
         <location filename="../qml/pages/FeaturesGuidePage.qml" line="175"/>
@@ -2731,7 +2736,7 @@
     <message>
         <location filename="../qml/pages/FeaturesGuidePage.qml" line="223"/>
         <source>MediaProjection approval on phone; Assist or Elevated for touch input</source>
-        <translation>Confirmação do MediaProjection no celular; Assist ou Elevated para controlar por toque</translation>
+        <translation>Confirmação do MediaProjection no celular; Assist ou Acesso Avançado para controlar por toque</translation>
     </message>
     <message>
         <location filename="../qml/pages/FeaturesGuidePage.qml" line="229"/>
@@ -2751,7 +2756,7 @@
     <message>
         <location filename="../qml/pages/FeaturesGuidePage.qml" line="236"/>
         <source>Elevated (Wireless debugging) enabled on phone</source>
-        <translation>Elevated (depuração por Wi-Fi) ativado no celular</translation>
+        <translation>Acesso Avançado (depuração por Wi-Fi) ativado no celular</translation>
     </message>
     <message>
         <location filename="../qml/pages/FeaturesGuidePage.qml" line="242"/>
@@ -2781,7 +2786,7 @@
     <message>
         <location filename="../qml/pages/FeaturesGuidePage.qml" line="260"/>
         <source>Use your phone camera as the NectarLink Virtual Camera in Zoom, Teams, Meet, and OBS.</source>
-        <translation>Use a câmera do celular como webcam virtual do NectarLink no Zoom, Teams, Meet e OBS.</translation>
+        <translation>Use a câmera do celular como webcam virtual do Conexão Móvel no Zoom, Teams, Meet e OBS.</translation>
     </message>
     <message>
         <location filename="../qml/pages/FeaturesGuidePage.qml" line="261"/>
@@ -2927,7 +2932,7 @@
     <message>
         <location filename="../qml/pages/FeaturesGuidePage.qml" line="354"/>
         <source>Assist (Accessibility) or Elevated (Wireless debugging) on phone</source>
-        <translation>Assist (Acessibilidade) ou Elevated (depuração por Wi-Fi) no celular</translation>
+        <translation>Assist (Acessibilidade) ou Acesso Avançado (depuração por Wi-Fi) no celular</translation>
     </message>
     <message>
         <location filename="../qml/pages/FeaturesGuidePage.qml" line="360"/>
@@ -2947,7 +2952,7 @@
     <message>
         <location filename="../qml/pages/FeaturesGuidePage.qml" line="367"/>
         <source>Elevated (Wireless debugging) required only for Wi-Fi and Bluetooth toggles</source>
-        <translation>Elevated (depuração por Wi-Fi) necessário somente para alternar Wi-Fi e Bluetooth</translation>
+        <translation>Acesso Avançado (depuração por Wi-Fi) necessário somente para alternar Wi-Fi e Bluetooth</translation>
     </message>
     <message>
         <location filename="../qml/pages/FeaturesGuidePage.qml" line="373"/>
@@ -3142,10 +3147,10 @@
 3. Open the Pair step in the setup walkthrough, or click + (Pair a new device) at the bottom of the left rail.
 4. Scan the QR code from the NectarLink Android app, or select your phone from the nearby devices list and confirm that the 6-digit code matches on both screens.
 5. Choose which features to share for that phone and grant only the Android permissions you want to use.</source>
-        <translation>1. Instale o NectarLink no PC (Windows 11 ou Linux) e no celular Android (Android 8.0 ou posterior).
+        <translation>1. Instale o Conexão Móvel no PC (Windows 11 ou Linux) e no celular Android (Android 8.0 ou posterior).
 2. Conecte os dois dispositivos à mesma rede Wi-Fi ou conecte o celular ao PC por USB.
 3. Abra a etapa Parear no passo a passo de configuração ou clique em + (Parear um novo dispositivo) na parte inferior da barra lateral.
-4. Escaneie o código QR com o app NectarLink para Android ou selecione o celular na lista de dispositivos próximos e confira se o código de 6 dígitos é igual nas duas telas.
+4. Escaneie o código QR com o app Conexão Móvel para Android ou selecione o celular na lista de dispositivos próximos e confira se o código de 6 dígitos é igual nas duas telas.
 5. Escolha quais recursos quer compartilhar com esse celular e conceda somente as permissões do Android que pretende usar.</translation>
     </message>
     <message>
@@ -3196,7 +3201,7 @@
     <message>
         <location filename="rust_strings.h" line="281"/>
         <source>Elevated and Assist modes</source>
-        <translation>Modos Elevated e Assist</translation>
+        <translation>Modos Acesso Avançado e Assist</translation>
     </message>
     <message>
         <location filename="rust_strings.h" line="282"/>
@@ -3224,9 +3229,9 @@
         <translation>Se o celular e o PC não encontrarem um ao outro:
 
 1. Abra Diagnóstico de conexão em Configurações › Conexão e sobre ou na Paleta de comandos.
-2. Confira se o perfil da rede Wi-Fi no Windows está definido como Privado, e não Público, ou clique em Corrigir no Diagnóstico de conexão para permitir o NectarLink no Firewall do Windows.
+2. Confira se o perfil da rede Wi-Fi no Windows está definido como Privado, e não Público, ou clique em Corrigir no Diagnóstico de conexão para permitir o Conexão Móvel no Firewall do Windows.
 3. Confira se os dois dispositivos estão na mesma sub-rede e se o isolamento de clientes da rede Wi-Fi para convidados está desativado no roteador.
-4. Você também pode conectá-los por um cabo USB com a depuração USB ativada; o NectarLink configura um túnel local automaticamente.</translation>
+4. Você também pode conectá-los por um cabo USB com a depuração USB ativada; o Conexão Móvel configura um túnel local automaticamente.</translation>
     </message>
     <message>
         <location filename="rust_strings.h" line="286"/>
@@ -3279,16 +3284,16 @@ Elevated mode (Wireless debugging or root)
 Assist mode (Android Accessibility Service)
 - Injects mouse clicks, scrolling, and touch gestures when you control your phone from your PC.
 - NectarLink never reads screen text or logs keystrokes through the Accessibility service.</source>
-        <translation>A maioria dos recursos do NectarLink funciona no modo Padrão com as permissões comuns do Android. Dois modos opcionais integram o app mais profundamente ao sistema:
+        <translation>A maioria dos recursos do Conexão Móvel funciona no modo Padrão com as permissões comuns do Android. Dois modos opcionais integram o app mais profundamente ao sistema:
 
-Modo Elevated (Depuração por Wi-Fi ou root)
+Modo Acesso Avançado (Depuração por Wi-Fi ou root)
 - Captura a tela do celular sem exibir a confirmação do Android para compartilhar a tela toda vez.
 - Abre apps individuais do celular em janelas separadas no PC (telas virtuais).
 - Libera outros controles rápidos do sistema.
 
 Modo Assist (Serviço de Acessibilidade do Android)
 - Envia cliques do mouse, rolagem e gestos de toque quando você controla o celular pelo PC.
-- O NectarLink não lê o texto da tela nem registra as teclas digitadas pelo serviço de Acessibilidade.</translation>
+- O Conexão Móvel não lê o texto da tela nem registra as teclas digitadas pelo serviço de Acessibilidade.</translation>
     </message>
     <message>
         <location filename="rust_strings.h" line="292"/>
@@ -3308,7 +3313,7 @@ Capability tiers on Android
 - Standard mode: Works right after installation with standard Android permissions.
 - Elevated mode (optional): Uses Wireless debugging (set up once in the phone app) or root for phone apps in their own windows, mirroring without the screen capture prompt, and more phone controls.
 - Assist mode (optional): Uses the Android Accessibility service only when you enable Remote input so your PC mouse and keyboard can control the phone.</source>
-        <translation>O NectarLink conecta o celular Android e o PC diretamente pela rede local ou por um cabo USB.
+        <translation>O Conexão Móvel conecta o celular Android e o PC diretamente pela rede local ou por um cabo USB.
 
 Como funciona
 - Os dispositivos se encontram pela rede Wi-Fi local (mDNS) ou por USB (túnel ADB reverso) e se conectam por QUIC (TLS 1.3).
@@ -3317,7 +3322,7 @@ Como funciona
 
 Níveis de acesso no Android
 - Modo Padrão: funciona assim que o app é instalado, com as permissões comuns do Android.
-- Modo Elevated (opcional): usa a Depuração por Wi-Fi (configurada uma vez no app do celular) ou root para abrir apps em janelas próprias, espelhar a tela sem pedir confirmação e liberar mais controles do celular.
+- Modo Acesso Avançado (opcional): usa a Depuração por Wi-Fi (configurada uma vez no app do celular) ou root para abrir apps em janelas próprias, espelhar a tela sem pedir confirmação e liberar mais controles do celular.
 - Modo Assist (opcional): usa o serviço de Acessibilidade do Android somente quando você ativa o Controle remoto, para que o mouse e o teclado do PC controlem o celular.</translation>
     </message>
     <message>
@@ -3329,7 +3334,7 @@ Níveis de acesso no Android
 - Phone and Call Log: Required only if you want incoming call alerts, call history, or dialing from your PC.
 - Media and Photos: Required only if you want the Photos gallery, Shelf latest photo, or folder sync.
 - Camera and Microphone: Required only while streaming your phone as a webcam, taking a Continuity Camera shot, or recording a voice note.</source>
-        <translation>O NectarLink não pede todas as permissões logo de cara. Cada recurso funciona por conta própria:
+        <translation>O Conexão Móvel não pede todas as permissões logo de cara. Cada recurso funciona por conta própria:
 
 - Acesso a notificações: necessário somente para ver as notificações do celular, responder por elas e receber no PC conversas de apps de mensagens.
 - SMS e Contatos: necessários somente para ler e enviar mensagens SMS/MMS ou consultar nomes dos contatos no PC.
@@ -3340,7 +3345,7 @@ Níveis de acesso no Android
     <message>
         <location filename="rust_strings.h" line="295"/>
         <source>NectarLink overview</source>
-        <translation>Visão geral do NectarLink</translation>
+        <translation>Visão geral do Conexão Móvel</translation>
     </message>
     <message>
         <location filename="rust_strings.h" line="296"/>
@@ -3467,7 +3472,7 @@ Onde encontrar
 - Paleta de comandos.
 
 O que precisa
-- O modo Padrão permite controlar o volume, a lanterna e fazer o celular tocar. O Não perturbe exige a permissão Acesso ao Não perturbe. Nas versões mais recentes do Android, é preciso usar o Elevated para alternar o Wi-Fi e o Bluetooth.</translation>
+- O modo Padrão permite controlar o volume, a lanterna e fazer o celular tocar. O Não perturbe exige a permissão Acesso ao Não perturbe. Nas versões mais recentes do Android, é preciso usar o Acesso Avançado para alternar o Wi-Fi e o Bluetooth.</translation>
     </message>
     <message>
         <location filename="rust_strings.h" line="315"/>
@@ -3520,7 +3525,7 @@ Where to find it
 What it needs
 - Turn on Local automation API in Settings › Connection &amp; About and read the bearer token from api-token.json.</source>
         <translation>O que faz
-Oferece, se você ativar, uma API HTTP/JSON local e uma API Server-Sent Events em 127.0.0.1 (porta padrão 53320). Um token bearer protege a API para que scripts, ferramentas de linha de comando e plugins do Stream Deck possam acionar recursos do NectarLink.
+Oferece, se você ativar, uma API HTTP/JSON local e uma API Server-Sent Events em 127.0.0.1 (porta padrão 53320). Um token bearer protege a API para que scripts, ferramentas de linha de comando e plugins do Stream Deck possam acionar recursos do Conexão Móvel.
 
 Onde encontrar
 - Configurações › Conexão e sobre › API de automação local.
@@ -3547,7 +3552,7 @@ Onde encontrar
 - Paleta de comandos › Digitar no celular com o teclado do PC.
 
 O que precisa
-- Assist (serviço de Acessibilidade), o método de entrada do NectarLink ou Elevated no celular.</translation>
+- Assist (serviço de Acessibilidade), o método de entrada do Conexão Móvel ou Acesso Avançado no celular.</translation>
     </message>
     <message>
         <location filename="rust_strings.h" line="319"/>
@@ -3678,7 +3683,7 @@ Onde encontrar
 - Configurações › Geral › Copiar códigos de uso único.
 
 O que precisa
-- Acesso a notificações ativado para o NectarLink no celular Android.
+- Acesso a notificações ativado para o Conexão Móvel no celular Android.
 - Opção Notificações ativada para esse dispositivo no PC.</translation>
     </message>
     <message>
@@ -3696,7 +3701,7 @@ What it needs
 Abre uma busca controlada pelo teclado para encontrar ações, contatos, conversas, apps que podem ser espelhados, controles rápidos do celular, histórico da área de transferência e páginas do app.
 
 Onde encontrar
-- Atalho global Ctrl+Alt+Espaço (ou Ctrl+K dentro da janela do NectarLink).
+- Atalho global Ctrl+Alt+Espaço (ou Ctrl+K dentro da janela do Conexão Móvel).
 - Comandos na barra superior.
 
 O que precisa
@@ -3798,7 +3803,7 @@ Where to find it
 What it needs
 - Paired phone and the per-device Files toggle enabled.</source>
         <translation>O que faz
-Envia arquivos, pastas, links e textos entre o celular e o PC pela rede local. Se o celular estiver desconectado, o NectarLink coloca o item na fila Aguardando para enviar e o envia assim que a conexão voltar.
+Envia arquivos, pastas, links e textos entre o celular e o PC pela rede local. Se o celular estiver desconectado, o Conexão Móvel coloca o item na fila Aguardando para enviar e o envia assim que a conexão voltar.
 
 Onde encontrar
 - Início › botão Enviar arquivos, arrastando itens para a janela, cartão Aguardando para enviar ou lista de Transferências.
@@ -3847,7 +3852,7 @@ Onde encontrar
 
 O que precisa
 - O envio automático da área de transferência do PC para o celular funciona sempre que o celular está conectado.
-- No Android 10 ou posterior, a sincronização do celular para o PC em segundo plano usa notificações, o atalho Enviar item copiado ou o modo Elevated.</translation>
+- No Android 10 ou posterior, a sincronização do celular para o PC em segundo plano usa notificações, o atalho Enviar item copiado ou o modo Acesso Avançado.</translation>
     </message>
     <message>
         <location filename="rust_strings.h" line="333"/>
@@ -3870,7 +3875,7 @@ Onde encontrar
 
 O que precisa
 - Permissões de Telefone, Registro de chamadas e Contatos no celular Android.
-- O áudio da chamada continua no celular ou em um fone pareado com ele. No Android 12 ou posterior, o modo Elevated libera os controles de silenciar, viva-voz, espera e teclado numérico.</translation>
+- O áudio da chamada continua no celular ou em um fone pareado com ele. No Android 12 ou posterior, o modo Acesso Avançado libera os controles de silenciar, viva-voz, espera e teclado numérico.</translation>
     </message>
     <message>
         <location filename="rust_strings.h" line="334"/>
@@ -3908,7 +3913,7 @@ What it needs
 Transmite a tela do PC para o celular, para você ver a área de trabalho de longe e usar o celular como trackpad ou apontador laser.
 
 Onde encontrar
-- Inicie pelo app NectarLink no celular.
+- Inicie pelo app Conexão Móvel no celular.
 - Configurações › Dispositivos › Compartilhar a tela do PC com o celular.
 
 O que precisa
@@ -3927,7 +3932,7 @@ What it needs
 - Camera permission on your phone.
 - For other apps to see it: Virtual camera add-on in Settings › Camera &amp; Audio.</source>
         <translation>O que faz
-Envia a câmera frontal ou traseira do celular, em até 4K, para a Câmera virtual do NectarLink no Windows. Assim, você pode usá-la no Zoom, Teams, Meet, Discord e OBS.
+Envia a câmera frontal ou traseira do celular, em até 4K, para a Câmera virtual do Conexão Móvel no Windows. Assim, você pode usá-la no Zoom, Teams, Meet, Discord e OBS.
 
 Onde encontrar
 - Início › Celular como webcam.
@@ -3959,8 +3964,8 @@ Onde encontrar
 
 O que precisa
 - No modo Padrão, a tela inteira é espelhada depois que você toca em Iniciar agora no pedido de captura do Android.
-- O modo Elevated (Depuração por Wi-Fi ou root) dispensa esse pedido e permite abrir apps em janelas separadas.
-- O modo Assist ou Elevated permite clicar, rolar e digitar na janela espelhada.</translation>
+- O modo Acesso Avançado (Depuração por Wi-Fi ou root) dispensa esse pedido e permite abrir apps em janelas separadas.
+- O modo Assist ou Acesso Avançado permite clicar, rolar e digitar na janela espelhada.</translation>
     </message>
     <message>
         <location filename="rust_strings.h" line="338"/>
@@ -5071,7 +5076,7 @@ O que precisa
     <message>
         <location filename="../qml/IslandWindow.qml" line="290"/>
         <source>Click to view in NectarLink</source>
-        <translation>Clique para ver no NectarLink</translation>
+        <translation>Clique para ver no Conexão Móvel</translation>
     </message>
     <message>
         <location filename="../qml/IslandWindow.qml" line="293"/>
@@ -5149,7 +5154,7 @@ O que precisa
     <message>
         <location filename="rust_strings.h" line="354"/>
         <source>Update NectarLink on %1.</source>
-        <translation>Atualize o NectarLink em %1.</translation>
+        <translation>Atualize o Conexão Móvel em %1.</translation>
     </message>
 </context>
 <context>
@@ -5157,7 +5162,7 @@ O que precisa
     <message>
         <location filename="../qml/components/LockChip.qml" line="15"/>
         <source>Elevated</source>
-        <translation>Elevated</translation>
+        <translation>Acesso Avançado</translation>
     </message>
     <message>
         <location filename="../qml/components/LockChip.qml" line="15"/>
@@ -5212,50 +5217,50 @@ O que precisa
     <message>
         <location filename="../qml/components/LockChip.qml" line="46"/>
         <source>On your phone, open NectarLink › Settings › Permissions › Control from your PC and turn on the Accessibility service.</source>
-        <translation>No celular, abra NectarLink › Configurações › Permissões › Controle pelo PC e ative o serviço de Acessibilidade.</translation>
+        <translation>No celular, abra Conexão Móvel › Configurações › Permissões › Controle pelo PC e ative o serviço de Acessibilidade.</translation>
     </message>
     <message>
         <location filename="../qml/components/LockChip.qml" line="48"/>
         <source>Needs Elevated: set it up in NectarLink › Settings › Permissions › Control from your PC, or connect the phone over USB with USB debugging allowed.</source>
-        <translation>Precisa do Elevated: configure em NectarLink › Configurações › Permissões › Controle pelo PC, ou conecte o celular por USB com a depuração USB permitida.</translation>
+        <translation>Precisa do Acesso Avançado: configure em Conexão Móvel › Configurações › Permissões › Controle pelo PC, ou conecte o celular por USB com a depuração USB permitida.</translation>
     </message>
     <message>
         <source>On your phone, open NectarLink › Settings › Control from your PC and turn on the Accessibility service.</source>
-        <translation type="vanished">No celular, abra NectarLink › Configurações › Controle pelo PC e ative o serviço de Acessibilidade.</translation>
+        <translation type="vanished">No celular, abra Conexão Móvel › Configurações › Controle pelo PC e ative o serviço de Acessibilidade.</translation>
     </message>
     <message>
         <source>Needs Elevated: set up Wireless debugging in NectarLink › Settings › Control from your PC, or connect the phone over USB with USB debugging allowed.</source>
-        <translation type="vanished">Requer o Elevated: configure a Depuração por Wi-Fi em NectarLink › Configurações › Controle pelo PC, ou conecte o celular por USB com a depuração USB permitida.</translation>
+        <translation type="vanished">Requer o Acesso Avançado: configure a Depuração por Wi-Fi em Conexão Móvel › Configurações › Controle pelo PC, ou conecte o celular por USB com a depuração USB permitida.</translation>
     </message>
     <message>
         <location filename="../qml/components/LockChip.qml" line="50"/>
         <source>On your phone, set NectarLink as the default SMS/Caller ID app when prompted.</source>
-        <translation>Quando solicitado no celular, defina o NectarLink como app padrão para SMS e identificação de chamadas.</translation>
+        <translation>Quando solicitado no celular, defina o Conexão Móvel como app padrão para SMS e identificação de chamadas.</translation>
     </message>
     <message>
         <location filename="../qml/components/LockChip.qml" line="53"/>
         <source>On your phone, open NectarLink and allow Notification access.</source>
-        <translation>No celular, abra o NectarLink e permita o Acesso a notificações.</translation>
+        <translation>No celular, abra o Conexão Móvel e permita o Acesso a notificações.</translation>
     </message>
     <message>
         <location filename="../qml/components/LockChip.qml" line="55"/>
         <source>On your phone, open NectarLink and allow Do Not Disturb access.</source>
-        <translation>No celular, abra o NectarLink e permita o acesso ao Não perturbe.</translation>
+        <translation>No celular, abra o Conexão Móvel e permita o acesso ao Não perturbe.</translation>
     </message>
     <message>
         <location filename="../qml/components/LockChip.qml" line="57"/>
         <source>On your phone, open NectarLink and allow Modify system settings.</source>
-        <translation>No celular, abra o NectarLink e permita Modificar configurações do sistema.</translation>
+        <translation>No celular, abra o Conexão Móvel e permita Modificar configurações do sistema.</translation>
     </message>
     <message>
         <location filename="../qml/components/LockChip.qml" line="58"/>
         <source>Open NectarLink on your phone and grant this permission in Settings.</source>
-        <translation>Abra o NectarLink no seu celular e conceda essa permissão em Configurações.</translation>
+        <translation>Abra o Conexão Móvel no seu celular e conceda essa permissão em Configurações.</translation>
     </message>
     <message>
         <location filename="../qml/components/LockChip.qml" line="60"/>
         <source>Open Settings › Camera &amp; Audio to set up the NectarLink virtual camera add-on.</source>
-        <translation>Abra Configurações › Câmera e áudio para configurar o Complemento de câmera virtual do NectarLink.</translation>
+        <translation>Abra Configurações › Câmera e áudio para configurar o Complemento de câmera virtual do Conexão Móvel.</translation>
     </message>
     <message>
         <location filename="../qml/components/LockChip.qml" line="62"/>
@@ -5876,7 +5881,7 @@ O que precisa
     <message>
         <location filename="rust_strings.h" line="376"/>
         <source>Set up Wireless debugging in NectarLink on the phone to open its apps here.</source>
-        <translation>Configure a Depuração por Wi-Fi no NectarLink do celular para abrir os apps aqui.</translation>
+        <translation>Configure a Depuração por Wi-Fi no Conexão Móvel do celular para abrir os apps aqui.</translation>
     </message>
     <message>
         <location filename="rust_strings.h" line="377"/>
@@ -5886,7 +5891,7 @@ O que precisa
     <message>
         <location filename="rust_strings.h" line="378"/>
         <source>The app didn&apos;t open on the phone. Try again, or open NectarLink on the phone to check Wireless debugging.</source>
-        <translation>O app não abriu no celular. Tente de novo ou abra o NectarLink no celular para conferir a Depuração por Wi-Fi.</translation>
+        <translation>O app não abriu no celular. Tente de novo ou abra o Conexão Móvel no celular para conferir a Depuração por Wi-Fi.</translation>
     </message>
     <message>
         <location filename="rust_strings.h" line="379"/>
@@ -5911,7 +5916,7 @@ O que precisa
     <message>
         <location filename="rust_strings.h" line="383"/>
         <source>This phone&apos;s app doesn&apos;t share its screen yet. Update NectarLink on the phone.</source>
-        <translation>O app deste celular ainda não compartilha a tela. Atualize o NectarLink no celular.</translation>
+        <translation>O app deste celular ainda não compartilha a tela. Atualize o Conexão Móvel no celular.</translation>
     </message>
     <message>
         <location filename="rust_strings.h" line="384"/>
@@ -5929,12 +5934,12 @@ O que precisa
     <message>
         <location filename="../qml/MirrorWindow.qml" line="25"/>
         <source>%1 · NectarLink</source>
-        <translation>%1 · NectarLink</translation>
+        <translation>%1 · Conexão Móvel</translation>
     </message>
     <message>
         <location filename="../qml/MirrorWindow.qml" line="25"/>
         <source>Phone screen · NectarLink</source>
-        <translation>Tela do celular · NectarLink</translation>
+        <translation>Tela do celular · Conexão Móvel</translation>
     </message>
     <message>
         <location filename="../qml/MirrorWindow.qml" line="376"/>
@@ -6020,7 +6025,7 @@ O que precisa
     <message>
         <location filename="../qml/MirrorWindow.qml" line="589"/>
         <source>To control the phone, turn on Control from your PC in NectarLink&apos;s settings on the phone.</source>
-        <translation>Para controlar o celular, ative Controle pelo PC nas Configurações do NectarLink no celular.</translation>
+        <translation>Para controlar o celular, ative Controle pelo PC nas Configurações do Conexão Móvel no celular.</translation>
     </message>
     <message>
         <location filename="../qml/MirrorWindow.qml" line="598"/>
@@ -6389,7 +6394,7 @@ O que precisa
     <message>
         <location filename="../qml/pages/PairingPanel.qml" line="114"/>
         <source>Install NectarLink</source>
-        <translation>Instalar o NectarLink</translation>
+        <translation>Instalar o Conexão Móvel</translation>
     </message>
     <message>
         <location filename="../qml/pages/PairingPanel.qml" line="114"/>
@@ -6417,7 +6422,7 @@ O que precisa
     <message>
         <location filename="../qml/pages/PairingPanel.qml" line="187"/>
         <source>Open NectarLink on your phone</source>
-        <translation>Abra o NectarLink no seu celular</translation>
+        <translation>Abra o Conexão Móvel no seu celular</translation>
     </message>
     <message>
         <location filename="../qml/pages/PairingPanel.qml" line="187"/>
@@ -6427,7 +6432,7 @@ O que precisa
     <message>
         <location filename="../qml/pages/PairingPanel.qml" line="235"/>
         <source>On your phone, open NectarLink and choose “Pair nearby”. It shows up here.</source>
-        <translation>No celular, abra o NectarLink e escolha “Parear com um dispositivo próximo”. Ele aparecerá aqui.</translation>
+        <translation>No celular, abra o Conexão Móvel e escolha “Parear com um dispositivo próximo”. Ele aparecerá aqui.</translation>
     </message>
     <message>
         <location filename="../qml/pages/PairingPanel.qml" line="265"/>
@@ -6538,7 +6543,7 @@ O que precisa
     <message>
         <location filename="rust_strings.h" line="401"/>
         <source>Update NectarLink on %1 to use its microphone.</source>
-        <translation>Atualize o NectarLink em %1 para usar o microfone.</translation>
+        <translation>Atualize o Conexão Móvel em %1 para usar o microfone.</translation>
     </message>
 </context>
 <context>
@@ -6546,7 +6551,7 @@ O que precisa
     <message>
         <location filename="rust_strings.h" line="402"/>
         <source>%1 couldn&apos;t ask to share its sound. Check that NectarLink can show notifications on the phone.</source>
-        <translation>%1 não conseguiu pedir para compartilhar o som. Confira se o NectarLink pode mostrar notificações no celular.</translation>
+        <translation>%1 não conseguiu pedir para compartilhar o som. Confira se o Conexão Móvel pode mostrar notificações no celular.</translation>
     </message>
     <message>
         <location filename="rust_strings.h" line="403"/>
@@ -6561,7 +6566,7 @@ O que precisa
     <message>
         <location filename="rust_strings.h" line="405"/>
         <source>Update NectarLink on %1 to play its sound here.</source>
-        <translation>Atualize o NectarLink em %1 para tocar o som dele aqui.</translation>
+        <translation>Atualize o Conexão Móvel em %1 para tocar o som dele aqui.</translation>
     </message>
 </context>
 <context>
@@ -6614,7 +6619,7 @@ O que precisa
     <message>
         <location filename="rust_strings.h" line="415"/>
         <source>Update NectarLink on %1 to back up its photos.</source>
-        <translation>Atualize o NectarLink em %1 para fazer backup das fotos.</translation>
+        <translation>Atualize o Conexão Móvel em %1 para fazer backup das fotos.</translation>
     </message>
     <message>
         <location filename="rust_strings.h" line="416"/>
@@ -7038,7 +7043,7 @@ O que precisa
     <message>
         <location filename="rust_strings.h" line="440"/>
         <source>Update NectarLink on %1 to play on it.</source>
-        <translation>Atualize o NectarLink em %1 para reproduzir a mídia nele.</translation>
+        <translation>Atualize o Conexão Móvel em %1 para reproduzir a mídia nele.</translation>
     </message>
 </context>
 <context>
@@ -7100,7 +7105,7 @@ O que precisa
     <message>
         <location filename="rust_strings.h" line="449"/>
         <source>Send to %1 with NectarLink</source>
-        <translation>Enviar para %1 com o NectarLink</translation>
+        <translation>Enviar para %1 com o Conexão Móvel</translation>
     </message>
     <message>
         <location filename="rust_strings.h" line="450"/>
@@ -7397,7 +7402,7 @@ O que precisa
     <message>
         <location filename="../qml/pages/SettingsPage.qml" line="184"/>
         <source>Run Deck shell commands</source>
-        <translation>Executar comandos do shell do Deck</translation>
+        <translation>Executar comandos do shell do Painel de Atalhos</translation>
     </message>
     <message>
         <location filename="../qml/pages/SettingsPage.qml" line="185"/>
@@ -7579,12 +7584,12 @@ O que precisa
     <message>
         <location filename="../qml/pages/SettingsPage.qml" line="949"/>
         <source>NectarLink follows the system unless you pick one.</source>
-        <translation>O NectarLink segue o idioma do sistema, a menos que você escolha outro.</translation>
+        <translation>O Conexão Móvel segue o idioma do sistema, a menos que você escolha outro.</translation>
     </message>
     <message>
         <location filename="../qml/pages/SettingsPage.qml" line="950"/>
         <source>NectarLink follows Windows unless you pick one.</source>
-        <translation>O NectarLink segue o idioma do Windows, a menos que você escolha outro.</translation>
+        <translation>O Conexão Móvel segue o idioma do Windows, a menos que você escolha outro.</translation>
     </message>
     <message>
         <location filename="../qml/pages/SettingsPage.qml" line="958"/>
@@ -7834,7 +7839,7 @@ O que precisa
     <message>
         <location filename="../qml/pages/SettingsPage.qml" line="573"/>
         <source>Makes text and everything else bigger. Applies when you restart NectarLink.</source>
-        <translation>Aumenta o texto e os demais elementos. A mudança é aplicada quando você reinicia o NectarLink.</translation>
+        <translation>Aumenta o texto e os demais elementos. A mudança é aplicada quando você reinicia o Conexão Móvel.</translation>
     </message>
     <message>
         <location filename="../qml/pages/SettingsPage.qml" line="1216"/>
@@ -7856,7 +7861,7 @@ O que precisa
     <message>
         <location filename="../qml/pages/SettingsPage.qml" line="1500"/>
         <source>Mirroring and app windows start with this phone&apos;s screen off. Needs Elevated.</source>
-        <translation>O espelhamento e as janelas de apps começam com a tela do celular desligada. Requer o Elevated.</translation>
+        <translation>O espelhamento e as janelas de apps começam com a tela do celular desligada. Requer o Acesso Avançado.</translation>
     </message>
     <message>
         <location filename="../qml/pages/SettingsPage.qml" line="1748"/>
@@ -8298,7 +8303,7 @@ O que precisa
     <message>
         <location filename="../qml/pages/SettingsPage.qml" line="2850"/>
         <source>For Deck tiles that run obs: commands. Turn on OBS&apos;s WebSocket server in Tools › WebSocket Server Settings.</source>
-        <translation>Para botões do Deck que executam comandos obs:. Ative o servidor WebSocket do OBS em Ferramentas › Configurações do Servidor WebSocket.</translation>
+        <translation>Para botões do Painel de Atalhos que executam comandos obs:. Ative o servidor WebSocket do OBS em Ferramentas › Configurações do Servidor WebSocket.</translation>
     </message>
     <message>
         <location filename="../qml/pages/SettingsPage.qml" line="2858"/>
@@ -8602,7 +8607,7 @@ O que precisa
     <message>
         <location filename="../qml/pages/SettingsPage.qml" line="3370"/>
         <source>NectarLink %1</source>
-        <translation>NectarLink %1</translation>
+        <translation>Conexão Móvel %1</translation>
     </message>
     <message>
         <location filename="../qml/pages/SettingsPage.qml" line="3373"/>
@@ -8670,7 +8675,7 @@ O que precisa
     <message>
         <location filename="../qml/pages/SettingsPage.qml" line="3574"/>
         <source>The phone asks once to let this PC in. NectarLink there also needs All files access, or this folder under Selected folders only.</source>
-        <translation>O celular pede uma vez para liberar este PC. O NectarLink de lá também precisa do Acesso a todos os arquivos, ou desta pasta em Somente pastas selecionadas.</translation>
+        <translation>O celular pede uma vez para liberar este PC. O Conexão Móvel de lá também precisa do Acesso a todos os arquivos, ou desta pasta em Somente pastas selecionadas.</translation>
     </message>
     <message>
         <location filename="../qml/pages/SettingsPage.qml" line="3577"/>
@@ -8742,7 +8747,7 @@ O que precisa
     <message>
         <location filename="../qml/pages/SettingsPage.qml" line="3704"/>
         <source>Wi-Fi networks this PC has joined before. Your system keeps their passwords; NectarLink never sees them.</source>
-        <translation>Redes Wi-Fi já usadas por este PC. O sistema guarda as senhas; o NectarLink nunca tem acesso a elas.</translation>
+        <translation>Redes Wi-Fi já usadas por este PC. O sistema guarda as senhas; o Conexão Móvel nunca tem acesso a elas.</translation>
     </message>
     <message>
         <location filename="../qml/pages/SettingsPage.qml" line="3705"/>
@@ -8752,7 +8757,7 @@ O que precisa
     <message>
         <location filename="../qml/pages/SettingsPage.qml" line="3707"/>
         <source>Wi-Fi networks this PC has joined before. Windows keeps their passwords; NectarLink never sees them.</source>
-        <translation>Redes Wi-Fi já usadas por este PC. O Windows guarda as senhas; o NectarLink nunca tem acesso a elas.</translation>
+        <translation>Redes Wi-Fi já usadas por este PC. O Windows guarda as senhas; o Conexão Móvel nunca tem acesso a elas.</translation>
     </message>
     <message>
         <location filename="../qml/pages/SettingsPage.qml" line="3708"/>
@@ -8890,7 +8895,7 @@ O que precisa
     <message>
         <location filename="rust_strings.h" line="457"/>
         <source>Couldn&apos;t uninstall NectarLink: %1</source>
-        <translation>Não foi possível desinstalar o NectarLink: %1</translation>
+        <translation>Não foi possível desinstalar o Conexão Móvel: %1</translation>
     </message>
     <message>
         <location filename="rust_strings.h" line="458"/>
@@ -8920,7 +8925,7 @@ O que precisa
     <message>
         <location filename="rust_strings.h" line="463"/>
         <source>The uninstaller is missing. Reinstall NectarLink, then uninstall it.</source>
-        <translation>O desinstalador não foi encontrado. Reinstale o NectarLink e depois desinstale-o.</translation>
+        <translation>O desinstalador não foi encontrado. Reinstale o Conexão Móvel e depois desinstale-o.</translation>
     </message>
     <message>
         <location filename="rust_strings.h" line="464"/>
@@ -8948,17 +8953,17 @@ O que precisa
     <message>
         <location filename="../qml/setup/SetupWindow.qml" line="51"/>
         <source>Uninstall NectarLink</source>
-        <translation>Desinstalar o NectarLink</translation>
+        <translation>Desinstalar o Conexão Móvel</translation>
     </message>
     <message>
         <location filename="../qml/setup/SetupWindow.qml" line="51"/>
         <source>NectarLink Setup</source>
-        <translation>Instalação do NectarLink</translation>
+        <translation>Instalação do Conexão Móvel</translation>
     </message>
     <message>
         <location filename="../qml/setup/SetupWindow.qml" line="67"/>
         <source>Install NectarLink in</source>
-        <translation>Instalar o NectarLink em</translation>
+        <translation>Instalar o Conexão Móvel em</translation>
     </message>
     <message>
         <location filename="../qml/setup/SetupWindow.qml" line="120"/>
@@ -8971,12 +8976,12 @@ O que precisa
     <message>
         <location filename="../qml/setup/SetupWindow.qml" line="187"/>
         <source>NectarLink</source>
-        <translation>NectarLink</translation>
+        <translation>Conexão Móvel</translation>
     </message>
     <message>
         <location filename="../qml/setup/SetupWindow.qml" line="216"/>
         <source>Couldn&apos;t uninstall NectarLink</source>
-        <translation>Não foi possível desinstalar o NectarLink</translation>
+        <translation>Não foi possível desinstalar o Conexão Móvel</translation>
     </message>
     <message>
         <location filename="../qml/setup/SetupWindow.qml" line="216"/>
@@ -8986,27 +8991,27 @@ O que precisa
     <message>
         <location filename="../qml/setup/SetupWindow.qml" line="218"/>
         <source>Uninstalling NectarLink</source>
-        <translation>Desinstalando o NectarLink</translation>
+        <translation>Desinstalando o Conexão Móvel</translation>
     </message>
     <message>
         <location filename="../qml/setup/SetupWindow.qml" line="219"/>
         <source>Updating NectarLink</source>
-        <translation>Atualizando o NectarLink</translation>
+        <translation>Atualizando o Conexão Móvel</translation>
     </message>
     <message>
         <location filename="../qml/setup/SetupWindow.qml" line="220"/>
         <source>Installing NectarLink</source>
-        <translation>Instalando o NectarLink</translation>
+        <translation>Instalando o Conexão Móvel</translation>
     </message>
     <message>
         <location filename="../qml/setup/SetupWindow.qml" line="221"/>
         <source>Uninstall NectarLink?</source>
-        <translation>Desinstalar o NectarLink?</translation>
+        <translation>Desinstalar o Conexão Móvel?</translation>
     </message>
     <message>
         <location filename="../qml/setup/SetupWindow.qml" line="236"/>
         <source>Sorry to see you go. This uninstalls NectarLink and deletes its settings and pairings on this PC. Files you received stay in %1.</source>
-        <translation>Que pena que você vai embora. Isso desinstala o NectarLink e apaga as configurações e os pareamentos deste PC. Os arquivos recebidos continuam em %1.</translation>
+        <translation>Que pena que você vai embora. Isso desinstala o Conexão Móvel e apaga as configurações e os pareamentos deste PC. Os arquivos recebidos continuam em %1.</translation>
     </message>
     <message>
         <location filename="../qml/setup/SetupWindow.qml" line="238"/>
@@ -9056,7 +9061,7 @@ O que precisa
     <message>
         <location filename="../qml/setup/SetupWindow.qml" line="298"/>
         <source>Keep NectarLink</source>
-        <translation>Manter o NectarLink</translation>
+        <translation>Manter o Conexão Móvel</translation>
     </message>
     <message>
         <location filename="../qml/setup/SetupWindow.qml" line="356"/>
@@ -9087,12 +9092,12 @@ O que precisa
     <message>
         <location filename="../qml/setup/SetupWindow.qml" line="469"/>
         <source>NectarLink is uninstalled</source>
-        <translation>O NectarLink foi desinstalado</translation>
+        <translation>O Conexão Móvel foi desinstalado</translation>
     </message>
     <message>
         <location filename="../qml/setup/SetupWindow.qml" line="469"/>
         <source>NectarLink is ready</source>
-        <translation>O NectarLink está pronto</translation>
+        <translation>O Conexão Móvel está pronto</translation>
     </message>
     <message>
         <location filename="../qml/setup/SetupWindow.qml" line="481"/>
@@ -9117,12 +9122,12 @@ O que precisa
     <message>
         <location filename="../qml/setup/SetupWindow.qml" line="531"/>
         <source>Open NectarLink</source>
-        <translation>Abrir o NectarLink</translation>
+        <translation>Abrir o Conexão Móvel</translation>
     </message>
     <message>
         <location filename="../qml/setup/SetupWindow.qml" line="591"/>
         <source>NectarLink goes into Program Files, or the folder you choose, for everyone on this PC. Setup also:</source>
-        <translation>O NectarLink será instalado em Arquivos de Programas ou na pasta escolhida e ficará disponível para todas as contas deste PC. A instalação também:</translation>
+        <translation>O Conexão Móvel será instalado em Arquivos de Programas ou na pasta escolhida e ficará disponível para todas as contas deste PC. A instalação também:</translation>
     </message>
     <message>
         <location filename="../qml/setup/SetupWindow.qml" line="593"/>
@@ -9132,7 +9137,7 @@ O que precisa
     <message>
         <location filename="../qml/setup/SetupWindow.qml" line="592"/>
         <source>allows it through Windows Firewall on private networks, so your phone can connect</source>
-        <translation>permite conexões do NectarLink pelo Firewall do Windows em redes privadas, para que o celular possa se conectar</translation>
+        <translation>permite conexões do Conexão Móvel pelo Firewall do Windows em redes privadas, para que o celular possa se conectar</translation>
     </message>
     <message>
         <location filename="../qml/setup/SetupWindow.qml" line="594"/>
@@ -9142,12 +9147,12 @@ O que precisa
     <message>
         <location filename="../qml/setup/SetupWindow.qml" line="595"/>
         <source>adds it to the Windows Share sheet</source>
-        <translation>adiciona o NectarLink ao menu Compartilhar do Windows</translation>
+        <translation>adiciona o Conexão Móvel ao menu Compartilhar do Windows</translation>
     </message>
     <message>
         <location filename="../qml/setup/SetupWindow.qml" line="596"/>
         <source>It checks GitHub for updates once a day, which you can turn off in Settings. Otherwise your phone and PC only talk to each other.</source>
-        <translation>O NectarLink verifica se há atualizações no GitHub uma vez por dia; você pode desativar essa opção em Configurações. Fora isso, a comunicação acontece somente entre o celular e o PC.</translation>
+        <translation>O Conexão Móvel verifica se há atualizações no GitHub uma vez por dia; você pode desativar essa opção em Configurações. Fora isso, a comunicação acontece somente entre o celular e o PC.</translation>
     </message>
     <message>
         <location filename="../qml/setup/SetupWindow.qml" line="603"/>
@@ -9160,7 +9165,7 @@ O que precisa
     <message>
         <location filename="../qml/ShelfWindow.qml" line="16"/>
         <source>NectarLink Shelf</source>
-        <translation>Bandeja de arquivos do NectarLink</translation>
+        <translation>Bandeja de arquivos do Conexão Móvel</translation>
     </message>
     <message>
         <location filename="../qml/ShelfWindow.qml" line="53"/>
@@ -9356,7 +9361,7 @@ O que precisa
     <message>
         <location filename="../qml/components/StarPrompt.qml" line="299"/>
         <source>Enjoying NectarLink?</source>
-        <translation>Está curtindo o NectarLink?</translation>
+        <translation>Está curtindo o Conexão Móvel?</translation>
     </message>
     <message>
         <location filename="../qml/components/StarPrompt.qml" line="309"/>
@@ -9379,12 +9384,12 @@ O que precisa
     <message>
         <location filename="rust_strings.h" line="469"/>
         <source>On the phone, allow All files access for NectarLink.</source>
-        <translation>No celular, permita Acesso a todos os arquivos para o NectarLink.</translation>
+        <translation>No celular, permita Acesso a todos os arquivos para o Conexão Móvel.</translation>
     </message>
     <message>
         <location filename="rust_strings.h" line="470"/>
         <source>On the phone, turn on Browse this phone&apos;s storage in File Explorer in NectarLink.</source>
-        <translation>No celular, ative Explorar o armazenamento deste celular pelo Explorador de Arquivos no NectarLink.</translation>
+        <translation>No celular, ative Explorar o armazenamento deste celular pelo Explorador de Arquivos no Conexão Móvel.</translation>
     </message>
 </context>
 <context>
@@ -9853,7 +9858,7 @@ O que precisa
     <message>
         <location filename="rust_strings.h" line="500"/>
         <source>Accept in NectarLink to save to Downloads\Nectarlink</source>
-        <translation>Aceite no NectarLink para salvar em Downloads\Nectarlink</translation>
+        <translation>Aceite no Conexão Móvel para salvar em Downloads\Nectarlink</translation>
     </message>
     <message>
         <location filename="rust_strings.h" line="501"/>
@@ -9896,27 +9901,27 @@ O que precisa
     <message>
         <location filename="rust_strings.h" line="508"/>
         <source>NectarLink %1 is available</source>
-        <translation>O NectarLink %1 está disponível</translation>
+        <translation>O Conexão Móvel %1 está disponível</translation>
     </message>
     <message>
         <location filename="rust_strings.h" line="509"/>
         <source>NectarLink %1 is available.</source>
-        <translation>O NectarLink %1 está disponível.</translation>
+        <translation>O Conexão Móvel %1 está disponível.</translation>
     </message>
     <message>
         <location filename="rust_strings.h" line="510"/>
         <source>NectarLink is still on the version you had. Try again from Settings.</source>
-        <translation>O NectarLink continua na versão que você tinha. Tente de novo em Configurações.</translation>
+        <translation>O Conexão Móvel continua na versão que você tinha. Tente de novo em Configurações.</translation>
     </message>
     <message>
         <location filename="rust_strings.h" line="511"/>
         <source>NectarLink is up to date.</source>
-        <translation>O NectarLink está atualizado.</translation>
+        <translation>O Conexão Móvel está atualizado.</translation>
     </message>
     <message>
         <location filename="rust_strings.h" line="512"/>
         <source>NectarLink is updated to %1</source>
-        <translation>O NectarLink foi atualizado para %1</translation>
+        <translation>O Conexão Móvel foi atualizado para %1</translation>
     </message>
     <message>
         <location filename="rust_strings.h" line="513"/>
@@ -9956,7 +9961,7 @@ O que precisa
     <message>
         <location filename="rust_strings.h" line="520"/>
         <source>The update is installed. Restart NectarLink to use it.</source>
-        <translation>A atualização foi instalada. Reinicie o NectarLink para começar a usá-la.</translation>
+        <translation>A atualização foi instalada. Reinicie o Conexão Móvel para começar a usá-la.</translation>
     </message>
     <message>
         <location filename="rust_strings.h" line="521"/>
@@ -10151,7 +10156,7 @@ O que precisa
     <message>
         <location filename="../qml/pages/WalkthroughPage.qml" line="1554"/>
         <source>Keep NectarLink ready in the system tray when you sign in.</source>
-        <translation>Deixe o NectarLink pronto na bandeja do sistema quando você entrar.</translation>
+        <translation>Deixe o Conexão Móvel pronto na bandeja do sistema quando você entrar.</translation>
     </message>
     <message>
         <location filename="../qml/pages/WalkthroughPage.qml" line="1612"/>
@@ -10196,7 +10201,7 @@ O que precisa
     <message>
         <location filename="../qml/pages/WalkthroughPage.qml" line="97"/>
         <source>Welcome to NectarLink</source>
-        <translation>Boas-vindas ao NectarLink</translation>
+        <translation>Boas-vindas ao Conexão Móvel</translation>
     </message>
     <message>
         <location filename="../qml/pages/WalkthroughPage.qml" line="98"/>
@@ -10206,7 +10211,7 @@ O que precisa
     <message>
         <location filename="../qml/pages/WalkthroughPage.qml" line="99"/>
         <source>Install NectarLink on your phone</source>
-        <translation>Instalar o NectarLink no celular</translation>
+        <translation>Instalar o Conexão Móvel no celular</translation>
     </message>
     <message>
         <location filename="../qml/pages/WalkthroughPage.qml" line="100"/>
@@ -10246,7 +10251,7 @@ O que precisa
     <message>
         <location filename="../qml/pages/WalkthroughPage.qml" line="110"/>
         <source>Scan the QR code from the NectarLink Android app, or pick your phone from nearby devices.</source>
-        <translation>Escaneie o código QR com o app NectarLink para Android ou escolha seu celular entre os dispositivos por perto.</translation>
+        <translation>Escaneie o código QR com o app Conexão Móvel para Android ou escolha seu celular entre os dispositivos por perto.</translation>
     </message>
     <message>
         <location filename="../qml/pages/WalkthroughPage.qml" line="111"/>
@@ -10396,7 +10401,7 @@ O que precisa
     <message>
         <location filename="../qml/pages/WalkthroughPage.qml" line="1478"/>
         <source>Notifications are off for NectarLink in Windows Settings.</source>
-        <translation>As notificações do NectarLink estão desativadas nas Configurações do Windows.</translation>
+        <translation>As notificações do Conexão Móvel estão desativadas nas Configurações do Windows.</translation>
     </message>
     <message>
         <location filename="../qml/pages/WalkthroughPage.qml" line="1493"/>
@@ -10431,7 +10436,7 @@ O que precisa
     <message>
         <location filename="../qml/pages/WalkthroughPage.qml" line="1654"/>
         <source>Open the NectarLink Android app whenever you are ready to scan the QR code.</source>
-        <translation>Quando quiser escanear o código QR, abra o app NectarLink para Android.</translation>
+        <translation>Quando quiser escanear o código QR, abra o app Conexão Móvel para Android.</translation>
     </message>
     <message>
         <location filename="../qml/pages/WalkthroughPage.qml" line="1659"/>
@@ -10441,7 +10446,7 @@ O que precisa
     <message>
         <location filename="../qml/pages/WalkthroughPage.qml" line="1664"/>
         <source>Browse every feature in NectarLink, see what permissions it needs, and jump straight to it.</source>
-        <translation>Explore todos os recursos do NectarLink, veja quais permissões cada um exige e abra qualquer um deles diretamente.</translation>
+        <translation>Explore todos os recursos do Conexão Móvel, veja quais permissões cada um exige e abra qualquer um deles diretamente.</translation>
     </message>
     <message>
         <location filename="../qml/pages/WalkthroughPage.qml" line="1741"/>
@@ -10487,12 +10492,12 @@ O que precisa
     <message>
         <location filename="../qml/pages/WelcomePage.qml" line="36"/>
         <source>Welcome to NectarLink</source>
-        <translation>Boas-vindas ao NectarLink</translation>
+        <translation>Boas-vindas ao Conexão Móvel</translation>
     </message>
     <message>
         <location filename="../qml/pages/WelcomePage.qml" line="46"/>
         <source>NectarLink couldn&apos;t start.</source>
-        <translation>Não foi possível iniciar o NectarLink.</translation>
+        <translation>Não foi possível iniciar o Conexão Móvel.</translation>
     </message>
     <message>
         <location filename="../qml/pages/WelcomePage.qml" line="47"/>

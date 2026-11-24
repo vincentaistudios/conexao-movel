@@ -193,11 +193,11 @@ class PhoneToggles(
                     setFlashlight(on)
                 }
                 id == "volume" -> {
-                    val level = (value as? PhoneToggleValue.Percent)?.percent?.toInt() ?: return false
+                    val level = (value as? PhoneToggleValue.Level)?.level?.toInt() ?: return false
                     setVolume(level)
                 }
                 id == "brightness" -> {
-                    val level = (value as? PhoneToggleValue.Percent)?.percent?.toInt() ?: return false
+                    val level = (value as? PhoneToggleValue.Level)?.level?.toInt() ?: return false
                     setBrightness(level)
                 }
                 id == "wifi" -> {
@@ -402,7 +402,8 @@ class PhoneToggles(
         fun canChangeWifi(context: Context): Boolean =
             Elevated.running || Build.VERSION.SDK_INT < Build.VERSION_CODES.Q
 
-        fun canChangeBluetooth(): Boolean = true
+        fun canChangeBluetooth(): Boolean =
+            Elevated.running || Build.VERSION.SDK_INT < Build.VERSION_CODES.Q
 
         fun dndSettingsIntent(): Intent =
             Intent(Settings.ACTION_NOTIFICATION_POLICY_ACCESS_SETTINGS)

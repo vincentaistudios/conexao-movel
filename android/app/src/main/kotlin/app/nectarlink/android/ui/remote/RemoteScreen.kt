@@ -392,24 +392,30 @@ private fun OfflineWakeBanner(device: Device, onWake: () -> Unit) {
         color = MaterialTheme.colorScheme.secondaryContainer,
         contentColor = MaterialTheme.colorScheme.onSecondaryContainer,
     ) {
-        Column(Modifier.fillMaxWidth().padding(horizontal = 16.dp, vertical = 12.dp)) {
+        Column(
+            modifier = Modifier.fillMaxWidth().padding(horizontal = 16.dp, vertical = 12.dp),
+            verticalArrangement = Arrangement.spacedBy(8.dp),
+        ) {
             when {
-                !device.canWake -> {
-                    Text(
-                        stringResource(R.string.remote_offline_text, device.name),
-                        style = MaterialTheme.typography.bodySmall,
-                    )
-                }
                 device.wakeState == WakeState.Waking -> {
                     Text(
                         stringResource(R.string.wake_waking, device.name),
                         style = MaterialTheme.typography.titleSmall,
                     )
-                    Spacer(Modifier.height(8.dp))
+                    Text(
+                        stringResource(R.string.wake_magic_packet_sent),
+                        style = MaterialTheme.typography.bodySmall,
+                    )
                     if (LocalReducedMotion.current) {
                         LinearProgressIndicator(progress = { 0.5f }, modifier = Modifier.fillMaxWidth())
                     } else {
                         LinearProgressIndicator(modifier = Modifier.fillMaxWidth())
+                    }
+                    OutlinedButton(
+                        onClick = onWake,
+                        modifier = Modifier.align(Alignment.End),
+                    ) {
+                        Text(stringResource(R.string.wake_retry_packet))
                     }
                 }
                 device.wakeState == WakeState.TimedOut -> {
@@ -417,14 +423,21 @@ private fun OfflineWakeBanner(device: Device, onWake: () -> Unit) {
                         stringResource(R.string.wake_timeout_title, device.name),
                         style = MaterialTheme.typography.titleSmall,
                     )
-                    Spacer(Modifier.height(4.dp))
                     Text(
                         stringResource(R.string.wake_timeout_text, device.name),
                         style = MaterialTheme.typography.bodySmall,
                     )
-                    Spacer(Modifier.height(10.dp))
-                    Button(onClick = onWake) {
-                        Text(stringResource(R.string.action_wake_pc))
+                    Button(
+                        onClick = onWake,
+                        modifier = Modifier.align(Alignment.End),
+                    ) {
+                        Icon(
+                            painter = painterResource(R.drawable.ic_wake),
+                            contentDescription = null,
+                            modifier = Modifier.size(16.dp),
+                        )
+                        Spacer(Modifier.width(6.dp))
+                        Text(stringResource(R.string.power_action_wake))
                     }
                 }
                 else -> {
@@ -432,14 +445,29 @@ private fun OfflineWakeBanner(device: Device, onWake: () -> Unit) {
                         modifier = Modifier.fillMaxWidth(),
                         verticalAlignment = Alignment.CenterVertically,
                     ) {
-                        Text(
-                            stringResource(R.string.remote_offline_text, device.name),
-                            style = MaterialTheme.typography.bodySmall,
-                            modifier = Modifier.weight(1f),
-                        )
+                        Column(modifier = Modifier.weight(1f)) {
+                            Text(
+                                stringResource(R.string.remote_offline_text, device.name),
+                                style = MaterialTheme.typography.bodySmall,
+                            )
+                            if (!device.canWake) {
+                                Spacer(Modifier.height(2.dp))
+                                Text(
+                                    stringResource(R.string.wake_not_ready_hint, device.name),
+                                    style = MaterialTheme.typography.labelSmall,
+                                    color = MaterialTheme.colorScheme.onSecondaryContainer.copy(alpha = 0.8f),
+                                )
+                            }
+                        }
                         Spacer(Modifier.width(12.dp))
                         Button(onClick = onWake) {
-                            Text(stringResource(R.string.action_wake_pc))
+                            Icon(
+                                painter = painterResource(R.drawable.ic_wake),
+                                contentDescription = null,
+                                modifier = Modifier.size(16.dp),
+                            )
+                            Spacer(Modifier.width(6.dp))
+                            Text(stringResource(R.string.power_action_wake))
                         }
                     }
                 }

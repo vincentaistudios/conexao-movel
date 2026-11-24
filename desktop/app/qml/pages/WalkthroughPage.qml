@@ -1088,6 +1088,10 @@ FocusScope {
                                     }
                                 }
                             }
+
+                            PhoneSetupCard {
+                                Layout.fillWidth: true
+                            }
                         }
 
                         // STEP 3: Pair your phone and PC

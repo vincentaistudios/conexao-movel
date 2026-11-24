@@ -522,6 +522,7 @@ fn is_background_rpc(t: &str) -> bool {
             | types::NOTIFY_ACTION
             | types::PC_POWER
             | types::LINK_OPEN
+            | types::MEDIA_DOWNLOAD_RPC
             | types::PHOTOS_ALBUMS
             | types::PHOTOS_LIST
             | types::PHOTOS_THUMBS
@@ -614,7 +615,10 @@ async fn handle(shared: &Arc<Shared>, session: &Arc<Session>, env: Envelope) -> 
         }
         t if t.starts_with("notify.") && crate::notifications::handle(shared, session, &env).await? => {}
         t if t.starts_with("media.") && crate::media::handle(shared, session, &env).await? => {}
-        t if (t.starts_with("pc.") || t.starts_with("link.") || t.starts_with("task."))
+        t if (t.starts_with("pc.")
+            || t.starts_with("link.")
+            || t.starts_with("task.")
+            || t == types::MEDIA_DOWNLOAD_RPC)
             && crate::actions::handle(shared, session, &env).await? => {}
         t if t.starts_with("clip.") && crate::clipboard::handle(shared, session, &env).await? => {}
         t if t.starts_with("photos.") && crate::photos::handle(shared, session, &env).await? => {}

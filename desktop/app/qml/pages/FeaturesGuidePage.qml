@@ -257,7 +257,7 @@ Item {
             area: "camera_audio",
             capKey: "webcam",
             toggleKey: "",
-            summary: qsTr("Use your phone camera as the NectarLink Virtual Camera in Zoom, Teams, Meet, and OBS."),
+            summary: qsTr("Use a câmera do seu celular como câmera virtual no Zoom, Teams, Meet e OBS."),
             whereLabel: qsTr("Home › Phone as webcam"),
             needsLabel: qsTr("Camera permission on phone and Virtual Camera registered on PC"),
             targetId: "settings:camera_audio:webcam",
@@ -583,7 +583,7 @@ Item {
 
             Txt {
                 Layout.fillWidth: true
-                text: qsTr("Every feature in NectarLink, what it needs, and where to find it.")
+                text: qsTr("Cada recurso da Conexão Móvel, suas permissões e onde encontrá-lo.")
                 role: "body"
                 color: Theme.surfaceContentVariant
                 wrapMode: Text.WordWrap

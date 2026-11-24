@@ -200,32 +200,10 @@ fn looks_virtual_name(friendly: &str, description: &str) -> bool {
     let f = friendly.to_ascii_lowercase();
     let d = description.to_ascii_lowercase();
     const VIRTUAL_WORDS: &[&str] = &[
-        "virtual",
-        "vethernet",
-        "hyper-v",
-        "wsl",
-        "vmware",
-        "virtualbox",
-        "vbox",
-        "loopback",
-        "tap-",
-        "tap-windows",
-        "tuntap",
-        "wintun",
-        "vpn",
-        "wireguard",
-        "openvpn",
-        "tailscale",
-        "zerotier",
-        "bluetooth",
-        "wan miniport",
-        "ndis",
-        "teredo",
-        "isatap",
-        "docker",
-        "npcap",
-        "wi-fi direct",
-        "hosted network",
+        "virtual", "vethernet", "hyper-v", "wsl", "vmware", "virtualbox", "vbox", "loopback",
+        "tap-", "tap-windows", "tuntap", "wintun", "vpn", "wireguard", "openvpn", "tailscale",
+        "zerotier", "bluetooth", "wan miniport", "ndis", "teredo", "isatap", "docker", "npcap",
+        "wi-fi direct", "hosted network", "radmin", "famatech", "hamachi", "podman", "warp", "nordlynx",
     ];
     VIRTUAL_WORDS.iter().any(|w| f.contains(w) || d.contains(w))
 }
@@ -346,13 +324,9 @@ pub fn query_wake_status() -> WakeStatus {
     let mut macs = Vec::new();
     let mut broadcasts = Vec::new();
     for a in &adapters {
-        if !macs.contains(&a.mac) {
-            macs.push(a.mac.clone());
-        }
+        if !macs.contains(&a.mac) { macs.push(a.mac.clone()); }
         for b in &a.broadcasts {
-            if !broadcasts.contains(b) {
-                broadcasts.push(b.clone());
-            }
+            if !broadcasts.contains(b) { broadcasts.push(b.clone()); }
         }
     }
     let info = PcWakeInfo { macs, broadcasts }.sanitized();
@@ -360,15 +334,152 @@ pub fn query_wake_status() -> WakeStatus {
     WakeStatus { info, adapters }
 }
 
+const POWER_KEY: &str = r"SYSTEM\CurrentControlSet\Control\Session Manager\Power";
+const BIOS_KEY: &str = r"HARDWARE\DESCRIPTION\System\BIOS";
+
+const WOL_OPTIMIZE_SCRIPT: &str = "\
+$ErrorActionPreference = 'SilentlyContinue'; powercfg.exe -h off; \
+Set-ItemProperty -Path 'HKLM:\\SYSTEM\\CurrentControlSet\\Control\\Session Manager\\Power' -Name 'HiberbootEnabled' -Value 0 -Type DWord -Force; \
+Get-NetAdapter -Physical -ErrorAction SilentlyContinue | ForEach-Object { \
+Enable-NetAdapterPowerManagement -Name $_.Name -WakeOnMagicPacket; Set-NetAdapterPowerManagement -Name $_.Name -WakeOnMagicPacket Enabled; \
+Set-NetAdapterAdvancedProperty -Name $_.Name -RegistryKeyword '*WakeOnMagicPacket' -RegistryValue '1'; \
+Set-NetAdapterAdvancedProperty -Name $_.Name -RegistryKeyword 'WakeOnMagicPacket' -RegistryValue '1'; \
+Set-NetAdapterAdvancedProperty -Name $_.Name -RegistryKeyword '*WakeOnPattern' -RegistryValue '0'; }; \
+$base = 'HKLM:\\SYSTEM\\CurrentControlSet\\Control\\Class\\{4d36e972-e325-11ce-bfc1-08002be10318}'; \
+Get-ChildItem -Path $base -ErrorAction SilentlyContinue | ForEach-Object { \
+$p = $_.PSPath; $c = (Get-ItemProperty -Path $p -Name 'Characteristics').Characteristics; \
+$d = (Get-ItemProperty -Path $p -Name 'DeviceInstanceID').DeviceInstanceID; \
+if ($c -ne $null -and (($c -band 0x01) -ne 0 -or ($c -band 0x04) -eq 0)) { return; }; \
+if ($d -and ($d.StartsWith('ROOT\\') -or $d.StartsWith('SWD\\') -or $d.StartsWith('UMB\\'))) { return; }; \
+Set-ItemProperty -Path $p -Name '*WakeOnMagicPacket' -Value '1' -Type String -Force; \
+Set-ItemProperty -Path $p -Name 'WakeOnMagicPacket' -Value '1' -Type String -Force; \
+Set-ItemProperty -Path $p -Name '*WakeOnPattern' -Value '0' -Type String -Force; \
+$pnp = (Get-ItemProperty -Path $p -Name 'PnPCapabilities').PnPCapabilities; \
+if ($pnp -ne $null) { Set-ItemProperty -Path $p -Name 'PnPCapabilities' -Value ($pnp -band (-bnot 0x10)) -Type DWord -Force; } }";
+
+/// Returns true if Windows Fast Startup (Hiberboot) is currently enabled in the registry.
+pub fn is_fast_startup_enabled() -> bool {
+    reg_dword(POWER_KEY, "HiberbootEnabled") == Some(1)
+}
+
+/// Normalizes motherboard vendor string to canonical vendor names (ASUS, MSI, Gigabyte, ASRock, etc.).
+pub fn normalize_motherboard_vendor(raw: &str) -> String {
+    let trimmed = raw.trim();
+    let u = trimmed.to_ascii_uppercase();
+    if u.contains("ASUSTEK") || u.contains("ASUS") { "ASUS".into() }
+    else if u.contains("MICRO-STAR") || u.contains("MSI") { "MSI".into() }
+    else if u.contains("GIGABYTE") { "Gigabyte".into() }
+    else if u.contains("ASROCK") { "ASRock".into() }
+    else if u.contains("DELL") { "Dell".into() }
+    else if u.contains("HP") || u.contains("HEWLETT-PACKARD") { "HP".into() }
+    else if u.contains("LENOVO") { "Lenovo".into() }
+    else if u.is_empty() || u.contains("TO BE FILLED") || u.contains("DEFAULT STRING") || u == "SYSTEM MANUFACTURER" { String::new() }
+    else { trimmed.to_string() }
+}
+
+/// Identifies the motherboard manufacturer via registry (BaseBoardManufacturer/SystemManufacturer) or WMI.
+pub fn detect_motherboard_vendor() -> String {
+    for val_name in ["BaseBoardManufacturer", "SystemManufacturer", "BIOSVendor"] {
+        if let Some(raw) = reg_string(BIOS_KEY, val_name) {
+            let normalized = normalize_motherboard_vendor(&raw);
+            if !normalized.is_empty() { return normalized; }
+        }
+    }
+    #[cfg(windows)]
+    {
+        use std::os::windows::process::CommandExt;
+        const CREATE_NO_WINDOW: u32 = 0x0800_0000;
+        if let Ok(output) = std::process::Command::new("powershell.exe")
+            .args(["-NoProfile", "-NonInteractive", "-Command", "(Get-CimInstance Win32_BaseBoard).Manufacturer"])
+            .creation_flags(CREATE_NO_WINDOW)
+            .output()
+        {
+            if output.status.success() {
+                let normalized = normalize_motherboard_vendor(&String::from_utf8_lossy(&output.stdout));
+                if !normalized.is_empty() { return normalized; }
+            }
+        }
+    }
+    "Unknown".to_string()
+}
+
+/// Invokes 'shutdown.exe /r /fw /t 0' on Windows to reboot directly into the UEFI BIOS setup.
+pub fn reboot_to_uefi_firmware() -> Result<(), String> {
+    #[cfg(windows)]
+    use std::os::windows::process::CommandExt;
+    const CREATE_NO_WINDOW: u32 = 0x0800_0000;
+
+    let mut cmd = std::process::Command::new("shutdown.exe");
+    cmd.args(["/r", "/fw", "/t", "0"]);
+    #[cfg(windows)]
+    cmd.creation_flags(CREATE_NO_WINDOW);
+
+    if let Ok(output) = cmd.output() {
+        if output.status.success() { return Ok(()); }
+    }
+
+    match super::elevated::start(std::path::Path::new("shutdown.exe"), "/r /fw /t 0") {
+        Ok(_) => Ok(()),
+        Err(super::elevated::Error::Declined) => Err("UAC prompt declined by user".to_string()),
+        Err(super::elevated::Error::Other(e)) => Err(format!("Failed to reboot to UEFI: {e}")),
+    }
+}
+
+/// Applies Wake-on-LAN and power optimizations (disables Fast Startup and configures physical NICs).
+pub fn apply_wol_and_power_optimizations() -> Result<(), String> {
+    #[cfg(windows)]
+    use std::os::windows::process::CommandExt;
+    const CREATE_NO_WINDOW: u32 = 0x0800_0000;
+
+    let mut cmd = std::process::Command::new("powershell.exe");
+    cmd.args(["-NoProfile", "-NonInteractive", "-ExecutionPolicy", "Bypass", "-Command", WOL_OPTIMIZE_SCRIPT]);
+    #[cfg(windows)]
+    cmd.creation_flags(CREATE_NO_WINDOW);
+
+    if let Ok(status) = cmd.status() {
+        if status.success() && !is_fast_startup_enabled() { return Ok(()); }
+    }
+
+    let params = format!("-NoProfile -NonInteractive -ExecutionPolicy Bypass -Command \"{WOL_OPTIMIZE_SCRIPT}\"");
+    match super::elevated::start(std::path::Path::new("powershell.exe"), &params) {
+        Ok(proc) => {
+            let start = std::time::Instant::now();
+            while start.elapsed() < std::time::Duration::from_secs(10) {
+                if let Some(code) = proc.exit_code() {
+                    return if code == 0 { Ok(()) } else { Err(format!("Optimization failed with code {code}")) };
+                }
+                std::thread::sleep(std::time::Duration::from_millis(100));
+            }
+            Ok(())
+        }
+        Err(super::elevated::Error::Declined) => Err("UAC prompt declined by user".to_string()),
+        Err(super::elevated::Error::Other(e)) => Err(format!("Failed to start elevated script: {e}")),
+    }
+}
+
 #[cfg(test)]
 mod tests {
     use super::*;
+
+    #[test]
+    fn normalizes_motherboard_vendor_names() {
+        assert_eq!(normalize_motherboard_vendor("ASUSTeK COMPUTER INC."), "ASUS");
+        assert_eq!(normalize_motherboard_vendor("Micro-Star International Co., Ltd."), "MSI");
+        assert_eq!(normalize_motherboard_vendor("Gigabyte Technology Co., Ltd."), "Gigabyte");
+        assert_eq!(normalize_motherboard_vendor("ASRock"), "ASRock");
+        assert_eq!(normalize_motherboard_vendor("Dell Inc."), "Dell");
+        assert_eq!(normalize_motherboard_vendor("Hewlett-Packard"), "HP");
+        assert_eq!(normalize_motherboard_vendor("LENOVO"), "Lenovo");
+        assert_eq!(normalize_motherboard_vendor("To be filled by O.E.M."), "");
+    }
 
     #[test]
     fn filters_virtual_adapter_names() {
         assert!(looks_virtual_name("vEthernet (WSL (Hyper-V firewall))", "Hyper-V Virtual Ethernet Adapter"));
         assert!(looks_virtual_name("Tailscale", "Tailscale Tunnel"));
         assert!(looks_virtual_name("Ethernet 2", "VMware Virtual Ethernet Adapter for VMnet1"));
+        assert!(looks_virtual_name("Radmin VPN", "Famatech Radmin VPN Ethernet Adapter"));
+        assert!(looks_virtual_name("Hamachi", "LogMeIn Hamachi Virtual Ethernet Adapter"));
         assert!(!looks_virtual_name("Ethernet", "Realtek PCIe GbE Family Controller"));
         assert!(!looks_virtual_name("Wi-Fi", "Intel(R) Wi-Fi 6E AX211 160MHz"));
     }

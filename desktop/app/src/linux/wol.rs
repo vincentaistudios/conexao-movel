@@ -77,8 +77,8 @@ pub fn query_wake_status() -> WakeStatus {
     let mut adapters = enumerate_wake_adapters();
     adapters.sort_by_key(|a| {
         (
-            Some(a.label.as_str()) != default_iface.as_deref(),
             !a.wired,
+            Some(a.label.as_str()) != default_iface.as_deref(),
             a.broadcasts.is_empty(),
             match a.support {
                 WakeSupport::Enabled => 0u8,
@@ -118,6 +118,14 @@ pub fn is_virtual_interface_name(name: &str) -> bool {
         || lower.starts_with("zt")
         || lower.starts_with("vmnet")
         || lower.starts_with("vboxnet")
+        || lower.starts_with("radmin")
+        || lower.starts_with("ham")
+        || lower.starts_with("podman")
+        || lower.starts_with("dummy")
+        || lower.starts_with("cni")
+        || lower.starts_with("flannel")
+        || lower.starts_with("calico")
+        || lower.starts_with("warp")
 }
 
 fn is_physical_ethernet_interface(name: &str, path: &Path) -> bool {
@@ -500,9 +508,21 @@ mod tests {
 
     #[test]
     fn excludes_virtual_and_tunnel_interface_names() {
-        for virt in
-            ["lo", "tun0", "tap0", "tailscale0", "wg0", "docker0", "veth1a2b3c", "br-123456", "virbr0"]
-        {
+        for virt in [
+            "lo",
+            "tun0",
+            "tap0",
+            "tailscale0",
+            "wg0",
+            "docker0",
+            "veth1a2b3c",
+            "br-123456",
+            "virbr0",
+            "radmin0",
+            "ham0",
+            "podman0",
+            "warp0",
+        ] {
             assert!(is_virtual_interface_name(virt), "expected {virt} to be excluded");
         }
         for phys in ["eth0", "enp3s0", "eno1", "wlan0", "wlp2s0"] {

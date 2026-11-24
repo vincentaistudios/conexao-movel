@@ -43,21 +43,21 @@ Rectangle {
         const s = feature || {}
         switch (lockKind) {
         case "assist":
-            return qsTr("On your phone, open NectarLink › Settings › Permissions › Control from your PC and turn on the Accessibility service.")
+            return qsTr("No seu celular, abra Conexão Móvel › Configurações › Permissões › Controlar pelo PC e ative o serviço de Acessibilidade.")
         case "elevated":
-            return qsTr("Needs Elevated: set it up in NectarLink › Settings › Permissions › Control from your PC, or connect the phone over USB with USB debugging allowed.")
+            return qsTr("Requer modo avançado: configure em Conexão Móvel › Configurações › Permissões › Controlar pelo PC, ou conecte via USB com depuração USB ativada.")
         case "role":
-            return qsTr("On your phone, set NectarLink as the default SMS/Caller ID app when prompted.")
+            return qsTr("No seu celular, defina o Conexão Móvel como aplicativo padrão de SMS/Identificador de chamadas quando solicitado.")
         case "permission":
             if (s.target === "notification_access")
-                return qsTr("On your phone, open NectarLink and allow Notification access.")
+                return qsTr("No seu celular, abra o Conexão Móvel e permita o acesso a Notificações.")
             if (s.target === "dnd_access")
-                return qsTr("On your phone, open NectarLink and allow Do Not Disturb access.")
+                return qsTr("No seu celular, abra o Conexão Móvel e permita o acesso a Não Perturbe.")
             if (s.target === "write_settings")
-                return qsTr("On your phone, open NectarLink and allow Modify system settings.")
-            return qsTr("Open NectarLink on your phone and grant this permission in Settings.")
+                return qsTr("No seu celular, abra o Conexão Móvel e permita Modificar configurações do sistema.")
+            return qsTr("Abra o Conexão Móvel no celular e conceda esta permissão nas Configurações.")
         case "enableAddon":
-            return qsTr("Open Settings › Camera & Audio to set up the NectarLink virtual camera add-on.")
+            return qsTr("Abra Configurações › Câmera e Áudio para configurar o complemento de câmera virtual do Conexão Móvel.")
         case "enablePath":
             return qsTr("Open Settings › Connection & About and turn on Connect over mobile data.")
         case "enableToggle":

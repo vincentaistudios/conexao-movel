@@ -335,6 +335,21 @@ pub mod qobject {
         #[qinvokable]
         fn doctor_fix(self: Pin<&mut AppController>, fix: &QString);
 
+        /// Reboots the computer directly into the UEFI BIOS setup.
+        #[qinvokable]
+        fn reboot_to_bios(self: &AppController);
+        /// Runs one-click automated permissions setup and Elevated mode activation via ADB.
+        #[qinvokable]
+        #[cxx_name = "runAdbAutoSetup"]
+        fn run_adb_auto_setup(self: Pin<&mut AppController>, serial: &QString) -> QString;
+        /// Lists connected ADB devices for one-click setup.
+        #[qinvokable]
+        #[cxx_name = "listAdbDevices"]
+        fn list_adb_devices(self: &AppController) -> QString;
+        /// Optimizes system settings for Wake-on-LAN and refreshes status.
+        #[qinvokable]
+        fn optimize_wake_on_lan(self: Pin<&mut AppController>);
+
         /// Checks for an update now and says what it found.
         #[qinvokable]
         fn check_for_updates(self: Pin<&mut AppController>);
@@ -563,7 +578,7 @@ pub fn install_update_in_background() {
                     object.as_mut().set_update_progress(-1.0);
                     object
                         .as_mut()
-                        .set_update_status(QString::from("Installing. NectarLink reopens by itself."));
+                        .set_update_status(QString::from("Instalando. O Conexão Móvel será reaberto automaticamente."));
                 }
                 Err(message) => {
                     object.as_mut().set_update_busy(false);
@@ -866,7 +881,7 @@ impl cxx_qt::Initialize for qobject::AppController {
             resume_notifications: tr!("App", "Resume phone notifications"),
             quit: tr!("App", "Quit NectarLink"),
         };
-        match tray::Tray::create("NectarLink", labels, move |event| on_tray_event(&qt, event)) {
+        match tray::Tray::create("Conexão Móvel", labels, move |event| on_tray_event(&qt, event)) {
             Ok(tray) => self.rust_mut().tray = Some(tray),
             Err(e) => tracing::warn!(error = %e, "no tray icon"),
         }
@@ -1799,7 +1814,11 @@ impl qobject::AppController {
                 Err(e) => {
                     let latest = node.phone_toggles(device);
                     core_host::host().hub.update(|s| s.set_toggles(device, latest));
-                    show_message(describe(&e));
+                    if failed_id == "bluetooth" || failed_id == "wifi" {
+                        show_message(tr!("Errors", "This action requires Elevated mode active on the phone (Settings › Elevated)."));
+                    } else {
+                        show_message(describe(&e));
+                    }
                     let _ = qt.queue(move |mut object| {
                         object.as_mut().phone_toggle_failed(
                             QString::from(&device.to_string()),
@@ -1840,6 +1859,33 @@ impl qobject::AppController {
 
     pub fn doctor_fix(self: Pin<&mut Self>, fix: &QString) {
         diagnose_in_background(self, Some(String::from(fix)));
+    }
+
+    pub fn reboot_to_bios(&self) {
+        #[cfg(windows)]
+        let _ = crate::win::wol::reboot_to_uefi_firmware();
+        #[cfg(target_os = "linux")]
+        let _ = std::process::Command::new("systemctl").args(["reboot", "--firmware-setup"]).spawn();
+    }
+
+    pub fn list_adb_devices(&self) -> QString {
+        let devs = crate::core_host::host().runtime.block_on(crate::adb_setup::list_attached_devices(None));
+        let json = serde_json::to_string(&devs).unwrap_or_else(|_| "[]".into());
+        QString::from(&json)
+    }
+
+    pub fn run_adb_auto_setup(self: Pin<&mut Self>, serial: &QString) -> QString {
+        let target = if serial.is_empty() { None } else { Some(String::from(serial)) };
+        let res = crate::core_host::host().runtime.block_on(crate::adb_setup::run_auto_setup(target));
+        let json = serde_json::to_string(&res).unwrap_or_else(|_| "{}".into());
+        QString::from(&json)
+    }
+
+    pub fn optimize_wake_on_lan(mut self: Pin<&mut Self>) {
+        #[cfg(windows)]
+        let _ = crate::win::wol::apply_wol_and_power_optimizations();
+        core_host::spawn(core_host::refresh_wake());
+        self.as_mut().toast(QString::from("Sistema otimizado com sucesso para Wake-on-LAN."));
     }
 
     pub fn logs_url(&self) -> QString {

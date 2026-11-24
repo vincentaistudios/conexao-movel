@@ -235,10 +235,10 @@ Window {
     readonly property bool expanded: pillHover.hovered || (Preferences.nectarIslandCalls && PhoneCall.active && PhoneCall.ringing)
     readonly property real pillWidth: expanded ? 380 : 340
     readonly property real pillHeight: expanded ? 88 : 40
-    width: 400
-    height: 104
+    width: pillWidth
+    height: pillHeight
     x: areaX + Math.round((areaW - width) / 2)
-    y: areaY + 8
+    y: areaY + 4
 
     readonly property string primaryLabel: {
         if (mode === "call")
@@ -287,7 +287,7 @@ Window {
                 : base
         }
         if (mode === "notification")
-            return qsTr("Click to view in NectarLink")
+            return qsTr("Clique para ver na Conexão Móvel")
         if (mode === "waiting") {
             return DeviceList.count > 0
                 ? qsTr("Will send when %1 is back").arg(DeviceList.deviceNameAt(0))
@@ -379,26 +379,9 @@ Window {
             easing.type: Easing.OutBack
         }
 
-        // Subtle outer ambient halo around the Dynamic Island capsule
-        Rectangle {
-            anchors.centerIn: pillBg
-            width: pillBg.width + 6
-            height: pillBg.height + 6
-            radius: height / 2
-            color: "transparent"
-            border.width: 1.5
-            border.color: islandWin.mode === "call"
-                ? Qt.rgba(0.29, 0.87, 0.50, 0.32)
-                : Qt.rgba(Theme.primary.r, Theme.primary.g, Theme.primary.b, 0.24)
-        }
-
         Rectangle {
             id: pillBg
-            anchors.top: parent.top
-            anchors.topMargin: 2
-            anchors.horizontalCenter: parent.horizontalCenter
-            width: islandWin.pillWidth
-            height: islandWin.pillHeight
+            anchors.fill: parent
             radius: height / 2
             // Authentic deep Dynamic Island obsidian surface with crisp specular glass border
             color: Qt.rgba(0.05, 0.055, 0.075, Theme.glass ? 0.92 : 0.96)

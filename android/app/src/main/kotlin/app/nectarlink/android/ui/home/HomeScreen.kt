@@ -68,6 +68,7 @@ import androidx.compose.material3.TextButton
 import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.produceState
 import androidx.compose.runtime.remember
@@ -116,6 +117,7 @@ import app.nectarlink.android.mirror.MirrorSession
 import app.nectarlink.android.notifications.NotificationListener
 import app.nectarlink.android.photos.RecentPhotos
 import app.nectarlink.android.recorder.RecorderSession
+import app.nectarlink.android.ui.downloader.MediaDownloaderSheet
 import app.nectarlink.android.ui.power.PowerScheduleSheet
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.drawBehind
@@ -225,6 +227,9 @@ fun HomeScreen(
     onDownloadPcFile: (pcId: String, remotePath: String, fileName: String, onSaved: (Uri?) -> Unit) -> Unit = { _, _, _, onSaved ->
         onSaved(null)
     },
+    onMediaDownloadRpc: suspend (pcId: String, op: String, payloadJson: String) -> Result<String> = { _, _, _ ->
+        Result.failure(UnsupportedOperationException("Downloader RPC unavailable"))
+    },
     mirrorSession: MirrorSession = MirrorSession(),
     webcamSession: WebcamSession = WebcamSession(),
     recorderSession: RecorderSession = RecorderSession(),
@@ -252,6 +257,8 @@ fun HomeScreen(
     var showTimeline by remember { mutableStateOf(false) }
     var browseFilesPcId by remember { mutableStateOf<String?>(null) }
     var powerSchedulePcId by remember { mutableStateOf<String?>(null) }
+    var mediaDownloaderPcId by remember { mutableStateOf<String?>(null) }
+    var powerSummaryRefreshKey by remember { mutableIntStateOf(0) }
     var pulsingTarget by remember { mutableStateOf<GuideHighlightTarget?>(null) }
     // Keep a screen of cards composed on each side, so scrolling back does not rebuild them.
     @OptIn(androidx.compose.foundation.ExperimentalFoundationApi::class)
@@ -643,6 +650,8 @@ fun HomeScreen(
                     onSetPcAudio = onSetPcAudio,
                     onBrowsePcFiles = { browseFilesPcId = it },
                     onPowerSchedule = { powerSchedulePcId = it },
+                    onMediaDownloader = { mediaDownloaderPcId = it },
+                    powerSummaryRefreshKey = powerSummaryRefreshKey,
                     micOn = micStreamingTo == device.id,
                     onToggleMic = { on -> if (on) onStartMic(device.id) else onStopMic() },
                 )
@@ -773,7 +782,19 @@ fun HomeScreen(
             onLock = { onPowerAction(powerDevice.id, "lock") },
             onShutdown = { onPowerAction(powerDevice.id, "shutdown") },
             onRestart = { onPowerAction(powerDevice.id, "reboot") },
-            onDismiss = { powerSchedulePcId = null },
+            onDismiss = {
+                powerSchedulePcId = null
+                powerSummaryRefreshKey++
+            },
+        )
+    }
+
+    val mediaDownloaderDevice = mediaDownloaderPcId?.let { state.device(it) }
+    if (mediaDownloaderDevice != null) {
+        MediaDownloaderSheet(
+            device = mediaDownloaderDevice,
+            onRpc = { op, payloadJson -> onMediaDownloadRpc(mediaDownloaderDevice.id, op, payloadJson) },
+            onDismiss = { mediaDownloaderPcId = null },
         )
     }
 
@@ -1390,6 +1411,8 @@ private fun PcCard(
     onBrowsePcFiles: (String) -> Unit = {},
     onDesk: (String) -> Unit = {},
     onPowerSchedule: (String) -> Unit = {},
+    onMediaDownloader: (String) -> Unit = {},
+    powerSummaryRefreshKey: Int = 0,
     /** Whether this phone's microphone streams to this PC now. */
     micOn: Boolean = false,
     onToggleMic: (Boolean) -> Unit = {},
@@ -1530,7 +1553,14 @@ private fun PcCard(
                     )
                 }
             }
-            Spacer(Modifier.height(16.dp))
+            Spacer(Modifier.height(14.dp))
+            HomeQuickPowerBar(
+                device = device,
+                refreshKey = powerSummaryRefreshKey,
+                onWake = onWake,
+                onOpenPowerSchedule = onPowerSchedule,
+            )
+            Spacer(Modifier.height(14.dp))
             Column(verticalArrangement = Arrangement.spacedBy(10.dp)) {
                 // 1. Primary Workspace Bento Grid (2x2): Control PC, Deck, Desk Mode, Webcam
                 Text(
@@ -1698,6 +1728,21 @@ private fun PcCard(
                             Spacer(Modifier.width(6.dp))
                             ButtonLabel(stringResource(R.string.action_browse_pc_files))
                         }
+                    }
+                    FilledTonalButton(
+                        contentPadding = CardButtonPadding,
+                        enabled = device.online,
+                        colors = tonal,
+                        onClick = { onMediaDownloader(device.id) },
+                        modifier = Modifier.fillMaxWidth().heightIn(min = 42.dp),
+                    ) {
+                        Icon(
+                            imageVector = DownloadMediaIcon,
+                            contentDescription = null,
+                            modifier = Modifier.size(15.dp),
+                        )
+                        Spacer(Modifier.width(6.dp))
+                        ButtonLabel(stringResource(R.string.action_media_downloader))
                     }
                 }
 
@@ -3842,6 +3887,13 @@ private val CloseQueueIcon: ImageVector by lazy {
     softContinuousVector(
         name = "CloseQueue",
         svgPath = "M6,6L18,18 M18,6L6,18",
+    )
+}
+
+private val DownloadMediaIcon: ImageVector by lazy {
+    softContinuousVector(
+        name = "DownloadMedia",
+        svgPath = "M12,3.5V14.5 M7.5,10L12,14.5L16.5,10 M4.5,19.5H19.5",
     )
 }
 

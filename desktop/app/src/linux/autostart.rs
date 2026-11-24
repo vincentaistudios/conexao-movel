@@ -62,10 +62,10 @@ fn render_desktop_entry(exe: &Path) -> String {
     format!(
         "[Desktop Entry]\n\
          Type=Application\n\
-         Name=NectarLink\n\
-         Comment=Link your Android phone and PC\n\
+         Name=Conexão Móvel\n\
+         Comment=Integração contínua entre celular Android e computador\n\
          Exec={cmd}\n\
-         Icon=nectarlink\n\
+         Icon=sys-device-link\n\
          Terminal=false\n\
          Categories=Utility;Network;\n\
          StartupNotify=false\n\

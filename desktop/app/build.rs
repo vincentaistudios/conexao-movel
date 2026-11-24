@@ -31,8 +31,16 @@ const QML: &[&str] = &[
     "qml/components/Chip.qml",
     "qml/components/CodeDigits.qml",
     "qml/components/CommandPalette.qml",
+    "qml/components/DeviceApprovalModal.qml",
     "qml/components/Divider.qml",
+    "qml/components/EmailReaderView.qml",
     "qml/components/GlassRim.qml",
+    "qml/components/GmailConnectModal.qml",
+    "qml/components/GmailInboxView.qml",
+    "qml/components/GoogleAuxiliaryViews.qml",
+    "qml/components/GoogleConnectWelcomeView.qml",
+    "qml/components/GoogleDriveView.qml",
+    "qml/components/GooglePhotosView.qml",
     "qml/components/DoctorSheet.qml",
     "qml/components/HistoryItem.qml",
     "qml/components/Icon.qml",
@@ -56,10 +64,14 @@ const QML: &[&str] = &[
     "qml/components/WindowPlacement.qml",
     "qml/components/SwitchBar.qml",
     "qml/components/Txt.qml",
+    "qml/components/WakeOnLanCard.qml",
+    "qml/components/PhoneSetupCard.qml",
     "qml/pages/AppsPage.qml",
     "qml/pages/CallsPage.qml",
     "qml/pages/DeckPage.qml",
+    "qml/pages/DownloadsPage.qml",
     "qml/pages/FeaturesGuidePage.qml",
+    "qml/pages/GoogleServicesPage.qml",
     "qml/pages/HomePage.qml",
     "qml/pages/MessagesPage.qml",
     "qml/pages/PairingPanel.qml",
@@ -218,13 +230,13 @@ BEGIN
   BEGIN
     BLOCK "040904B0"
     BEGIN
-      VALUE "CompanyName", "The NectarLink contributors"
-      VALUE "FileDescription", "NectarLink"
+      VALUE "CompanyName", "Conexão Móvel"
+      VALUE "FileDescription", "Conexão Móvel"
       VALUE "FileVersion", "{version}"
       VALUE "InternalName", "nectarlink-desktop"
       VALUE "LegalCopyright", "GPL-3.0-or-later"
       VALUE "OriginalFilename", "nectarlink-desktop.exe"
-      VALUE "ProductName", "NectarLink"
+      VALUE "ProductName", "Conexão Móvel"
       VALUE "ProductVersion", "{version}"
     END
   END

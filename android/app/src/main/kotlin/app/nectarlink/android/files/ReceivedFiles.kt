@@ -64,6 +64,22 @@ object ReceivedFiles {
         }
     }.getOrNull()
 
+    /**
+     * Garante que a pasta publica `Download/Nectarlink` e a pasta interna do app
+     * estejam criadas e acessiveis no dispositivo.
+     */
+    fun ensureDirectory(context: Context): File {
+        val publicDir = File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS), "Nectarlink")
+        if (!publicDir.exists()) {
+            publicDir.mkdirs()
+        }
+        val appDownloads = File(context.getExternalFilesDir(Environment.DIRECTORY_DOWNLOADS), "Nectarlink")
+        if (!appDownloads.exists()) {
+            appDownloads.mkdirs()
+        }
+        return publicDir
+    }
+
     /** `folder`: where it goes in Download/Nectarlink (`Trip/Day 1`). */
     private fun publishFile(context: Context, file: File, folder: String?): Published? = runCatching {
         val mime = mimeOf(file.name)

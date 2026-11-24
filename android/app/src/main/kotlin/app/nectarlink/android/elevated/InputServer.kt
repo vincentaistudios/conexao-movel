@@ -1101,7 +1101,7 @@ object InputServer {
         fun sendGamepadReport(buttons: Int, lx: Int, ly: Int, rx: Int, ry: Int, lt: Int, rt: Int): Boolean {
             if (!gamepadAttempted) {
                 gamepadAttempted = true
-                gamepadFd = openDevice("NectarLink Virtual Gamepad", 0x4EE8, GAMEPAD_RD)
+                gamepadFd = openDevice("Conexão Móvel Virtual Gamepad", 0x4EE8, GAMEPAD_RD)
             }
             val fd = gamepadFd ?: return false
             val report = java.nio.ByteBuffer.allocate(12).order(java.nio.ByteOrder.LITTLE_ENDIAN).apply {

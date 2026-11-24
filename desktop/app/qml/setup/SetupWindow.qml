@@ -505,13 +505,13 @@ NativeWindow {
             }
             Item { width: 1; height: window.removing ? 0 : 12 }
             Text {
-                visible: !window.removing
+                visible: false
                 anchors.horizontalCenter: parent.horizontalCenter
                 font.family: "Figtree"
                 font.pixelSize: 13
                 font.underline: true
                 color: window.honey
-                text: "github.com/thtbee/nectarlink/releases/latest"
+                text: ""
                 Accessible.role: Accessible.Link
                 Accessible.name: qsTr("Open the Android app download page")
                 Accessible.onPressAction: Setup.openAndroidPage()
@@ -588,14 +588,13 @@ NativeWindow {
                         font.pixelSize: 14
                         color: window.muted
                         textFormat: Text.StyledText
-                        text: qsTr("NectarLink goes into Program Files, or the folder you choose, for everyone on this PC. Setup also:")
-                            + "<br>&#8226; " + qsTr("allows it through Windows Firewall on private networks, so your phone can connect")
-                            + "<br>&#8226; " + qsTr("adds a task that installs updates without an administrator prompt, where only administrators can change the folder")
-                            + "<br>&#8226; " + qsTr("adds a Start menu shortcut, and a desktop one if you leave that ticked, and starts it with Windows (turn this off in Settings)")
-                            + "<br>&#8226; " + qsTr("adds it to the Windows Share sheet")
-                            + "<br><br>" + qsTr("It checks GitHub for updates once a day, which you can turn off in Settings. Otherwise your phone and PC only talk to each other.")
+                        text: qsTr("Conexão Móvel é instalado para todos os usuários deste computador.")
+                            + "<br>&#8226; " + qsTr("Permite a comunicação segura via firewall de rede local")
+                            + "<br>&#8226; " + qsTr("Atalho no menu de aplicativos do sistema")
+                            + "<br>&#8226; " + qsTr("Integração direta com o sistema de arquivos e notificações locais")
                     }
                     Text {
+                        visible: false
                         font.family: "Figtree"
                         font.pixelSize: 14
                         font.underline: true
@@ -607,7 +606,7 @@ NativeWindow {
                             anchors.fill: parent
                             anchors.margins: -6
                             cursorShape: Qt.PointingHandCursor
-                            onClicked: Qt.openUrlExternally("https://github.com/thtbee/nectarlink/blob/main/docs/guide/privacy-and-security.md")
+                            onClicked: {}
                         }
                     }
                 }

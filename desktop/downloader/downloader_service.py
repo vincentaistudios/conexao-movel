@@ -3,21 +3,74 @@
 """
 Modulo Core de Download de Midias para o Conexao Movel.
 Orquestra o yt-dlp e ffmpeg de forma isolada, resiliente e assincrona.
+Contem sanitizacao rigorosa de URLs, prevencao contra Command e Option Injection,
+e validacao estrita de caminhos contra Path Traversal.
 """
 
+import json
 import os
 import re
-import sys
-import json
-import time
 import shutil
-import threading
 import subprocess
-from typing import Dict, Any, Optional, List, Callable
+import sys
+import threading
+import time
+from typing import Any, Callable, Dict, List, Optional
+from urllib.parse import urlparse
 
 DOWNLOADS_DIR = os.path.expanduser("~/Downloads")
+BLOCKED_HOSTNAMES = frozenset({
+    "localhost",
+    "127.0.0.1",
+    "::1",
+    "0.0.0.0",
+    "169.254.169.254",
+})
+
+
+def validate_download_url(url: str) -> str:
+    """Valida e sanitiza a URL de midia contra injecoes e requisicoes SSRF."""
+    if not url or not isinstance(url, str):
+        raise ValueError("URL invalida: parametro ausente ou nao textual.")
+
+    url_clean = url.strip()
+    if len(url_clean) > 4096:
+        raise ValueError("URL invalida: comprimento excede 4096 caracteres.")
+
+    if any(c.isspace() or ord(c) < 32 for c in url_clean):
+        raise ValueError("URL invalida: caracteres de espaco ou controle nao sao permitidos.")
+
+    parsed = urlparse(url_clean)
+    scheme = (parsed.scheme or "").lower()
+    if scheme not in ("http", "https"):
+        raise ValueError("URL invalida: esquema nao suportado. Utilize apenas http:// ou https://.")
+
+    netloc = parsed.netloc
+    if not netloc or "@" in netloc:
+        raise ValueError("URL invalida: autoridade ausente ou credenciais embutidas.")
+
+    hostname = (parsed.hostname or "").lower().strip("[]")
+    if not hostname:
+        raise ValueError("URL invalida: nome de host ausente.")
+
+    if hostname in BLOCKED_HOSTNAMES or hostname.endswith(".local") or hostname.endswith(".internal"):
+        raise ValueError("URL invalida: enderecos de rede local e metadados internos sao bloqueados.")
+
+    return url_clean
+
+
+def is_safe_path(base_dir: str, target_path: str) -> bool:
+    """Verifica se o caminho de destino reside estritamente dentro da pasta base."""
+    try:
+        real_base = os.path.realpath(base_dir)
+        real_target = os.path.realpath(target_path)
+        return os.path.commonpath([real_base, real_target]) == real_base
+    except Exception:
+        return False
+
 
 def get_yt_dlp_binary() -> str:
+    """Localiza o binario yt-dlp seguro no ambiente do usuario ou sistema."""
     user_bin = os.path.expanduser("~/.local/bin/yt-dlp")
     if os.path.exists(user_bin) and os.access(user_bin, os.X_OK):
         return user_bin
@@ -26,34 +79,52 @@ def get_yt_dlp_binary() -> str:
         return system_bin
     raise FileNotFoundError("Binario yt-dlp nao encontrado no sistema.")
 
+
 class MediaDownloader:
     """Gerencia inspecao de metadados e execucao de downloads de midia."""
 
     def __init__(self, output_dir: str = DOWNLOADS_DIR):
-        self.output_dir = output_dir
+        self.output_dir = os.path.realpath(output_dir)
         os.makedirs(self.output_dir, exist_ok=True)
         self.active_processes: Dict[str, subprocess.Popen] = {}
         self.active_tasks: Dict[str, Dict[str, Any]] = {}
         self._lock = threading.Lock()
 
+    def get_active_downloads_count(self) -> int:
+        """Retorna o numero de tarefas ativas em download no momento."""
+        with self._lock:
+            return sum(1 for t in self.active_tasks.values() if t.get("status") == "downloading")
+
     def inspect_url(self, url: str) -> Dict[str, Any]:
         """Extrai metadados do video de forma rapida e sem baixar o arquivo."""
-        url = (url or "").strip()
-        if not url.startswith("http://") and not url.startswith("https://"):
-            return {"success": False, "error": "URL invalida. Forneca um link http/https valido."}
+        try:
+            valid_url = validate_download_url(url)
+        except ValueError as err:
+            return {"success": False, "error": str(err)}
 
-        yt_bin = get_yt_dlp_binary()
+        try:
+            yt_bin = get_yt_dlp_binary()
+        except FileNotFoundError as err:
+            return {"success": False, "error": str(err)}
+
         cmd = [
             yt_bin,
             "--dump-json",
             "--no-playlist",
             "--no-warnings",
             "--socket-timeout", "10",
-            url
+            "--",
+            valid_url,
         ]
 
         try:
-            res = subprocess.run(cmd, stdout=subprocess.PIPE, stderr=subprocess.PIPE, text=True, timeout=15)
+            res = subprocess.run(
+                cmd,
+                stdout=subprocess.PIPE,
+                stderr=subprocess.PIPE,
+                text=True,
+                timeout=20,
+            )
             if res.returncode != 0:
                 err = res.stderr.strip() or "Falha ao extrair metadados do link."
                 return {"success": False, "error": err}
@@ -66,7 +137,7 @@ class MediaDownloader:
                 "duration": data.get("duration", 0),
                 "thumbnail": data.get("thumbnail") or "",
                 "extractor": data.get("extractor", "web"),
-                "webpage_url": data.get("webpage_url", url)
+                "webpage_url": data.get("webpage_url", valid_url),
             }
         except subprocess.TimeoutExpired:
             return {"success": False, "error": "Tempo limite excedido ao inspecionar o link."}
@@ -80,30 +151,37 @@ class MediaDownloader:
         media_format: str = "video",
         destination: str = "pc",
         device_id: str = "",
-        on_progress: Optional[Callable[[Dict[str, Any]], None]] = None
+        on_progress: Optional[Callable[[Dict[str, Any]], None]] = None,
     ) -> Dict[str, Any]:
-        """Inicia um download assincrono em segundo plano."""
-        url = (url or "").strip()
-        if not url.startswith("http://") and not url.startswith("https://"):
-            return {"success": False, "error": "URL invalida."}
+        """Inicia um download assincrono em segundo plano com validacao estrita."""
+        try:
+            valid_url = validate_download_url(url)
+        except ValueError as err:
+            return {"success": False, "error": str(err)}
 
-        media_format = (media_format or "video").lower()
-        if media_format not in ["audio", "video", "both"]:
-            media_format = "video"
+        clean_task_id = (task_id or "").strip()
+        if not clean_task_id or not re.match(r"^[a-zA-Z0-9_\-]{1,64}$", clean_task_id):
+            return {"success": False, "error": "Identificador task_id invalido."}
 
-        destination = (destination or "pc").lower()
-        if destination not in ["pc", "phone", "both"]:
-            destination = "pc"
+        clean_format = (media_format or "video").lower()
+        if clean_format not in ["audio", "video", "both"]:
+            clean_format = "video"
 
-        yt_bin = get_yt_dlp_binary()
+        clean_dest = (destination or "pc").lower()
+        if clean_dest not in ["pc", "phone", "both"]:
+            clean_dest = "pc"
 
-        # Estrutura de estado da tarefa
+        try:
+            yt_bin = get_yt_dlp_binary()
+        except FileNotFoundError as err:
+            return {"success": False, "error": str(err)}
+
         task_data = {
-            "id": task_id,
-            "url": url,
-            "format": media_format,
-            "destination": destination,
-            "device_id": device_id,
+            "id": clean_task_id,
+            "url": valid_url,
+            "format": clean_format,
+            "destination": clean_dest,
+            "device_id": str(device_id)[:128],
             "status": "downloading",
             "progress": 0.0,
             "speed": "Iniciando...",
@@ -112,21 +190,20 @@ class MediaDownloader:
             "generated_files": [],
             "error": None,
             "started_at": time.time(),
-            "completed_at": None
+            "completed_at": None,
         }
 
         with self._lock:
-            self.active_tasks[task_id] = task_data
+            self.active_tasks[clean_task_id] = task_data
 
-        # Thread de execucao do download
         thread = threading.Thread(
             target=self._run_download_thread,
-            args=(task_id, yt_bin, url, media_format, on_progress),
-            daemon=True
+            args=(clean_task_id, yt_bin, valid_url, clean_format, on_progress),
+            daemon=True,
         )
         thread.start()
 
-        return {"success": True, "task_id": task_id}
+        return {"success": True, "task_id": clean_task_id}
 
     def _run_download_thread(
         self,
@@ -134,17 +211,19 @@ class MediaDownloader:
         yt_bin: str,
         url: str,
         media_format: str,
-        on_progress: Optional[Callable[[Dict[str, Any]], None]]
+        on_progress: Optional[Callable[[Dict[str, Any]], None]],
     ):
-        """Thread executora com streaming de progresso e tratamento para o modo 'both'."""
+        """Thread executora com streaming de progresso e filtragem de arquivos seguros."""
         try:
             if media_format == "audio":
-                files = self._download_audio(task_id, yt_bin, url, on_progress)
+                raw_files = self._download_audio(task_id, yt_bin, url, on_progress)
             elif media_format == "video":
-                files = self._download_video(task_id, yt_bin, url, on_progress)
-            else: # both
-                # No modo 'both', baixa o video com audio integrado e depois extrai a faixa MP3
-                files = self._download_video_and_extract_audio(task_id, yt_bin, url, on_progress)
+                raw_files = self._download_video(task_id, yt_bin, url, on_progress)
+            else:
+                raw_files = self._download_video_and_extract_audio(task_id, yt_bin, url, on_progress)
+
+            # Filtragem estrita contra Path Traversal em arquivos gerados
+            safe_files = [f for f in raw_files if is_safe_path(self.output_dir, f)]
 
             with self._lock:
                 task = self.active_tasks.get(task_id)
@@ -153,10 +232,10 @@ class MediaDownloader:
                     task["progress"] = 100.0
                     task["speed"] = "Concluido"
                     task["eta"] = "00:00"
-                    task["generated_files"] = files
+                    task["generated_files"] = safe_files
                     task["completed_at"] = time.time()
-                    if files:
-                        task["title"] = os.path.basename(files[0])
+                    if safe_files:
+                        task["title"] = os.path.basename(safe_files[0])
                     if on_progress:
                         on_progress(task)
 
@@ -179,15 +258,15 @@ class MediaDownloader:
         cmd: List[str],
         on_progress: Optional[Callable[[Dict[str, Any]], None]],
         progress_weight: float = 1.0,
-        progress_offset: float = 0.0
+        progress_offset: float = 0.0,
     ) -> List[str]:
-        """Executa o comando yt-dlp capturando linhas de progresso e arquivos gerados."""
+        """Executa o comando yt-dlp capturando linhas de progresso e caminhos seguros."""
         proc = subprocess.Popen(
             cmd,
             stdout=subprocess.PIPE,
             stderr=subprocess.STDOUT,
             text=True,
-            bufsize=1
+            bufsize=1,
         )
 
         with self._lock:
@@ -204,7 +283,6 @@ class MediaDownloader:
         for line in proc.stdout:
             line_str = line.strip()
 
-            # Captura progresso
             p_match = progress_pattern.search(line_str)
             if p_match:
                 raw_pct = float(p_match.group(1))
@@ -223,30 +301,18 @@ class MediaDownloader:
                         if on_progress:
                             on_progress(task)
 
-            # Captura caminho do arquivo de saida
-            d_match = dest_pattern.search(line_str)
-            if d_match:
-                p = d_match.group(1).strip()
-                if os.path.exists(p) and p not in generated_files:
-                    generated_files.append(p)
-
-            m_match = merge_pattern.search(line_str)
-            if m_match:
-                p = m_match.group(1).strip()
-                if os.path.exists(p) and p not in generated_files:
-                    generated_files.append(p)
-
-            a_match = already_pattern.search(line_str)
-            if a_match:
-                p = a_match.group(1).strip()
-                if os.path.exists(p) and p not in generated_files:
-                    generated_files.append(p)
+            for pat in (dest_pattern, merge_pattern, already_pattern):
+                match = pat.search(line_str)
+                if match:
+                    candidate = match.group(1).strip()
+                    if os.path.exists(candidate) and is_safe_path(self.output_dir, candidate):
+                        if candidate not in generated_files:
+                            generated_files.append(candidate)
 
         proc.wait()
         if proc.returncode != 0 and proc.returncode != -15:
             raise RuntimeError(f"O processo de download falhou com codigo {proc.returncode}")
 
-        # Varredura adicional no diretorio para capturar arquivos recem-criados se nao identificados por regex
         if not generated_files:
             generated_files = self._find_recently_modified_files(30)
 
@@ -258,11 +324,15 @@ class MediaDownloader:
             yt_bin,
             "--newline",
             "--no-playlist",
+            "--no-warnings",
+            "--restrict-filenames",
+            "--windows-filenames",
             "-x",
             "--audio-format", "mp3",
             "--audio-quality", "0",
             "-o", out_template,
-            url
+            "--",
+            url,
         ]
         return self._execute_yt_dlp_cmd(task_id, cmd, on_progress)
 
@@ -272,24 +342,29 @@ class MediaDownloader:
             yt_bin,
             "--newline",
             "--no-playlist",
+            "--no-warnings",
+            "--restrict-filenames",
+            "--windows-filenames",
             "-f", "bestvideo[ext=mp4]+bestaudio[ext=m4a]/best[ext=mp4]/best",
             "--merge-output-format", "mp4",
             "-o", out_template,
-            url
+            "--",
+            url,
         ]
         return self._execute_yt_dlp_cmd(task_id, cmd, on_progress)
 
     def _download_video_and_extract_audio(self, task_id: str, yt_bin: str, url: str, on_progress) -> List[str]:
-        # Fase 1: Baixa o video MP4 (0% a 75% do progresso total)
         video_files = self._download_video(task_id, yt_bin, url, on_progress)
         if not video_files:
             raise RuntimeError("Nenhum arquivo de video foi gerado na fase 1.")
 
         main_video = video_files[0]
+        if not is_safe_path(self.output_dir, main_video):
+            raise RuntimeError("Caminho de video inseguro detectado.")
+
         base, _ = os.path.splitext(main_video)
         audio_out = f"{base}.mp3"
 
-        # Fase 2: Extrai o audio MP3 320k via FFmpeg (75% a 100%)
         with self._lock:
             task = self.active_tasks.get(task_id)
             if task:
@@ -304,11 +379,11 @@ class MediaDownloader:
             "-vn",
             "-c:a", "libmp3lame",
             "-b:a", "320k",
-            audio_out
+            audio_out,
         ]
 
         res = subprocess.run(ffmpeg_cmd, stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
-        if res.returncode != 0:
+        if res.returncode != 0 or not is_safe_path(self.output_dir, audio_out):
             return video_files
 
         return [main_video, audio_out]
@@ -319,13 +394,15 @@ class MediaDownloader:
         try:
             for f in os.listdir(self.output_dir):
                 full = os.path.join(self.output_dir, f)
-                if os.path.isfile(full) and (now - os.path.getmtime(full)) <= seconds:
-                    res.append(full)
+                if os.path.isfile(full) and is_safe_path(self.output_dir, full):
+                    if (now - os.path.getmtime(full)) <= seconds:
+                        res.append(full)
         except Exception:
             pass
         return res
 
     def cancel_download(self, task_id: str) -> bool:
+        """Cancela uma tarefa de download ativa."""
         with self._lock:
             proc = self.active_processes.get(task_id)
             if proc:
@@ -342,12 +419,13 @@ class MediaDownloader:
         return False
 
     def get_task_status(self, task_id: str) -> Optional[Dict[str, Any]]:
+        """Consulta o status atual de uma tarefa."""
         with self._lock:
             return self.active_tasks.get(task_id)
 
     def get_recent_history(self, limit: int = 15) -> List[Dict[str, Any]]:
+        """Recupera o historico recente ordenado de downloads."""
         with self._lock:
             tasks = list(self.active_tasks.values())
         tasks.sort(key=lambda t: t.get("started_at", 0), reverse=True)
         return tasks[:limit]
-

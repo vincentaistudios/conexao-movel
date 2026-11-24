@@ -19,12 +19,12 @@ Item {
             width: 52; height: 52
             radius: Theme.radiusMd
             color: Theme.graphite ? Theme.surfaceContent : Theme.primary
-            Icon {
+            Image {
                 anchors.centerIn: parent
-                width: 26; height: 26
-                path: Icons.mark
-                stroke: 2.4
-                color: Theme.graphite ? Theme.surface : Theme.primaryContent
+                width: 34; height: 34
+                source: "file:///usr/share/icons/hicolor/scalable/apps/sys-device-link.svg"
+                smooth: true
+                mipmap: true
             }
         }
         Column {
@@ -33,7 +33,7 @@ Item {
             Txt {
                 width: parent.width
                 horizontalAlignment: Text.AlignHCenter
-                text: qsTr("Welcome to NectarLink")
+                text: qsTr("Bem-vindo à Conexão Móvel")
                 role: "displaySmall"
             }
             Txt {
@@ -43,8 +43,8 @@ Item {
                 role: "body"
                 muted: true
                 text: page.status === "failed"
-                      ? qsTr("NectarLink couldn't start.")
-                      : qsTr("Your phone and this PC, together. Pair once and they find each other from then on.")
+                      ? qsTr("Não foi possível iniciar a Conexão Móvel.")
+                      : qsTr("Seu smartphone e este computador integrados com total privacidade e fluidez.")
             }
         }
 

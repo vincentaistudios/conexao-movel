@@ -33,7 +33,7 @@ data class ContinuityCameraRequest(
  * from the PC so any open capture screen closes cleanly.
  */
 object ContinuityCameraRequests {
-    private const val CHANNEL = "continuity_camera_requests"
+    private const val CHANNEL = "continuity_camera_requests_v2"
     private const val TAG = "continuity_camera_req"
     private const val REQUEST_TIMEOUT_MS = 2 * 60 * 1000L
 
@@ -46,13 +46,14 @@ object ContinuityCameraRequests {
     val active: StateFlow<ContinuityCameraRequest?> = _active.asStateFlow()
 
     fun createChannel(context: Context) {
-        context.getSystemService(NotificationManager::class.java)?.createNotificationChannel(
-            NotificationChannel(
-                CHANNEL,
-                context.getString(R.string.channel_camera_requests),
-                NotificationManager.IMPORTANCE_HIGH,
-            ),
-        )
+        val channel = NotificationChannel(
+            CHANNEL,
+            context.getString(R.string.channel_camera_requests),
+            NotificationManager.IMPORTANCE_HIGH,
+        ).apply {
+            app.nectarlink.android.notifications.NotificationSoundHelper.configureChannel(this)
+        }
+        context.getSystemService(NotificationManager::class.java)?.createNotificationChannel(channel)
     }
 
     /**
@@ -110,7 +111,7 @@ object ContinuityCameraRequests {
             } else {
                 context.getString(R.string.continuity_camera_request_photo_text)
             }
-            val notification = NotificationCompat.Builder(context, CHANNEL)
+            val builder = NotificationCompat.Builder(context, CHANNEL)
                 .setSmallIcon(R.drawable.ic_notification)
                 .setContentTitle(title)
                 .setContentText(text)
@@ -120,7 +121,8 @@ object ContinuityCameraRequests {
                 .setTimeoutAfter(REQUEST_TIMEOUT_MS)
                 .setCategory(NotificationCompat.CATEGORY_CALL)
                 .setPriority(NotificationCompat.PRIORITY_HIGH)
-                .build()
+            app.nectarlink.android.notifications.NotificationSoundHelper.applyBuilderSound(builder)
+            val notification = builder.build()
             runCatching {
                 NotificationManagerCompat.from(context).notify(TAG, pcId.hashCode(), notification)
             }

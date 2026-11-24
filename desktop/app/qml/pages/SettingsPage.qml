@@ -1,7 +1,9 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 import QtQuick
 import QtQuick.Dialogs
+import QtQuick.Layouts
 import app.nectarlink
+import "../components"
 
 // Settings: two-pane categorized layout for appearance, general behavior,
 // paired devices & permissions, camera & audio, notifications, files & sync,
@@ -570,7 +572,7 @@ Item {
                             width: parent.width
                             iconPath: Icons.palette
                             title: qsTr("App size")
-                            description: qsTr("Makes text and everything else bigger. Applies when you restart NectarLink.")
+                            description: qsTr("Makes text and everything else bigger. Applies when you restart the app.")
                             Segmented {
                                 options: [
                                     { value: 100, label: "100%" },
@@ -946,8 +948,8 @@ Item {
                             iconPath: Icons.globe
                             title: qsTr("Language")
                             description: Qt.platform.os === "linux"
-                                ? qsTr("NectarLink follows the system unless you pick one.")
-                                : qsTr("NectarLink follows Windows unless you pick one.")
+                                ? qsTr("O aplicativo segue o sistema, a menos que você escolha um idioma.")
+                                : qsTr("O aplicativo segue o sistema, a menos que você escolha um idioma.")
                             Segmented {
                                 readonly property var other: page.languages.find(
                                     (l) => l.code === Preferences.language && l.code !== "en")
@@ -3367,7 +3369,7 @@ Item {
                         ListRow {
                             width: parent.width
                             iconPath: Icons.desktop
-                            title: qsTr("NectarLink %1").arg(AppController.version)
+                            title: qsTr("Conexão Móvel %1").arg(AppController.version)
                             description: AppController.updateStatus.length > 0
                                          ? AppController.updateStatus
                                          : qsTr("This PC: %1").arg(AppController.deviceName)
@@ -3465,6 +3467,15 @@ Item {
                             }
                         }
                     }
+                }
+
+                WakeOnLanCard {
+                    width: parent.width
+                    onRequestBiosReboot: biosRebootSheet.open()
+                }
+
+                PhoneSetupCard {
+                    width: parent.width
                 }
 
                 Card {
@@ -3571,7 +3582,7 @@ Item {
                 wrapMode: Text.WordWrap
                 role: "body"
                 muted: true
-                text: qsTr("The phone asks once to let this PC in. NectarLink there also needs All files access, or this folder under Selected folders only.")
+                text: qsTr("O celular solicita autorização para permitir o acesso. O aplicativo no celular também requer permissão de acesso a todos os arquivos ou à pasta selecionada.")
             }
 
             Txt { text: qsTr("Folder on the phone"); role: "label" }
@@ -3701,11 +3712,11 @@ Item {
                 muted: true
                 text: Qt.platform.os === "linux"
                     ? (hotspotSheet.networks.length > 0
-                        ? qsTr("Wi-Fi networks this PC has joined before. Your system keeps their passwords; NectarLink never sees them.")
-                        : qsTr("This PC hasn't saved any Wi-Fi networks yet. Join the phone's hotspot once from your system Wi-Fi list first."))
+                        ? qsTr("Redes Wi-Fi que este computador já utilizou. O sistema armazena as senhas; o aplicativo nunca tem acesso a elas.")
+                        : qsTr("Nenhuma rede Wi-Fi salva ainda. Conecte-se ao ponto de acesso do celular pela lista de redes do sistema primeiro."))
                     : (hotspotSheet.networks.length > 0
-                        ? qsTr("Wi-Fi networks this PC has joined before. Windows keeps their passwords; NectarLink never sees them.")
-                        : qsTr("This PC hasn't saved any Wi-Fi networks yet. Join the phone's hotspot once from Windows' Wi-Fi list first."))
+                        ? qsTr("Redes Wi-Fi que este computador já utilizou. O sistema armazena as senhas; o aplicativo nunca tem acesso a elas.")
+                        : qsTr("Nenhuma rede Wi-Fi salva ainda. Conecte-se ao ponto de acesso do celular pela lista de redes do sistema primeiro."))
             }
             // A PC can have saved dozens of networks: the list scrolls.
             ListView {
@@ -3911,6 +3922,114 @@ Item {
                     onClicked: {
                         AppController.clearEverything()
                         clearEverythingSheet.close()
+                    }
+                }
+            }
+        }
+    }
+
+    // Wake-on-LAN BIOS confirmation sheet
+    Sheet {
+        id: biosRebootSheet
+        cardWidth: 500
+
+        Column {
+            width: parent.width
+            spacing: 16
+
+            RowLayout {
+                width: parent.width
+                spacing: 12
+
+                Rectangle {
+                    Layout.preferredWidth: 40
+                    Layout.preferredHeight: 40
+                    radius: Theme.radiusMd
+                    color: Qt.alpha(Theme.primary, 0.14)
+                    border.width: 1
+                    border.color: Qt.alpha(Theme.primary, 0.28)
+
+                    Icon {
+                        anchors.centerIn: parent
+                        path: Icons.power
+                        color: Theme.primary
+                        width: 22
+                        height: 22
+                    }
+                }
+
+                Txt {
+                    Layout.fillWidth: true
+                    text: qsTr("Reiniciar Direto na BIOS")
+                    role: "headline"
+                    font.weight: Font.DemiBold
+                }
+            }
+
+            Txt {
+                width: parent.width
+                wrapMode: Text.WordWrap
+                role: "body"
+                text: qsTr("O computador sera reiniciado e abrira diretamente a tela da BIOS. Na BIOS, verifique se a opcao PCIe Devices Power On (ou Wake on LAN) esta definida como Enabled.")
+            }
+
+            Rectangle {
+                width: parent.width
+                radius: Theme.radiusMd
+                color: Theme.surfaceContainerHighest
+                border.width: 1
+                border.color: Theme.outlineVariant
+                implicitHeight: biosTipCol.implicitHeight + 20
+
+                Column {
+                    id: biosTipCol
+                    anchors.fill: parent
+                    anchors.margins: 12
+                    spacing: 6
+
+                    Txt {
+                        width: parent.width
+                        text: qsTr("Instruções para Placa-Mãe ASRock:")
+                        role: "bodySmall"
+                        font.weight: Font.DemiBold
+                        color: Theme.primary
+                    }
+
+                    Txt {
+                        width: parent.width
+                        wrapMode: Text.WordWrap
+                        role: "bodySmall"
+                        muted: true
+                        text: qsTr("1. Advanced › ACPI Configuration › PCIe Devices Power On = Enabled\n2. Deep Sleep in S4/S5 = Disabled\n3. Pressione F10 para salvar e sair.")
+                    }
+                }
+            }
+
+            RowLayout {
+                width: parent.width
+                spacing: 10
+
+                Item { Layout.fillWidth: true }
+
+                Button {
+                    variant: "text"
+                    text: qsTr("Cancelar")
+                    onClicked: biosRebootSheet.close()
+                }
+
+                Button {
+                    variant: "fill"
+                    iconPath: Icons.refresh
+                    text: qsTr("Reiniciar Agora")
+                    onClicked: {
+                        biosRebootSheet.close()
+                        if (typeof AppController.rebootToBios === "function") {
+                            AppController.rebootToBios()
+                        } else {
+                            if (typeof AppController.toast === "function") {
+                                AppController.toast(qsTr("Comando de reinicialização para a BIOS enviado."))
+                            }
+                        }
                     }
                 }
             }
