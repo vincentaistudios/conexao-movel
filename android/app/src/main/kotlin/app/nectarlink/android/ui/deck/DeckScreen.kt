@@ -118,6 +118,22 @@ fun DeckScreen(
     var showSpikeCompanionSheet by remember { mutableStateOf(false) }
     var spikePlantedTimestamp by remember { mutableStateOf(0L) }
 
+    // Receptor de eventos táticos automáticos do Spike Watcher
+    LaunchedEffect(core, device.id) {
+        core.spikeAutoEvents.collect { event ->
+            when (event) {
+                is Core.SpikeAutoEvent.Planted -> {
+                    spikePlantedTimestamp = event.plantedAtMs
+                    showSpikeCompanionSheet = true
+                    view.performHapticFeedback(HapticFeedbackConstants.LONG_PRESS)
+                }
+                is Core.SpikeAutoEvent.Defused, is Core.SpikeAutoEvent.Reset -> {
+                    showSpikeCompanionSheet = false
+                }
+            }
+        }
+    }
+
     // Keep the phone's screen on while Deck is open, and restore system bars on exit.
     DisposableEffect(view, device.id) {
         val window = (context as? Activity)?.window

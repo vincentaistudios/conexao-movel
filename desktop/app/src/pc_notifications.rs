@@ -87,12 +87,19 @@ pub fn forward_pc_toast(app_name: &str, title: &str, text: &str) -> bool {
 }
 
 /// Forwards a PC notification (`app_name`, `title`, `text`) to connected
+/// Forwards a PC notification (`app_name`, `title`, `text`) to connected
 /// phones when `forward_pc_notifications_to_phone` is enabled. Returns `true`
 /// if the notification was queued for delivery.
 pub fn forward_to_phones(app_name: &str, title: &str, text: &str) -> bool {
     if !settings::forward_pc_notifications_to_phone() {
         return false;
     }
+    forward_to_phones_force(app_name, title, text)
+}
+
+/// Forwards an internal or game tactical notification directly to connected
+/// phones, bypassing the general desktop notification forwarder toggle.
+pub fn forward_to_phones_force(app_name: &str, title: &str, text: &str) -> bool {
     let seq = NEXT_ID.fetch_add(1, Ordering::Relaxed);
     let when_ms = SystemTime::now()
         .duration_since(UNIX_EPOCH)

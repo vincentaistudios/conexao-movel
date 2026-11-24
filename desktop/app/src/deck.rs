@@ -467,16 +467,18 @@ pub fn handle_spike_command(cmd: &str) -> Result<(), String> {
     tracing::info!(cmd, "Valorant Spike companion action triggered");
     match cmd {
         "plant" | "planted" => {
-            // Emite notificação discreta ou feedback se necessário
-            tracing::info!("Spike planted event recorded at timestamp");
+            tracing::info!("Spike planted event broadcasted to connected phones");
+            crate::pc_notifications::forward_to_phones_force("VALORANT", "Spike Plantada", "spike:planted");
             Ok(())
         }
         "defuse" | "half_defuse" => {
-            tracing::info!("Spike defuse state updated");
+            tracing::info!("Spike defuse state broadcasted to connected phones");
+            crate::pc_notifications::forward_to_phones_force("VALORANT", "Spike Desarmada", "spike:defused");
             Ok(())
         }
         "reset" => {
-            tracing::info!("Spike timer reset");
+            tracing::info!("Spike timer reset broadcasted to connected phones");
+            crate::pc_notifications::forward_to_phones_force("VALORANT", "Spike Reset", "spike:reset");
             Ok(())
         }
         other => {

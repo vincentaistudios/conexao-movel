@@ -136,6 +136,7 @@ static STREAM_PC_AUDIO: std::sync::atomic::AtomicBool = std::sync::atomic::Atomi
 static SHARE_PC_STORAGE: std::sync::atomic::AtomicBool = std::sync::atomic::AtomicBool::new(false);
 static FORWARD_PC_NOTIFICATIONS: std::sync::atomic::AtomicBool = std::sync::atomic::AtomicBool::new(false);
 static AWAY_MODE: std::sync::atomic::AtomicBool = std::sync::atomic::AtomicBool::new(false);
+static VALORANT_SPIKE_AUTO_DETECT: std::sync::atomic::AtomicBool = std::sync::atomic::AtomicBool::new(true);
 static FLOW_FOLLOW_CLIPBOARD: std::sync::atomic::AtomicBool = std::sync::atomic::AtomicBool::new(true);
 static SYNC_WIFI_ONLY: std::sync::atomic::AtomicBool = std::sync::atomic::AtomicBool::new(false);
 static OPEN_SHARED_FILES: std::sync::atomic::AtomicBool = std::sync::atomic::AtomicBool::new(false);
@@ -232,6 +233,14 @@ pub fn set_away_mode(on: bool) {
     if let Some(node) = crate::core_host::node() {
         node.set_away_mode(on);
     }
+}
+
+pub fn valorant_spike_auto_detect() -> bool {
+    VALORANT_SPIKE_AUTO_DETECT.load(std::sync::atomic::Ordering::Relaxed)
+}
+
+pub fn set_valorant_spike_auto_detect(on: bool) {
+    VALORANT_SPIKE_AUTO_DETECT.store(on, std::sync::atomic::Ordering::Relaxed);
 }
 
 static BATTERY_FULL_THRESHOLD: std::sync::atomic::AtomicU8 = std::sync::atomic::AtomicU8::new(100);
@@ -567,6 +576,9 @@ pub struct Settings {
     /// Allow staying connected over mobile data (LTE/5G) / relay when away from Wi-Fi.
     #[serde(default, alias = "away_mode")]
     pub away_mode: bool,
+    /// Detecção automática e autônoma da Spike do Valorant via HUD visual no Windows.
+    #[serde(default = "default_true", alias = "valorant_spike_auto_detect")]
+    pub valorant_spike_auto_detect: bool,
     /// Whether the first-run setup walkthrough has been completed or skipped.
     #[serde(default, alias = "walkthrough_completed")]
     pub walkthrough_completed: bool,
@@ -685,6 +697,7 @@ impl Default for Settings {
             share_pc_storage: false,
             forward_pc_notifications_to_phone: false,
             away_mode: false,
+            valorant_spike_auto_detect: true,
             walkthrough_completed: false,
             walkthrough_step: 0,
             whats_new_dismissed: false,
@@ -757,6 +770,7 @@ impl Settings {
         set_share_pc_storage(self.share_pc_storage);
         set_forward_pc_notifications_to_phone(self.forward_pc_notifications_to_phone);
         set_away_mode(self.away_mode);
+        set_valorant_spike_auto_detect(self.valorant_spike_auto_detect);
         set_battery_full_threshold(self.battery_full_threshold);
         set_keep_screen_off_phones(self.keep_screen_off.clone());
         set_device_nicknames(self.device_nicknames.clone());

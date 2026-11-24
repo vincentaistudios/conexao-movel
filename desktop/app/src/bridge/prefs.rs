@@ -1174,6 +1174,7 @@ impl qobject::Preferences {
             share_pc_storage: p.share_pc_storage,
             forward_pc_notifications_to_phone: p.forward_pc_notifications_to_phone,
             away_mode: p.away_mode,
+            valorant_spike_auto_detect: crate::settings::valorant_spike_auto_detect(),
             walkthrough_completed: p.walkthrough_completed,
             walkthrough_step: p.walkthrough_step.clamp(0, 6) as u8,
             whats_new_dismissed: p.whats_new_dismissed,

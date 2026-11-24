@@ -6,6 +6,7 @@ import android.content.Intent
 import android.os.Build
 import android.os.Bundle
 import android.view.KeyEvent
+import android.view.WindowManager
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.BackHandler
 import androidx.activity.compose.setContent
@@ -157,6 +158,18 @@ class MainActivity : ComponentActivity() {
                     ConnectionService.start(this@MainActivity)
                 } else if (state.status is CoreStatus.Ready) {
                     ConnectionService.stop(this@MainActivity)
+                }
+            }
+            // Desperta a tela e navega automaticamente para o Deck tático quando a Spike é plantada
+            LaunchedEffect(core) {
+                core.spikeAutoEvents.collect { event ->
+                    if (event is app.nectarlink.android.core.Core.SpikeAutoEvent.Planted) {
+                        requestedDeckPc = event.deviceId
+                        window.addFlags(
+                            WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON or
+                                WindowManager.LayoutParams.FLAG_TURN_SCREEN_ON
+                        )
+                    }
                 }
             }
             NectarlinkTheme(
