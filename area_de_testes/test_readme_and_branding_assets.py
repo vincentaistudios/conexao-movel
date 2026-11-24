@@ -22,6 +22,13 @@ EXPECTED_SVGS = [
     os.path.join(REPO_ROOT, "docs/assets/mockup-spike-companion.svg"),
     os.path.join(REPO_ROOT, "docs/assets/mockup-stream-deck.svg"),
     os.path.join(REPO_ROOT, "docs/assets/mockup-ecosystem-sync.svg"),
+    os.path.join(REPO_ROOT, "assets/badges/badge-version.svg"),
+    os.path.join(REPO_ROOT, "assets/badges/badge-download.svg"),
+    os.path.join(REPO_ROOT, "assets/badges/badge-android.svg"),
+    os.path.join(REPO_ROOT, "assets/badges/badge-windows.svg"),
+    os.path.join(REPO_ROOT, "assets/badges/badge-linux.svg"),
+    os.path.join(REPO_ROOT, "assets/badges/badge-localfirst.svg"),
+    os.path.join(REPO_ROOT, "assets/badges/badge-license.svg"),
 ]
 
 EMOJI_PATTERN = re.compile(
@@ -89,3 +96,4 @@ class TestReadmeAndBrandingAssets(unittest.TestCase):
 
 if __name__ == "__main__":
     unittest.main()
+
