@@ -345,8 +345,8 @@ Item {
                             time: Theme.combTime
                             animate: !Theme.reduceMotion && !AppController.powerSaver
                             cell: 9
-                            lineColor: Theme.dark ? Qt.rgba(1.0, 0.73, 0.37, 0.28) : Qt.rgba(0.54, 0.32, 0.0, 0.16)
-                            glowColor: Theme.dark ? Qt.rgba(1.0, 0.62, 0.18, 0.70) : Qt.rgba(1.0, 0.72, 0.37, 0.75)
+                            lineColor: Theme.dark ? Qt.rgba(0.22, 0.74, 0.97, 0.28) : Qt.rgba(0.01, 0.52, 0.78, 0.16)
+                            glowColor: Theme.dark ? Qt.rgba(0.22, 0.74, 0.97, 0.70) : Qt.rgba(0.01, 0.52, 0.78, 0.75)
                             origin: Qt.point(width / 2, height / 2)
                         }
                         Icon {
@@ -354,7 +354,7 @@ Item {
                             width: 22; height: 22
                             path: Icons.mark
                             stroke: 2.2
-                            color: Theme.dark ? "#FFB95F" : "#8A5100"
+                            color: Theme.dark ? "#38BDF8" : "#0284C7"
                         }
                     }
                     Column {

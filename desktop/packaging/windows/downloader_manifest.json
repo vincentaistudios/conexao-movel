@@ -1,0 +1,183 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "manifest_version": "1.0.0",
+  "package_id": "org.nectarlink.windows.downloader",
+  "display_name": "Conexao Movel - Servico de Downloads de Midia e Wake-on-LAN",
+  "target_os": "windows-x64",
+  "author": "Conexao Movel / NectarLink Core Team",
+  "license": "GPL-3.0-or-later",
+  "service": {
+    "name": "ConexaoMovelDownloader",
+    "display_name": "Servico Local de Downloads Conexao Movel",
+    "description": "Daemon HTTP REST local para inspecao e download de midias com yt-dlp e ffmpeg",
+    "host": "127.0.0.1",
+    "port": 28795,
+    "protocol": "http",
+    "zero_trust": {
+      "bind_address_only_loopback": true,
+      "allowed_origins": [
+        "http://127.0.0.1",
+        "http://localhost"
+      ],
+      "reject_external_origins": true
+    },
+    "endpoints": {
+      "health": "/health",
+      "inspect": "/inspect",
+      "download": "/download",
+      "status": "/status",
+      "cancel": "/cancel",
+      "history": "/history",
+      "clipboard": "/clipboard"
+    }
+  },
+  "components": {
+    "scripts": [
+      {
+        "filename": "downloader_server.py",
+        "role": "Servidor HTTP REST nativo assincrono na porta 28795",
+        "relative_path": "downloader/downloader_server.py"
+      },
+      {
+        "filename": "downloader_service.py",
+        "role": "Logica de orquestracao, extração de metadados e conversao de midia",
+        "relative_path": "downloader/downloader_service.py"
+      },
+      {
+        "filename": "google_bridge_routes.py",
+        "role": "Rotas de integracao de servicos de arquivos e nuvem",
+        "relative_path": "downloader/google_bridge_routes.py"
+      }
+    ],
+    "binaries": [
+      {
+        "name": "yt-dlp",
+        "filename": "yt-dlp.exe",
+        "role": "Motor de extracao de fluxos e download de plataformas web",
+        "min_version": "2024.11.04",
+        "relative_path": "bin/yt-dlp.exe",
+        "download_url": "https://github.com/yt-dlp/yt-dlp/releases/latest/download/yt-dlp.exe",
+        "checksum_sha256": ""
+      },
+      {
+        "name": "ffmpeg",
+        "filename": "ffmpeg.exe",
+        "role": "Multiplexador de audio e video e extrator de MP3 320kbps via libmp3lame",
+        "min_version": "6.0",
+        "relative_path": "bin/ffmpeg.exe",
+        "download_url": "https://www.gyan.dev/ffmpeg/builds/ffmpeg-release-essentials.zip",
+        "checksum_sha256": ""
+      },
+      {
+        "name": "ffprobe",
+        "filename": "ffprobe.exe",
+        "role": "Inspecao rapida de codecs e streams de arquivos multimidia",
+        "min_version": "6.0",
+        "relative_path": "bin/ffprobe.exe",
+        "download_url": "https://www.gyan.dev/ffmpeg/builds/ffmpeg-release-essentials.zip",
+        "checksum_sha256": ""
+      }
+    ],
+    "runtime": {
+      "type": "python-embed",
+      "version": "3.11.x",
+      "distribution": "python-3.11.9-embed-amd64.zip",
+      "executable": "runtime/python.exe",
+      "windowless_executable": "runtime/pythonw.exe",
+      "arguments": [
+        "downloader/downloader_server.py"
+      ]
+    }
+  },
+  "directories": {
+    "install_root": "%ProgramFiles%\\Nectarlink",
+    "downloader_dir": "%ProgramFiles%\\Nectarlink\\downloader",
+    "bin_dir": "%ProgramFiles%\\Nectarlink\\bin",
+    "user_data_dir": "%LOCALAPPDATA%\\Nectarlink",
+    "default_downloads_dir": "%USERPROFILE%\\Downloads"
+  },
+  "system_configuration": {
+    "fast_startup": {
+      "action": "disable",
+      "justification": "O Fast Startup (inicializacao rapida) coloca o Windows em S4 hibrido, desligando a controladora de rede fisica e impedindo a escuta de pacotes Wake-on-LAN ao desligar.",
+      "registry": {
+        "hive": "HKEY_LOCAL_MACHINE",
+        "key_path": "SYSTEM\\CurrentControlSet\\Control\\Session Manager\\Power",
+        "value_name": "HiberbootEnabled",
+        "value_type": "REG_DWORD",
+        "target_value": 0
+      },
+      "cli_command": "powercfg.exe -h off"
+    },
+    "wake_on_lan": {
+      "action": "enable",
+      "justification": "Permite que smartphones Android pareados liguem o computador remotamente atraves de Magic Packets UDP.",
+      "target_adapter_filter": {
+        "is_physical_only": true,
+        "required_characteristics_mask": 4,
+        "forbidden_characteristics_mask": 1,
+        "ignored_virtual_keywords": [
+          "virtual",
+          "vethernet",
+          "hyper-v",
+          "wsl",
+          "vmware",
+          "virtualbox",
+          "vbox",
+          "loopback",
+          "tap-",
+          "wintun",
+          "vpn",
+          "wireguard",
+          "openvpn",
+          "tailscale",
+          "zerotier",
+          "bluetooth",
+          "wan miniport",
+          "ndis",
+          "docker"
+        ]
+      },
+      "network_class_key": "SYSTEM\\CurrentControlSet\\Control\\Class\\{4d36e972-e325-11ce-bfc1-08002be10318}",
+      "registry_keys": [
+        {
+          "name": "*WakeOnMagicPacket",
+          "type": "REG_SZ",
+          "value": "1"
+        },
+        {
+          "name": "WakeOnMagicPacket",
+          "type": "REG_SZ",
+          "value": "1"
+        },
+        {
+          "name": "PnPCapabilities",
+          "type": "REG_DWORD",
+          "operation": "clear_bit_0x10",
+          "notes": "O bit 0x10 desativa o despertar por hardware; deve ser desmarcado para habilitar 'Permitir que este dispositivo acorde o computador'."
+        },
+        {
+          "name": "*WakeOnPattern",
+          "type": "REG_SZ",
+          "value": "0",
+          "notes": "Desativa despertar por trafego comum, mantendo apenas Magic Packets confiaveis."
+        }
+      ],
+      "powershell_command": "Get-NetAdapter | Where-Object { $_.Virtual -eq $false -and $_.Status -eq 'Up' } | Enable-NetAdapterPowerManagement -WakeOnMagicPacket -Confirm:$false"
+    },
+    "firewall": {
+      "rules": [
+        {
+          "name": "ConexaoMovel-WOL-UDP-In",
+          "display_name": "Conexao Movel Wake-on-LAN (UDP 7/9)",
+          "direction": "Inbound",
+          "protocol": "UDP",
+          "local_ports": "7,9",
+          "action": "Allow",
+          "profile": "Private,Domain"
+        }
+      ],
+      "loopback_note": "A porta 28795 do Downloader atende estritamente em 127.0.0.1, nao necessitando de exposicao no firewall de rede."
+    }
+  }
+}

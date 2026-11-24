@@ -1,3 +1,9 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100" width="512" height="512">
-  <g transform="rotate(-25 50 50)"><path d="M 41.5 42.5 C 26 24, 13.5 31, 13.5 50 C 13.5 69, 26 76, 41.5 57.5" fill="none" stroke="#FFFFFF" stroke-width="11.4" stroke-linecap="round"/><path d="M 58.5 42.5 C 74 24, 86.5 31, 86.5 50 C 86.5 69, 74 76, 58.5 57.5" fill="none" stroke="#FFFFFF" stroke-width="11.4" stroke-linecap="round"/><circle cx="50" cy="50" r="8.8" fill="#FFFFFF"/></g>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" width="512" height="512">
+  <!-- Monograma V plano branco para icones monocromaticos -->
+  <g transform="translate(25.6, 15) scale(0.90)">
+    <path d="M 72 96 L 168 96 L 256 364 L 216 428 L 72 96 Z" fill="#FFFFFF"/>
+    <path d="M 440 96 L 344 96 L 256 364 L 296 428 L 440 96 Z" fill="#FFFFFF"/>
+    <polygon points="256,120 284,175 256,230 228,175" fill="#FFFFFF"/>
+    <polygon points="256,364 216,428 256,448 296,428" fill="#FFFFFF"/>
+  </g>
 </svg>

@@ -886,6 +886,7 @@ private fun App(
                                     onStopKeyboardFromPc = core::stopKeyboardFromPc,
                                     onListPcFiles = core::listPcFiles,
                                     onDownloadPcFile = core::downloadPcFile,
+                                    onMediaDownloadRpc = core::mediaDownloadRpc,
                                     mirrorSession = mirrorSession,
                                     webcamSession = webcamSession,
                                     recorderSession = recorderSession,

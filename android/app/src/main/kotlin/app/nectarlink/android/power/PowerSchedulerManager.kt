@@ -13,7 +13,7 @@ import org.json.JSONObject
 import java.util.Calendar
 
 /**
- * Information regarding an active sleep timer.
+ * Informacoes persistidas sobre um temporizador de sono ativo.
  */
 data class SleepTimerInfo(
     val pcId: String,
@@ -32,10 +32,13 @@ data class SleepTimerInfo(
 
     companion object {
         fun fromJson(json: JSONObject): SleepTimerInfo {
+            val rawAction = json.optString("action", "")
+            val parsedAction = PowerActionType.fromStringOrNull(rawAction)
+                ?: throw IllegalArgumentException("Acao de temporizador invalida no JSON: $rawAction")
             return SleepTimerInfo(
                 pcId = json.getString("pcId"),
                 pcName = json.optString("pcName", ""),
-                action = PowerActionType.fromString(json.getString("action")),
+                action = parsedAction,
                 triggerAtMillis = json.getLong("triggerAtMillis"),
             )
         }
@@ -43,85 +46,46 @@ data class SleepTimerInfo(
 }
 
 /**
- * Manages power schedules and countdown sleep timers.
- * Handles persistence in SharedPreferences and exact alarm registrations via [AlarmManager].
+ * Gerencia agendamentos de energia e temporizadores regressivos via SharedPreferences e AlarmManager.
  */
 class PowerSchedulerManager(private val context: Context) {
     private val prefs: SharedPreferences =
         context.getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE)
     private val lock = Any()
 
-    /**
-     * Returns all saved schedules, optionally filtered by [pcId].
-     */
     fun getSchedules(pcId: String? = null): List<PowerSchedule> {
         val all = loadSchedules()
-        return if (pcId != null) {
-            all.filter { it.pcId == pcId }
-        } else {
-            all
-        }
+        return if (pcId != null) all.filter { it.pcId == pcId } else all
     }
 
-    /**
-     * Returns a specific schedule by [id], or null if not found.
-     */
-    fun getSchedule(id: String): PowerSchedule? {
-        return loadSchedules().firstOrNull { it.id == id }
-    }
+    fun getSchedule(id: String): PowerSchedule? = loadSchedules().firstOrNull { it.id == id }
 
-    /**
-     * Adds a new schedule or replaces an existing one with matching ID,
-     * then schedules the exact alarm if enabled.
-     */
     fun addSchedule(schedule: PowerSchedule) {
         synchronized(lock) {
             val list = loadSchedules().toMutableList()
             val existingIndex = list.indexOfFirst { it.id == schedule.id }
-            if (existingIndex >= 0) {
-                list[existingIndex] = schedule
-            } else {
-                list.add(schedule)
-            }
+            if (existingIndex >= 0) list[existingIndex] = schedule else list.add(schedule)
             saveSchedules(list)
         }
-        if (schedule.enabled) {
-            scheduleAlarm(schedule)
-        } else {
-            cancelAlarm(schedule.id)
-        }
+        if (schedule.enabled) scheduleAlarm(schedule) else cancelAlarm(schedule.id)
     }
 
-    /**
-     * Updates an existing schedule and refreshes its alarm.
-     */
     fun updateSchedule(schedule: PowerSchedule) {
         addSchedule(schedule)
     }
 
-    /**
-     * Removes the schedule with matching [id] and cancels any pending alarm.
-     */
     fun removeSchedule(id: String) {
         synchronized(lock) {
-            val list = loadSchedules().filterNot { it.id == id }
-            saveSchedules(list)
+            saveSchedules(loadSchedules().filterNot { it.id == id })
         }
         cancelAlarm(id)
     }
 
-    /**
-     * Enables or disables a schedule by [id].
-     */
     fun toggleSchedule(id: String, enabled: Boolean) {
         val existing = getSchedule(id) ?: return
-        val updated = existing.copy(enabled = enabled)
-        addSchedule(updated)
+        addSchedule(existing.copy(enabled = enabled))
     }
 
-    /**
-     * Records the execution timestamp of a schedule.
-     */
     fun recordTrigger(id: String, timestamp: Long = System.currentTimeMillis()) {
         synchronized(lock) {
             val list = loadSchedules().toMutableList()
@@ -133,61 +97,16 @@ class PowerSchedulerManager(private val context: Context) {
         }
     }
 
-    /**
-     * Calculates the next epoch timestamp (in milliseconds) for the given [schedule].
-     */
     fun calculateNextTriggerMillis(
         schedule: PowerSchedule,
         nowMillis: Long = System.currentTimeMillis(),
-    ): Long {
-        if (schedule.daysOfWeek.isEmpty()) {
-            val target = Calendar.getInstance().apply {
-                timeInMillis = nowMillis
-                set(Calendar.HOUR_OF_DAY, schedule.hour)
-                set(Calendar.MINUTE, schedule.minute)
-                set(Calendar.SECOND, 0)
-                set(Calendar.MILLISECOND, 0)
-                if (timeInMillis <= nowMillis) {
-                    add(Calendar.DAY_OF_YEAR, 1)
-                }
-            }
-            return target.timeInMillis
-        }
+    ): Long = Companion.calculateNextTriggerMillis(schedule, nowMillis)
 
-        for (offset in 0..7) {
-            val candidate = Calendar.getInstance().apply {
-                timeInMillis = nowMillis
-                add(Calendar.DAY_OF_YEAR, offset)
-                set(Calendar.HOUR_OF_DAY, schedule.hour)
-                set(Calendar.MINUTE, schedule.minute)
-                set(Calendar.SECOND, 0)
-                set(Calendar.MILLISECOND, 0)
-            }
-            val dayOfWeek = candidate.get(Calendar.DAY_OF_WEEK)
-            if (schedule.daysOfWeek.contains(dayOfWeek) && candidate.timeInMillis > nowMillis) {
-                return candidate.timeInMillis
-            }
-        }
-
-        return Calendar.getInstance().apply {
-            timeInMillis = nowMillis
-            add(Calendar.DAY_OF_YEAR, 1)
-            set(Calendar.HOUR_OF_DAY, schedule.hour)
-            set(Calendar.MINUTE, schedule.minute)
-            set(Calendar.SECOND, 0)
-            set(Calendar.MILLISECOND, 0)
-        }.timeInMillis
-    }
-
-    /**
-     * Registers an exact alarm for the given [schedule] via [AlarmManager.setExactAndAllowWhileIdle].
-     */
     fun scheduleAlarm(schedule: PowerSchedule) {
         if (!schedule.enabled) {
             cancelAlarm(schedule.id)
             return
         }
-
         val triggerAtMillis = calculateNextTriggerMillis(schedule)
         val intent = Intent(context, PowerScheduleReceiver::class.java).apply {
             action = PowerScheduleReceiver.ACTION_SCHEDULE_TRIGGER
@@ -198,20 +117,15 @@ class PowerSchedulerManager(private val context: Context) {
             putExtra(PowerScheduleReceiver.EXTRA_ACTION, schedule.action.name)
             putExtra(PowerScheduleReceiver.EXTRA_IS_SLEEP_TIMER, false)
         }
-
         val pendingIntent = PendingIntent.getBroadcast(
             context,
             schedule.id.hashCode(),
             intent,
             PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE,
         )
-
         setAlarm(triggerAtMillis, pendingIntent)
     }
 
-    /**
-     * Cancels any pending alarm for the given [scheduleId].
-     */
     fun cancelAlarm(scheduleId: String) {
         val intent = Intent(context, PowerScheduleReceiver::class.java).apply {
             action = PowerScheduleReceiver.ACTION_SCHEDULE_TRIGGER
@@ -230,97 +144,62 @@ class PowerSchedulerManager(private val context: Context) {
         }
     }
 
-    /**
-     * Re-registers all active schedules and sleep timers with AlarmManager.
-     * Useful after system reboot or package update.
-     */
     fun rescheduleAll() {
-        val schedules = loadSchedules()
-        for (schedule in schedules) {
-            if (schedule.enabled) {
-                scheduleAlarm(schedule)
-            } else {
-                cancelAlarm(schedule.id)
-            }
+        for (schedule in loadSchedules()) {
+            if (schedule.enabled) scheduleAlarm(schedule) else cancelAlarm(schedule.id)
         }
-
         val now = System.currentTimeMillis()
-        val sleepTimers = loadAllSleepTimers()
-        for ((pcId, info) in sleepTimers) {
+        for ((pcId, info) in loadAllSleepTimers()) {
             if (info.triggerAtMillis > now) {
-                val timerId = "sleep_timer_$pcId"
-                val intent = Intent(context, PowerScheduleReceiver::class.java).apply {
-                    action = PowerScheduleReceiver.ACTION_SCHEDULE_TRIGGER
-                    data = Uri.parse("nectarlink://sleep_timer/$pcId")
-                    putExtra(PowerScheduleReceiver.EXTRA_SCHEDULE_ID, timerId)
-                    putExtra(PowerScheduleReceiver.EXTRA_PC_ID, info.pcId)
-                    putExtra(PowerScheduleReceiver.EXTRA_PC_NAME, info.pcName)
-                    putExtra(PowerScheduleReceiver.EXTRA_ACTION, info.action.name)
-                    putExtra(PowerScheduleReceiver.EXTRA_IS_SLEEP_TIMER, true)
-                }
-                val pendingIntent = PendingIntent.getBroadcast(
-                    context,
-                    timerId.hashCode(),
-                    intent,
-                    PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE,
-                )
-                setAlarm(info.triggerAtMillis, pendingIntent)
+                scheduleSleepTimerAlarm(info)
             } else {
                 clearSleepTimer(pcId)
             }
         }
     }
 
-    // ---- Sleep Timer Support ----
+    // ---- Suporte ao Temporizador de Sono ----
 
-    /**
-     * Starts a countdown sleep timer for [pcId] to trigger [action] in [minutes] minutes.
-     */
     fun startSleepTimer(
         pcId: String,
         pcName: String,
         action: PowerActionType,
         minutes: Int,
     ) {
-        val timerId = "sleep_timer_$pcId"
-        val triggerAtMillis = System.currentTimeMillis() + (minutes * 60_000L)
+        // Evita disparo residual caso um novo timer seja iniciado dentro da janela de aviso de 60s
+        cancelPendingExecuteAlarm(sleepTimerId(pcId))
         val info = SleepTimerInfo(
             pcId = pcId,
             pcName = pcName,
             action = action,
-            triggerAtMillis = triggerAtMillis,
+            triggerAtMillis = System.currentTimeMillis() + (minutes * 60_000L),
         )
-
         saveSleepTimer(info)
-
-        val intent = Intent(context, PowerScheduleReceiver::class.java).apply {
-            action = PowerScheduleReceiver.ACTION_SCHEDULE_TRIGGER
-            data = Uri.parse("nectarlink://sleep_timer/$pcId")
-            putExtra(PowerScheduleReceiver.EXTRA_SCHEDULE_ID, timerId)
-            putExtra(PowerScheduleReceiver.EXTRA_PC_ID, pcId)
-            putExtra(PowerScheduleReceiver.EXTRA_PC_NAME, pcName)
-            putExtra(PowerScheduleReceiver.EXTRA_ACTION, action.name)
-            putExtra(PowerScheduleReceiver.EXTRA_IS_SLEEP_TIMER, true)
-        }
-
-        val pendingIntent = PendingIntent.getBroadcast(
-            context,
-            timerId.hashCode(),
-            intent,
-            PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE,
-        )
-
-        setAlarm(triggerAtMillis, pendingIntent)
+        scheduleSleepTimerAlarm(info)
     }
 
     /**
-     * Cancels an ongoing sleep timer for [pcId].
+     * Persiste e reagenda o temporizador apos adiamento (snooze) usando URI e requestCode canonicos.
      */
+    fun rescheduleSleepTimerSnooze(
+        pcId: String,
+        pcName: String,
+        action: PowerActionType,
+        delayMillis: Long,
+        nowMillis: Long = System.currentTimeMillis(),
+    ): Long {
+        val info = buildSnoozedSleepTimer(pcId, pcName, action, delayMillis, nowMillis)
+        saveSleepTimer(info)
+        scheduleSleepTimerAlarm(info)
+        return info.triggerAtMillis
+    }
+
     fun cancelSleepTimer(pcId: String) {
-        val timerId = "sleep_timer_$pcId"
+        val timerId = sleepTimerId(pcId)
+        cancelPendingExecuteAlarm(timerId)
         val intent = Intent(context, PowerScheduleReceiver::class.java).apply {
             action = PowerScheduleReceiver.ACTION_SCHEDULE_TRIGGER
-            data = Uri.parse("nectarlink://sleep_timer/$pcId")
+            data = sleepTimerUri(pcId)
         }
         val pendingIntent = PendingIntent.getBroadcast(
             context,
@@ -337,32 +216,71 @@ class PowerSchedulerManager(private val context: Context) {
     }
 
     /**
-     * Retrieves active sleep timer info for [pcId] if exists and still in future.
+     * Retorna o temporizador ativo se existir e estiver no futuro (somente leitura para a UI,
+     * preservando a entrada persistida durante a janela de aviso de 60s ate a execucao).
      */
-    fun getSleepTimer(pcId: String): SleepTimerInfo? {
+    fun getSleepTimer(pcId: String): SleepTimerInfo? =
+        filterFutureSleepTimer(getSleepTimerEntry(pcId))
+
+    /**
+     * Retorna a entrada persistida mesmo durante a janela de aviso de 60s apos o disparo inicial,
+     * permitindo que o receptor valide se o temporizador ainda existe e nao foi cancelado.
+     */
+    fun getSleepTimerEntry(pcId: String): SleepTimerInfo? {
         val raw = prefs.getString(KEY_SLEEP_TIMER_PREFIX + pcId, null) ?: return null
         return try {
-            val info = SleepTimerInfo.fromJson(JSONObject(raw))
-            if (info.triggerAtMillis > System.currentTimeMillis()) {
-                info
-            } else {
-                clearSleepTimer(pcId)
-                null
-            }
+            SleepTimerInfo.fromJson(JSONObject(raw))
         } catch (_: Exception) {
             clearSleepTimer(pcId)
             null
         }
     }
 
-    /**
-     * Clears sleep timer data for [pcId].
-     */
     fun clearSleepTimer(pcId: String) {
         prefs.edit().remove(KEY_SLEEP_TIMER_PREFIX + pcId).apply()
     }
 
-    // ---- Private Helpers ----
+    private fun scheduleSleepTimerAlarm(info: SleepTimerInfo) {
+        val timerId = sleepTimerId(info.pcId)
+        val intent = Intent(context, PowerScheduleReceiver::class.java).apply {
+            action = PowerScheduleReceiver.ACTION_SCHEDULE_TRIGGER
+            data = sleepTimerUri(info.pcId)
+            putExtra(PowerScheduleReceiver.EXTRA_SCHEDULE_ID, timerId)
+            putExtra(PowerScheduleReceiver.EXTRA_PC_ID, info.pcId)
+            putExtra(PowerScheduleReceiver.EXTRA_PC_NAME, info.pcName)
+            putExtra(PowerScheduleReceiver.EXTRA_ACTION, info.action.name)
+            putExtra(PowerScheduleReceiver.EXTRA_IS_SLEEP_TIMER, true)
+        }
+        val pendingIntent = PendingIntent.getBroadcast(
+            context,
+            timerId.hashCode(),
+            intent,
+            PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE,
+        )
+        setAlarm(info.triggerAtMillis, pendingIntent)
+    }
+
+    private fun cancelPendingExecuteAlarm(scheduleId: String) {
+        val executeIntent = Intent(context, PowerScheduleReceiver::class.java).apply {
+            action = PowerScheduleReceiver.ACTION_EXECUTE_POWER
+            data = Uri.parse("nectarlink://power_execute/$scheduleId")
+        }
+        val pendingIntent = PendingIntent.getBroadcast(
+            context,
+            (scheduleId + "_execute").hashCode(),
+            executeIntent,
+            PendingIntent.FLAG_NO_CREATE or PendingIntent.FLAG_IMMUTABLE,
+        )
+        if (pendingIntent != null) {
+            val alarmManager = context.getSystemService(Context.ALARM_SERVICE) as? AlarmManager
+            alarmManager?.cancel(pendingIntent)
+            pendingIntent.cancel()
+        }
+    }
+
+    private fun sleepTimerId(pcId: String): String = "sleep_timer_$pcId"
+
+    private fun sleepTimerUri(pcId: String): Uri = Uri.parse("nectarlink://sleep_timer/$pcId")
 
     private fun setAlarm(triggerAtMillis: Long, pendingIntent: PendingIntent) {
         val alarmManager = context.getSystemService(Context.ALARM_SERVICE) as? AlarmManager ?: return
@@ -376,7 +294,7 @@ class PowerSchedulerManager(private val context: Context) {
             } else {
                 alarmManager.setExactAndAllowWhileIdle(AlarmManager.RTC_WAKEUP, triggerAtMillis, pendingIntent)
             }
-        } catch (e: SecurityException) {
+        } catch (_: SecurityException) {
             alarmManager.setAndAllowWhileIdle(AlarmManager.RTC_WAKEUP, triggerAtMillis, pendingIntent)
         }
     }
@@ -387,7 +305,9 @@ class PowerSchedulerManager(private val context: Context) {
             val array = JSONArray(raw)
             val result = mutableListOf<PowerSchedule>()
             for (i in 0 until array.length()) {
-                result.add(PowerSchedule.fromJson(array.getJSONObject(i)))
+                runCatching { PowerSchedule.fromJson(array.getJSONObject(i)) }
+                    .getOrNull()
+                    ?.let { result.add(it) }
             }
             result
         } catch (_: Exception) {
@@ -397,9 +317,7 @@ class PowerSchedulerManager(private val context: Context) {
 
     private fun saveSchedules(list: List<PowerSchedule>) {
         val array = JSONArray()
-        for (item in list) {
-            array.put(item.toJson())
-        }
+        for (item in list) array.put(item.toJson())
         prefs.edit().putString(KEY_SCHEDULES, array.toString()).apply()
     }
 
@@ -417,7 +335,7 @@ class PowerSchedulerManager(private val context: Context) {
                     val info = SleepTimerInfo.fromJson(JSONObject(value))
                     result[info.pcId] = info
                 } catch (_: Exception) {
-                    // Ignore corrupted entries
+                    // Ignora entradas corrompidas
                 }
             }
         }
@@ -428,5 +346,77 @@ class PowerSchedulerManager(private val context: Context) {
         private const val PREFS_NAME = "power_schedules_prefs"
         private const val KEY_SCHEDULES = "schedules_data"
         private const val KEY_SLEEP_TIMER_PREFIX = "sleep_timer_"
+
+        /**
+         * Filtra o temporizador somente para exibicao na UI quando ainda esta no futuro,
+         * sem apagar a entrada persistida usada na validacao da janela de 60s.
+         */
+        fun filterFutureSleepTimer(
+            info: SleepTimerInfo?,
+            nowMillis: Long = System.currentTimeMillis(),
+        ): SleepTimerInfo? = info?.takeIf { it.triggerAtMillis > nowMillis }
+
+        /**
+         * Constroi o SleepTimerInfo atualizado para adiamento (snooze) sem depender de Context.
+         */
+        fun buildSnoozedSleepTimer(
+            pcId: String,
+            pcName: String,
+            action: PowerActionType,
+            delayMillis: Long,
+            nowMillis: Long = System.currentTimeMillis(),
+        ): SleepTimerInfo = SleepTimerInfo(
+            pcId = pcId,
+            pcName = pcName,
+            action = action,
+            triggerAtMillis = nowMillis + delayMillis,
+        )
+
+        /**
+         * Calcula o proximo timestamp em milissegundos para disparo unico (daysOfWeek vazio)
+         * ou recorrencia semanal sem depender de Context Android.
+         */
+        fun calculateNextTriggerMillis(
+            schedule: PowerSchedule,
+            nowMillis: Long = System.currentTimeMillis(),
+        ): Long {
+            if (schedule.daysOfWeek.isEmpty()) {
+                val target = Calendar.getInstance().apply {
+                    timeInMillis = nowMillis
+                    set(Calendar.HOUR_OF_DAY, schedule.hour)
+                    set(Calendar.MINUTE, schedule.minute)
+                    set(Calendar.SECOND, 0)
+                    set(Calendar.MILLISECOND, 0)
+                    if (timeInMillis <= nowMillis) {
+                        add(Calendar.DAY_OF_YEAR, 1)
+                    }
+                }
+                return target.timeInMillis
+            }
+
+            for (offset in 0..7) {
+                val candidate = Calendar.getInstance().apply {
+                    timeInMillis = nowMillis
+                    add(Calendar.DAY_OF_YEAR, offset)
+                    set(Calendar.HOUR_OF_DAY, schedule.hour)
+                    set(Calendar.MINUTE, schedule.minute)
+                    set(Calendar.SECOND, 0)
+                    set(Calendar.MILLISECOND, 0)
+                }
+                val dayOfWeek = candidate.get(Calendar.DAY_OF_WEEK)
+                if (schedule.daysOfWeek.contains(dayOfWeek) && candidate.timeInMillis > nowMillis) {
+                    return candidate.timeInMillis
+                }
+            }
+
+            return Calendar.getInstance().apply {
+                timeInMillis = nowMillis
+                add(Calendar.DAY_OF_YEAR, 1)
+                set(Calendar.HOUR_OF_DAY, schedule.hour)
+                set(Calendar.MINUTE, schedule.minute)
+                set(Calendar.SECOND, 0)
+                set(Calendar.MILLISECOND, 0)
+            }.timeInMillis
+        }
     }
 }

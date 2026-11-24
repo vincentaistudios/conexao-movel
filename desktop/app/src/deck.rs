@@ -78,6 +78,24 @@ pub fn set_page_active(active: bool) {
     }
 }
 
+/// Returns the wire DeckLayout including user pages and the dynamic "Janelas no PC" page.
+pub fn current_wire_layout() -> nectarlink_core::DeckLayout {
+    let base_config = {
+        let guard = lock(&DECK);
+        guard
+            .as_ref()
+            .map(|rt| rt.config.clone())
+            .unwrap_or_else(DeckConfig::default_deck)
+    };
+    let mut layout = base_config.to_wire_layout();
+    let open_wins = crate::window_switcher::list_open_windows();
+    if !open_wins.is_empty() {
+        let win_page = crate::window_switcher::build_active_windows_page(&open_wins);
+        layout.pages.insert(0, win_page.to_wire());
+    }
+    layout
+}
+
 /// Loads `deck.json` from `data_dir` and starts the background poller that
 /// keeps speaker volume, microphone mute, output devices, and external
 /// `deck.json` edits in sync.
@@ -96,11 +114,11 @@ pub fn init(data_dir: &Path) {
         playing: false,
         output_devices: Vec::new(),
     };
-    let wire_layout = config.to_wire_layout();
     {
         let mut guard = lock(&DECK);
         *guard = Some(RuntimeState { config, state: initial_state, path: Some(path), last_mtime: mtime });
     }
+    let wire_layout = current_wire_layout();
     core_host::host().hub.update(|_| Changes::DECK);
 
     core_host::spawn(async move {
@@ -126,6 +144,7 @@ pub fn init(data_dir: &Path) {
         // picks up edits to deck.json while the Deck page is open.
         win::audio::watch(|| core_host::spawn(refresh_live_state()));
         let mut interval = tokio::time::interval(Duration::from_millis(1500));
+        let mut last_window_titles: Vec<String> = Vec::new();
         loop {
             interval.tick().await;
             if !PAGE_ACTIVE.load(Ordering::Relaxed) {
@@ -133,6 +152,16 @@ pub fn init(data_dir: &Path) {
             }
             reload_from_disk_if_modified();
             refresh_live_state().await;
+
+            let wins = crate::window_switcher::list_open_windows();
+            let titles: Vec<String> = wins.iter().map(|w| format!("{}:{}", w.wid, w.title)).collect();
+            if titles != last_window_titles {
+                last_window_titles = titles;
+                let wire = current_wire_layout();
+                if let Some(node) = core_host::node() {
+                    let _ = node.set_deck_layout(wire).await;
+                }
+            }
         }
     });
 }
@@ -152,7 +181,7 @@ fn reload_from_disk_if_modified() {
             return;
         }
         rt.config = fresh;
-        Some(rt.config.to_wire_layout())
+        Some(current_wire_layout())
     };
     if let Some(wire) = updated_wire {
         core_host::host().hub.update(|_| Changes::DECK);
@@ -226,7 +255,7 @@ fn commit_config(mutate: impl FnOnce(&mut DeckConfig)) {
             }
             rt.last_mtime = file_mtime(path);
         }
-        rt.config.to_wire_layout()
+        current_wire_layout()
     };
     core_host::host().hub.update(|_| Changes::DECK);
     core_host::spawn(async move {
@@ -273,6 +302,32 @@ pub fn handle_set_audio(peer: &DeviceId, volume: Option<u8>, muted: Option<bool>
 /// Executes a tile's action by ID (used both for remote `deck.press` and the
 /// desktop Deck editor's "Test" button).
 pub fn execute_tile(tile_id: &str) -> Result<(), String> {
+    if let Some(rest) = tile_id.strip_prefix("snap_win_") {
+        // Format: snap_win_<layout>_<wid>
+        let layouts = [
+            "fullscreen", "maximize", "max",
+            "top_left", "top_right", "bottom_left", "bottom_right",
+            "left", "right", "center",
+        ];
+        for layout in layouts {
+            let prefix = format!("{layout}_");
+            if let Some(raw_wid) = rest.strip_prefix(&prefix) {
+                let clean_wid = raw_wid.replace("0x_", "0x");
+                return crate::window_switcher::snap_window(&clean_wid, layout);
+            }
+        }
+    }
+    if let Some(wid_hex) = tile_id.strip_prefix("focus_win_") {
+        let raw = wid_hex.replace("0x_", "0x");
+        // Focus and maximize window to full screen by default
+        return crate::window_switcher::snap_window(&raw, "maximize");
+    }
+    if let Some(app_name) = tile_id.strip_prefix("launch_app_") {
+        return launch_named_app(app_name);
+    }
+    if let Some(preset) = tile_id.strip_prefix("add_preset_") {
+        return add_preset_tile(preset);
+    }
     reload_from_disk_if_modified();
     let action = {
         let guard = lock(&DECK);
@@ -287,6 +342,46 @@ pub fn execute_tile(tile_id: &str) -> Result<(), String> {
         refresh_live_state().await;
     });
     res
+}
+
+fn launch_named_app(name: &str) -> Result<(), String> {
+    match name {
+        "spotify" => win::shell::run_command("spotify"),
+        "minecraft" => win::shell::run_command("minecraft-launcher || prism-launcher || minetest"),
+        "discord" => win::shell::run_command("discord"),
+        "obs" => win::shell::run_command("obs"),
+        "chromium" | "browser" => win::shell::run_command("chromium || google-chrome || firefox"),
+        "twitch" => links::open_here("https://www.twitch.tv"),
+        "crunchyroll" => links::open_here("https://www.crunchyroll.com"),
+        "youtube" => links::open_here("https://www.youtube.com"),
+        "terminal" => win::shell::run_command("x-terminal-emulator || xfce4-terminal || alacritty"),
+        "calculator" | "calc" => win::shell::run_command("gnome-calculator || galculator || kcalc"),
+        other => win::shell::run_command(other),
+    }
+}
+
+fn add_preset_tile(preset: &str) -> Result<(), String> {
+    let (label, icon, color, action) = match preset {
+        "spotify" => ("Spotify", "music", "emerald", DeckAction::RunCommand { command: "spotify".into() }),
+        "minecraft" => ("Minecraft", "gamepad", "amber", DeckAction::RunCommand { command: "minecraft-launcher".into() }),
+        "discord" => ("Discord", "chat", "indigo", DeckAction::RunCommand { command: "discord".into() }),
+        "obs" => ("OBS Studio", "video", "ruby", DeckAction::RunCommand { command: "obs".into() }),
+        "browser" => ("Navegador", "globe", "sapphire", DeckAction::RunCommand { command: "chromium".into() }),
+        "twitch" => ("Twitch", "video", "purple", DeckAction::OpenUrl { url: "https://www.twitch.tv".into() }),
+        "crunchyroll" => ("Crunchyroll", "video", "orange", DeckAction::OpenUrl { url: "https://www.crunchyroll.com".into() }),
+        "terminal" => ("Terminal", "terminal", "graphite", DeckAction::RunCommand { command: "x-terminal-emulator".into() }),
+        "valorant_spike" | "spike" => ("Spike Timer", "bomb", "ruby", DeckAction::RunCommand { command: "spike:plant".into() }),
+        _ => return Err(format!("Unknown preset: {preset}")),
+    };
+    let page_id = {
+        let guard = lock(&DECK);
+        guard
+            .as_ref()
+            .and_then(|rt| rt.config.pages.first().map(|p| p.id.clone()))
+            .unwrap_or_else(|| "main".to_string())
+    };
+    let _ = save_tile(&page_id, "", label, icon, color, action)?;
+    Ok(())
 }
 
 fn execute_action(action: &DeckAction) -> Result<(), String> {
@@ -351,6 +446,8 @@ fn execute_action(action: &DeckAction) -> Result<(), String> {
         DeckAction::RunCommand { command } => {
             if let Some(obs_cmd) = command.trim().strip_prefix("obs:") {
                 send_obs_command(obs_cmd.trim())
+            } else if let Some(spike_cmd) = command.trim().strip_prefix("spike:") {
+                handle_spike_command(spike_cmd.trim())
             } else {
                 win::shell::run_command(command)
             }
@@ -363,6 +460,30 @@ fn execute_action(action: &DeckAction) -> Result<(), String> {
 pub fn send_obs_command(obs_cmd: &str) -> Result<(), String> {
     let (port, _) = crate::settings::obs_settings();
     crate::obs::run(obs_cmd, port, crate::settings::obs_password().as_deref())
+}
+
+/// Handles tactical Spike Companion commands originating from Stream Deck tiles or PC hotkeys.
+pub fn handle_spike_command(cmd: &str) -> Result<(), String> {
+    tracing::info!(cmd, "Valorant Spike companion action triggered");
+    match cmd {
+        "plant" | "planted" => {
+            // Emite notificação discreta ou feedback se necessário
+            tracing::info!("Spike planted event recorded at timestamp");
+            Ok(())
+        }
+        "defuse" | "half_defuse" => {
+            tracing::info!("Spike defuse state updated");
+            Ok(())
+        }
+        "reset" => {
+            tracing::info!("Spike timer reset");
+            Ok(())
+        }
+        other => {
+            tracing::warn!(other, "unknown spike command");
+            Ok(())
+        }
+    }
 }
 
 fn next_unique_id(prefix: &str, existing: &[String]) -> String {

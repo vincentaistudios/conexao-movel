@@ -34,18 +34,10 @@ internal object StarNotification {
     fun askAt(firstInstall: Long, lastUpdate: Long, now: Long): Long =
         if (lastUpdate > firstInstall) now else firstInstall + HOUR_MS
 
-    /** Call when the app opens. Posts it if it's time, or sets an alarm for when it is. */
+    /** Call when the app opens. Disabled: no GitHub notifications requested. */
     fun onAppOpened(context: Context) {
-        val app = context.applicationContext
-        if (posted(app)) return
-        val info = runCatching { app.packageManager.getPackageInfo(app.packageName, 0) }.getOrNull() ?: return
-        val now = System.currentTimeMillis()
-        val at = askAt(info.firstInstallTime, info.lastUpdateTime, now)
-        if (at <= now) {
-            post(app)
-        } else {
-            app.getSystemService(AlarmManager::class.java)?.set(AlarmManager.RTC, at, alarm(app))
-        }
+        // Disabled: do not schedule or show GitHub notifications
+        return
     }
 
     private fun posted(context: Context) =

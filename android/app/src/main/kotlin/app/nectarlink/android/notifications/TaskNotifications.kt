@@ -25,7 +25,7 @@ import app.nectarlink.core.TaskNotify
  */
 object TaskNotifications {
     private const val CHANNEL_RUNNING = "pc_tasks_running"
-    private const val CHANNEL_DONE = "pc_tasks"
+    private const val CHANNEL_DONE = "pc_tasks_v2"
     private const val NOTIFICATION_ID = 0x5441534B // "TASK"
 
     fun createChannels(context: Context) {
@@ -37,13 +37,14 @@ object TaskNotifications {
                 NotificationManager.IMPORTANCE_LOW,
             ).apply { setShowBadge(false) },
         )
-        manager.createNotificationChannel(
-            NotificationChannel(
-                CHANNEL_DONE,
-                context.getString(R.string.channel_pc_tasks),
-                NotificationManager.IMPORTANCE_HIGH,
-            ),
-        )
+        val doneChannel = NotificationChannel(
+            CHANNEL_DONE,
+            context.getString(R.string.channel_pc_tasks),
+            NotificationManager.IMPORTANCE_HIGH,
+        ).apply {
+            NotificationSoundHelper.configureChannel(this)
+        }
+        manager.createNotificationChannel(doneChannel)
     }
 
     /** Shows or updates a task notification from a paired PC; false if notifications are disabled. */
@@ -125,7 +126,7 @@ object TaskNotifications {
     ): Notification {
         val title = completionTitle(task.title, task.exitCode, context)
         val body = completionBody(from, task.elapsedMs.toLong().coerceAtLeast(0L), context)
-        return Notification.Builder(context, CHANNEL_DONE)
+        val builder = Notification.Builder(context, CHANNEL_DONE)
             .setSmallIcon(R.drawable.ic_notification)
             .setContentTitle(title)
             .setContentText(body)
@@ -138,7 +139,8 @@ object TaskNotifications {
             .setShowWhen(true)
             .setWhen(System.currentTimeMillis())
             .setCategory(Notification.CATEGORY_STATUS)
-            .build()
+        NotificationSoundHelper.applyBuilderSound(builder)
+        return builder.build()
     }
 
     internal fun completionTitle(rawTitle: String, exitCode: Int?, context: Context? = null): String {

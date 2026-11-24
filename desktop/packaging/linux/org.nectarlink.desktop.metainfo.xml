@@ -1,23 +1,23 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <component type="desktop-application">
   <id>org.nectarlink.desktop</id>
-  <name>NectarLink</name>
-  <summary>Connect your Android phone and Linux PC over LAN</summary>
+  <name>Conexão Móvel</name>
+  <summary>Conecte seu celular Android e computador Linux na rede local</summary>
   <metadata_license>CC0-1.0</metadata_license>
   <project_license>GPL-3.0-or-later</project_license>
   <developer id="io.github.thtbee">
-    <name>thtbee</name>
+    <name>Conexão Móvel</name>
   </developer>
   <description>
     <p>
-      NectarLink links your Android phone and Linux desktop over your local network with end-to-end encryption.
+      O Conexão Móvel integra seu celular Android e seu computador com criptografia de ponta a ponta.
     </p>
     <ul>
-      <li>Sync clipboard text and images bidirectionally</li>
-      <li>Mirror phone notifications and reply inline from your desktop</li>
-      <li>Send and receive files, folders, and browsable phone storage via FUSE</li>
-      <li>Stream phone screen, camera, and audio with low latency</li>
-      <li>Read and send SMS/MMS messages and manage phone calls</li>
+      <li>Sincronize texto e imagens da área de transferência nos dois sentidos</li>
+      <li>Espelhe notificações do celular e responda diretamente do computador</li>
+      <li>Envie e receba arquivos, pastas e baixe mídias remotamente</li>
+      <li>Espelhamento de tela, webcam virtual e áudio com baixa latência</li>
+      <li>Leia/envie SMS, gerencie chamadas e controle energia/agendamento do PC</li>
     </ul>
   </description>
   <launchable type="desktop-id">nectarlink.desktop</launchable>
@@ -34,6 +34,8 @@
   </provides>
   <content_rating type="oars-1.1" />
   <releases>
+    <release version="0.1.8" date="2026-11-22" />
+    <release version="0.1.7" date="2026-11-12" />
     <release version="0.1.5" date="2026-11-05" />
     <release version="0.1.4" date="2026-10-17" />
   </releases>

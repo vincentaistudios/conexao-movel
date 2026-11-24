@@ -44,6 +44,8 @@ pub mod types {
     pub const MEDIA_WATCH: &str = "media.watch";
     pub const MEDIA_FILE: &str = "media.file";
     pub const MEDIA_FILE_META: &str = "media.file.meta";
+    pub const MEDIA_DOWNLOAD_RPC: &str = "media.download_rpc";
+    pub const MEDIA_DOWNLOAD_REPLY: &str = "media.download_reply";
     pub const PC_POWER: &str = "pc.power";
     pub const PC_WAKE_INFO: &str = "pc.wake_info";
     pub const LINK_OPEN: &str = "link.open";
@@ -4457,6 +4459,78 @@ impl StorageChanged {
     }
 }
 
+/// Bounds and allowed operations for `media.download_rpc` / `media.download_reply`.
+pub mod media_download {
+    /// Maximum UTF-8 bytes in `MediaDownloadRpc::op`.
+    pub const MAX_OP_BYTES: usize = 32;
+    /// Maximum UTF-8 bytes in `MediaDownloadRpc::payload_json`.
+    pub const MAX_PAYLOAD_BYTES: usize = 16 * 1024;
+    /// Maximum UTF-8 bytes in `MediaDownloadReply::body_json`.
+    pub const MAX_BODY_BYTES: usize = 512 * 1024;
+    /// Operations permitted by the local media downloader RPC bridge.
+    pub const ALLOWED_OPS: &[&str] = &["health", "inspect", "start", "status", "history", "cancel"];
+
+    /// Returns `true` when `op` fits within protocol bounds and is in [`ALLOWED_OPS`].
+    pub fn is_valid_op(op: &str) -> bool {
+        op.len() <= MAX_OP_BYTES && ALLOWED_OPS.contains(&op)
+    }
+}
+
+/// Body of `media.download_rpc`: request from a paired phone to the PC's local media downloader.
+#[derive(Clone, PartialEq, Eq, Serialize, Deserialize)]
+pub struct MediaDownloadRpc {
+    pub op: String,
+    #[serde(default)]
+    pub payload_json: String,
+}
+
+/// Never prints the JSON payload in logs (protocol v0 §11).
+impl std::fmt::Debug for MediaDownloadRpc {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        f.debug_struct("MediaDownloadRpc")
+            .field("op", &self.op)
+            .field("payload_bytes", &self.payload_json.len())
+            .finish()
+    }
+}
+
+impl MediaDownloadRpc {
+    /// Validates operation whitelist and size limits.
+    pub fn is_valid(&self) -> bool {
+        media_download::is_valid_op(&self.op)
+            && self.payload_json.len() <= media_download::MAX_PAYLOAD_BYTES
+    }
+}
+
+/// Body of `media.download_reply`: response from the PC's local media downloader.
+#[derive(Clone, PartialEq, Eq, Serialize, Deserialize)]
+pub struct MediaDownloadReply {
+    pub ok: bool,
+    #[serde(default)]
+    pub body_json: String,
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub error: Option<String>,
+}
+
+/// Never prints the full JSON response body in logs (protocol v0 §11).
+impl std::fmt::Debug for MediaDownloadReply {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        f.debug_struct("MediaDownloadReply")
+            .field("ok", &self.ok)
+            .field("body_bytes", &self.body_json.len())
+            .field("has_error", &self.error.is_some())
+            .finish()
+    }
+}
+
+impl MediaDownloadReply {
+    /// Validates reply payload and error length bounds.
+    pub fn is_valid(&self) -> bool {
+        self.body_json.len() <= media_download::MAX_BODY_BYTES
+            && self.error.as_deref().is_none_or(|e| e.len() <= 2048)
+    }
+}
+
 #[cfg(test)]
 mod tests {
     #[test]
@@ -6056,7 +6130,15 @@ mod tests {
                     NotifyAction,
                     ClipSet
                 ),
-                3 => try_decode!(MediaPlayer, MediaState, MediaCommand, PcPower, PcWakeInfo),
+                3 => try_decode!(
+                    MediaPlayer,
+                    MediaState,
+                    MediaCommand,
+                    MediaDownloadRpc,
+                    MediaDownloadReply,
+                    PcPower,
+                    PcWakeInfo
+                ),
                 4 => try_decode!(
                     MirrorStart,
                     MirrorPower,
@@ -6200,5 +6282,53 @@ mod tests {
         let env = crate::Envelope::new(types::AUDIO_PCM, &frame).unwrap();
         let decoded: AudioPcmFrame = crate::Envelope::from_cbor(&env.to_cbor()).unwrap().body().unwrap();
         assert_eq!(decoded, frame);
+    }
+
+    #[test]
+    fn media_download_rpc_validation_and_cbor_roundtrip() {
+        for op in media_download::ALLOWED_OPS {
+            let rpc = MediaDownloadRpc { op: (*op).to_owned(), payload_json: r#"{"ok":true}"#.into() };
+            assert!(rpc.is_valid(), "op {op} should be valid");
+            let env = crate::Envelope::new(types::MEDIA_DOWNLOAD_RPC, &rpc).unwrap();
+            let decoded: MediaDownloadRpc = crate::Envelope::from_cbor(&env.to_cbor()).unwrap().body().unwrap();
+            assert_eq!(decoded, rpc);
+        }
+
+        let bad_op = MediaDownloadRpc { op: "exec".into(), payload_json: "{}".into() };
+        assert!(!bad_op.is_valid());
+        let long_op = MediaDownloadRpc { op: "a".repeat(media_download::MAX_OP_BYTES + 1), payload_json: "{}".into() };
+        assert!(!long_op.is_valid());
+        let big_payload = MediaDownloadRpc {
+            op: "inspect".into(),
+            payload_json: "x".repeat(media_download::MAX_PAYLOAD_BYTES + 1),
+        };
+        assert!(!big_payload.is_valid());
+
+        let reply = MediaDownloadReply {
+            ok: true,
+            body_json: r#"{"status":"ok"}"#.into(),
+            error: None,
+        };
+        assert!(reply.is_valid());
+        let env = crate::Envelope::new(types::MEDIA_DOWNLOAD_REPLY, &reply).unwrap();
+        let decoded: MediaDownloadReply = crate::Envelope::from_cbor(&env.to_cbor()).unwrap().body().unwrap();
+        assert_eq!(decoded, reply);
+
+        let err_reply = MediaDownloadReply {
+            ok: false,
+            body_json: String::new(),
+            error: Some("indisponivel".into()),
+        };
+        assert!(err_reply.is_valid());
+        let env = crate::Envelope::new(types::MEDIA_DOWNLOAD_REPLY, &err_reply).unwrap();
+        let decoded: MediaDownloadReply = crate::Envelope::from_cbor(&env.to_cbor()).unwrap().body().unwrap();
+        assert_eq!(decoded, err_reply);
+
+        let big_reply = MediaDownloadReply {
+            ok: true,
+            body_json: "x".repeat(media_download::MAX_BODY_BYTES + 1),
+            error: None,
+        };
+        assert!(!big_reply.is_valid());
     }
 }

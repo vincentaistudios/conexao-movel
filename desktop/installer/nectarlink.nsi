@@ -46,9 +46,9 @@ SetCompressor /SOLID zlib
 ; APP names the install folder, registry keys and the firewall rule; DISPLAY is
 ; the name people see.
 !define APP "Nectarlink"
-!define DISPLAY "NectarLink"
+!define DISPLAY "Conexão Móvel"
 !define EXE "nectarlink-desktop.exe"
-!define SETUP_EXE "Nectarlink Setup.exe"
+!define SETUP_EXE "Conexao Movel Setup.exe"
 !define UNINSTALL_KEY "Software\Microsoft\Windows\CurrentVersion\Uninstall\${APP}"
 !define FIREWALL_RULE "Nectarlink"
 
@@ -67,7 +67,7 @@ ShowUninstDetails nevershow
 VIProductVersion "${VERSION}.${BUILD}"
 VIAddVersionKey "ProductName" "${DISPLAY}"
 VIAddVersionKey "FileDescription" "${DISPLAY} Setup"
-VIAddVersionKey "CompanyName" "The NectarLink contributors"
+VIAddVersionKey "CompanyName" "Conexão Móvel"
 VIAddVersionKey "LegalCopyright" "GPL-3.0-or-later"
 VIAddVersionKey "FileVersion" "${VERSION}"
 VIAddVersionKey "ProductVersion" "${DISPLAY_VERSION}"
@@ -374,6 +374,15 @@ Section "Install"
   !insertmacro Progress "step firewall"
   nsExec::Exec 'netsh advfirewall firewall delete rule name="${FIREWALL_RULE}"'
   nsExec::Exec 'netsh advfirewall firewall add rule name="${FIREWALL_RULE}" dir=in action=allow program="$INSTDIR\${EXE}" enable=yes profile=private,domain description="Lets paired phones connect to NectarLink."'
+  nsExec::Exec 'netsh advfirewall firewall delete rule name="${APP} Wake-on-LAN"'
+  nsExec::Exec 'netsh advfirewall firewall add rule name=\"${APP} Wake-on-LAN\" dir=in action=allow protocol=UDP localport=9 enable=yes profile=private,domain description=\"Lets paired phones wake this PC over LAN.\"'
+
+  ; Wake-on-LAN and network adapter power automation
+  ${If} ${FileExists} "$INSTDIR\setup_wol_and_power.ps1"
+    nsExec::Exec 'powershell -NoProfile -NonInteractive -ExecutionPolicy Bypass -File "$INSTDIR\setup_wol_and_power.ps1" -Quiet'
+  ${ElseIf} ${FileExists} "$INSTDIR\packaging\windows\setup_wol_and_power.ps1"
+    nsExec::Exec 'powershell -NoProfile -NonInteractive -ExecutionPolicy Bypass -File "$INSTDIR\packaging\windows\setup_wol_and_power.ps1" -Quiet'
+  ${EndIf}
 
   ; Updates without an administrator prompt: a task that runs this app as
   ; SYSTEM to install a newer release (desktop/app/src/updater.rs). Only
@@ -445,6 +454,7 @@ Section "Install"
   System::Call 'kernel32::SetEnvironmentVariableW(w "NECTARLINK_INSTDIR", w "$INSTDIR")'
   nsExec::Exec 'powershell -NoProfile -NonInteractive -ExecutionPolicy Bypass -Command "if (-not [Security.Principal.WindowsIdentity]::GetCurrent().IsSystem) { try { Add-AppxPackage -Register \"$$env:NECTARLINK_INSTDIR\AppxManifest.xml\" -ExternalLocation $$env:NECTARLINK_INSTDIR -ErrorAction Stop } catch { $$_ | Out-File -Encoding utf8 -LiteralPath \"$$env:NECTARLINK_INSTDIR\sparse-package.log\" } }"'
 
+  WriteRegDWORD HKLM "SYSTEM\CurrentControlSet\Control\Session Manager\Power" "HiberbootEnabled" 0
   WriteRegStr HKLM "Software\${APP}" "InstallDir" "$INSTDIR"
   WriteRegDWORD HKLM "Software\${APP}" "AdminOnlyFolder" $AdminOnly
   WriteRegStr HKLM "${UNINSTALL_KEY}" "DisplayName" "${DISPLAY}"
@@ -484,6 +494,7 @@ Section "Uninstall"
   !insertmacro Progress "step cleanup"
   nsExec::Exec 'powershell -NoProfile -NonInteractive -ExecutionPolicy Bypass -Command "try { Get-AppxPackage -Name \"Nectarlink.Desktop\" -ErrorAction SilentlyContinue | Remove-AppxPackage -ErrorAction SilentlyContinue } catch {}"'
   nsExec::Exec 'netsh advfirewall firewall delete rule name="${FIREWALL_RULE}"'
+  nsExec::Exec 'netsh advfirewall firewall delete rule name="${APP} Wake-on-LAN"'
   nsExec::Exec 'schtasks /Delete /TN "Nectarlink Update" /F'
   Delete "$SMPROGRAMS\${DISPLAY}.lnk"
   Delete "$DESKTOP\${DISPLAY}.lnk"
@@ -501,6 +512,7 @@ Section "Uninstall"
     RMDir /r "$INSTDIR\Assets"
     Delete "$INSTDIR\sparse-package.log"
     Delete "$INSTDIR\update.log"
+    Delete "$INSTDIR\setup_wol_and_power.ps1"
     Delete "$INSTDIR\uninstall.exe"
   ${EndIf}
 

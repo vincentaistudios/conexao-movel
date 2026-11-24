@@ -13,7 +13,7 @@ import app.nectarlink
 Window {
     id: shelfWin
 
-    title: qsTr("NectarLink Shelf")
+    title: qsTr("Área de Transferência · Conexão Móvel")
     flags: Qt.Tool | Qt.FramelessWindowHint | Qt.WindowStaysOnTopHint | Qt.WindowDoesNotAcceptFocus
     color: "transparent"
     visible: true

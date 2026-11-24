@@ -477,10 +477,12 @@ pub fn take_screenshot_to(save_path: &Path) -> Result<(), String> {
 
     let dest = save_path.to_string_lossy();
     let cli_candidates: &[(&str, &[&str])] = &[
+        ("scrot", &[&dest]),
+        ("maim", &[&dest]),
+        ("import", &["-window", "root", &dest]),
         ("grim", &[&dest]),
         ("gnome-screenshot", &["-f", &dest]),
         ("spectacle", &["-b", "-n", "-o", &dest]),
-        ("import", &["-window", "root", &dest]),
     ];
 
     for (prog, args) in cli_candidates {
@@ -493,6 +495,10 @@ pub fn take_screenshot_to(save_path: &Path) -> Result<(), String> {
             .is_ok_and(|s| s.success())
             && check_saved()
         {
+            // Copia instantanea para a area de transferencia
+            let _ = Command::new("xclip")
+                .args(["-selection", "clipboard", "-t", "image/png", "-i", dest.as_ref()])
+                .spawn();
             return Ok(());
         }
     }
@@ -507,14 +513,24 @@ pub fn take_screenshot() -> Result<(), String> {
     let stamp = format_deletion_date(SystemTime::now()).replace(':', "-");
     let save_path = dir.join(format!("Screenshot_{stamp}.png"));
     if take_screenshot_to(&save_path).is_ok() {
+        let _ = Command::new("notify-send")
+            .args([
+                "-a", "Conexão Móvel",
+                "-i", "camera-photo",
+                "-u", "low",
+                "Captura de Tela Realizada",
+                "Salva em Imagens e copiada para a área de transferência",
+            ])
+            .spawn();
         return Ok(());
     }
 
     let candidates: &[(&str, &[&str])] = &[
+        ("scrot", &[]),
+        ("xfce4-screenshooter", &["-r"]),
+        ("flameshot", &["gui"]),
         ("spectacle", &[]),
         ("gnome-screenshot", &["-i"]),
-        ("flameshot", &["gui"]),
-        ("xfce4-screenshooter", &["-r"]),
     ];
     for (prog, args) in candidates {
         if spawn_detached(prog, args).is_ok() {

@@ -2624,6 +2624,17 @@ impl Node {
         crate::actions::pc_power(&self.shared, &session, action).await
     }
 
+    /// Calls the paired PC's local media downloader service (`media.download_rpc`).
+    pub async fn media_download_rpc(
+        &self,
+        peer: DeviceId,
+        op: String,
+        payload_json: String,
+    ) -> Result<String> {
+        let session = self.connected(&peer)?;
+        crate::actions::media_download_rpc(&session, op, payload_json).await
+    }
+
     /// Sets this PC's Wake-on-LAN adapter addresses (`pc.wake_info`) and sends
     /// them to every connected phone when they changed.
     pub async fn set_wake_info(&self, info: nectarlink_protocol::messages::PcWakeInfo) {

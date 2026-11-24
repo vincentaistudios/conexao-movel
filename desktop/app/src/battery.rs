@@ -107,7 +107,7 @@ pub fn on_event(event: &NodeEvent) {
         key: device.to_string(),
         title,
         body,
-        attribution: "NectarLink".into(),
+        attribution: "Conexão Móvel".into(),
         icon: None,
         image: None,
         actions: Vec::new(),

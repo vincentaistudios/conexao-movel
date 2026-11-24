@@ -1,64 +1,68 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
-//! The NectarLink mark, the Waggle Dance (`assets/brand/icon.svg`): two loops,
-//! the phone and the PC, around a drop of nectar, tilted like a bee's waggle
-//! run, on an espresso tile with a warm glow. Drawn in code at any pixel
-//! size: the tray, window and toast icons at runtime, and the executable's
-//! icon at build time (`build.rs` includes this file), so every size is sharp
-//! without bitmap assets. At 32 px and below the strokes are heavier and the
-//! tile fills more of the square, as in the hand-tuned small sizes.
+//! O emblema oficial do Conexão Móvel (monograma 'V' com losango central ciano
+//! sobre squircle escuro, fiel a `sys-device-link.svg`). Desenhado por código
+//! em qualquer resolução (ícones de bandeja, janela, toasts e recurso do executável
+//! em tempo de compilação via `build.rs`), sem dependências externas além da `std`.
 
-/// Espresso tile, its glow, the honey rim, and the two loops and the drop
-/// (docs/design/tokens.json, Honey palette).
-const TILE: [f32; 3] = rgb(0x2C, 0x16, 0x00);
-const GLOW: [f32; 3] = rgb(0x69, 0x3C, 0x00);
-const RIM: [f32; 3] = rgb(0xFF, 0xB9, 0x5F);
-const PHONE: [f32; 3] = rgb(0xFF, 0xF8, 0xF3);
-const PC: [f32; 3] = rgb(0xFF, 0xDD, 0xB8);
-const NECTAR: [f32; 3] = rgb(0xFF, 0xB9, 0x5F);
+const BG_START: [f32; 3] = rgb(0x0F, 0x17, 0x2A);
+const BG_MID: [f32; 3] = rgb(0x11, 0x18, 0x27);
+const BG_END: [f32; 3] = rgb(0x03, 0x07, 0x12);
 
-/// The loops in a 100×100 design grid, before the tilt: each is two cubic
-/// Béziers (start, control, control, end, control, control, end).
-const LEFT_LOOP: [(f32, f32); 7] =
-    [(41.5, 42.5), (26.0, 24.0), (13.5, 31.0), (13.5, 50.0), (13.5, 69.0), (26.0, 76.0), (41.5, 57.5)];
-const RIGHT_LOOP: [(f32, f32); 7] =
-    [(58.5, 42.5), (74.0, 24.0), (86.5, 31.0), (86.5, 50.0), (86.5, 69.0), (74.0, 76.0), (58.5, 57.5)];
-/// The tilt, degrees (counterclockwise on screen).
-const TILT: f32 = -25.0;
+const BORDER_START: [f32; 3] = rgb(0x38, 0xBD, 0xF8);
+const BORDER_MID: [f32; 3] = rgb(0x63, 0x66, 0xF1);
+const BORDER_END: [f32; 3] = rgb(0x0E, 0xA5, 0xE9);
 
-/// Supersampling grid per pixel (SS×SS samples) for smooth edges.
+const GLOW_CYAN: [f32; 3] = rgb(0x38, 0xBD, 0xF8);
+const GLOW_INDIGO: [f32; 3] = rgb(0x63, 0x66, 0xF1);
+
+const V_LEFT_START: [f32; 3] = rgb(0xFF, 0xFF, 0xFF);
+const V_LEFT_MID: [f32; 3] = rgb(0xF1, 0xF5, 0xF9);
+const V_LEFT_END: [f32; 3] = rgb(0xCB, 0xD5, 0xE1);
+
+const V_RIGHT_START: [f32; 3] = rgb(0xE2, 0xE8, 0xF0);
+const V_RIGHT_MID: [f32; 3] = rgb(0x94, 0xA3, 0xB8);
+const V_RIGHT_END: [f32; 3] = rgb(0x64, 0x74, 0x8B);
+
+const V_CENTER_TOP: [f32; 3] = rgb(0x38, 0xBD, 0xF8);
+const V_CENTER_BOTTOM: [f32; 3] = rgb(0x60, 0xA5, 0xFA);
+const V_TIP_WHITE: [f32; 3] = rgb(0xFF, 0xFF, 0xFF);
+
+/// Mapeamento do grupo `<g transform="translate(25.6, 15) scale(0.90)">` da grade 512×512 para 100×100.
+const fn map_svg(sx: f32, sy: f32) -> (f32, f32) {
+    ((25.6 + 0.90 * sx) * (100.0 / 512.0), (15.0 + 0.90 * sy) * (100.0 / 512.0))
+}
+
+const LEFT_WING: [(f32, f32); 4] =
+    [map_svg(72.0, 96.0), map_svg(168.0, 96.0), map_svg(256.0, 364.0), map_svg(216.0, 428.0)];
+const RIGHT_WING: [(f32, f32); 4] =
+    [map_svg(440.0, 96.0), map_svg(344.0, 96.0), map_svg(256.0, 364.0), map_svg(296.0, 428.0)];
+const CENTER_DIAMOND: [(f32, f32); 4] =
+    [map_svg(256.0, 120.0), map_svg(284.0, 175.0), map_svg(256.0, 230.0), map_svg(228.0, 175.0)];
+const BOTTOM_TIP: [(f32, f32); 4] =
+    [map_svg(256.0, 364.0), map_svg(216.0, 428.0), map_svg(256.0, 448.0), map_svg(296.0, 428.0)];
+
+/// Grade de supersampling por pixel (`SS×SS`) para bordas suaves e nítidas.
 const SS: usize = 4;
 
 const fn rgb(r: u8, g: u8, b: u8) -> [f32; 3] {
     [r as f32, g as f32, b as f32]
 }
 
-/// Sizes in the design grid: the small sizes are drawn bolder.
-struct Geometry {
-    inset: f32,
-    corner: f32,
-    stroke: f32,
-    drop: f32,
-}
-
-impl Geometry {
-    fn for_size(size: usize) -> Self {
-        if size <= 32 {
-            Geometry { inset: 2.0, corner: 20.0, stroke: 11.4, drop: 8.8 }
-        } else {
-            Geometry { inset: 4.0, corner: 22.0, stroke: 10.4, drop: 8.2 }
-        }
-    }
-}
-
-/// Renders the mark as straight-alpha RGBA, row by row, `size`×`size`.
+/// Renderiza o ícone em RGBA straight-alpha (`size × size`), linha a linha.
 pub fn render(size: usize) -> Vec<u8> {
-    let g = Geometry::for_size(size);
+    if size == 0 {
+        return Vec::new();
+    }
+    let inset = if size <= 32 { 2.0 } else { 4.0 };
+    let corner = 22.0;
+    let span = 100.0 - 2.0 * inset;
     let unit = 100.0 / size as f32;
-    let left = polyline(&LEFT_LOOP);
-    let right = polyline(&RIGHT_LOOP);
-    let (sin, cos) = (-TILT.to_radians()).sin_cos();
-    // The rim is at least about a pixel wide, so the tile keeps an edge on dark taskbars.
-    let rim = (1.5f32).max(unit * 0.6);
+    let rim = (1.1f32).max(unit * 0.85);
+
+    let lw_bounds = bounds(&LEFT_WING);
+    let rw_bounds = bounds(&RIGHT_WING);
+    let cd_y0 = CENTER_DIAMOND[0].1;
+    let cd_y1 = CENTER_DIAMOND[2].1;
 
     let mut out = vec![0u8; size * size * 4];
     for py in 0..size {
@@ -67,31 +71,52 @@ pub fn render(size: usize) -> Vec<u8> {
             let mut covered = 0usize;
             for sy in 0..SS {
                 for sx in 0..SS {
-                    // The sample in the design grid.
                     let x = (px as f32 + (sx as f32 + 0.5) / SS as f32) * unit;
                     let y = (py as f32 + (sy as f32 + 0.5) / SS as f32) * unit;
-                    let edge = rounded_square_distance(x, y, g.inset, g.corner);
+                    let edge = rounded_square_distance(x, y, inset, corner);
                     if edge > 0.0 {
                         continue;
                     }
                     covered += 1;
-                    // Undo the tilt to test against the upright loops.
-                    let (dx, dy) = (x - 50.0, y - 50.0);
-                    let (ux, uy) = (50.0 + dx * cos - dy * sin, 50.0 + dx * sin + dy * cos);
-                    let half = g.stroke / 2.0;
-                    let paint = if (dx * dx + dy * dy).sqrt() <= g.drop {
-                        NECTAR
-                    } else if distance_to(&left, (ux, uy)) <= half {
-                        PHONE
-                    } else if distance_to(&right, (ux, uy)) <= half {
-                        PC
+
+                    let diag_t = (((x - inset) + (y - inset)) / (2.0 * span)).clamp(0.0, 1.0);
+                    let mut bg = grad3(BG_START, BG_MID, BG_END, 0.5, diag_t);
+
+                    // Brilho radial ambiente atrás do monograma (`cx=50, cy=48.4` e `50, 50`).
+                    let d_cyan = ((x - 50.0).powi(2) + (y - 48.4375).powi(2)).sqrt();
+                    if d_cyan < 31.25 {
+                        let fade = (1.0 - d_cyan / 31.25).clamp(0.0, 1.0);
+                        bg = mix(bg, GLOW_CYAN, 0.12 * (0.4 + 0.6 * fade));
+                    }
+                    let d_indigo = ((x - 50.0).powi(2) + (y - 50.0).powi(2)).sqrt();
+                    if d_indigo < 19.53125 {
+                        let fade = (1.0 - d_indigo / 19.53125).clamp(0.0, 1.0);
+                        bg = mix(bg, GLOW_INDIGO, 0.16 * (0.4 + 0.6 * fade));
+                    }
+
+                    let paint = if point_in_poly((x, y), &BOTTOM_TIP) {
+                        V_TIP_WHITE
+                    } else if point_in_poly((x, y), &CENTER_DIAMOND) {
+                        let t = ((y - cd_y0) / (cd_y1 - cd_y0)).clamp(0.0, 1.0);
+                        mix(V_CENTER_TOP, V_CENTER_BOTTOM, t)
+                    } else if point_in_poly((x, y), &LEFT_WING) {
+                        let t = diag_in_bounds(x, y, lw_bounds);
+                        grad3(V_LEFT_START, V_LEFT_MID, V_LEFT_END, 0.60, t)
+                    } else if point_in_poly((x, y), &RIGHT_WING) {
+                        let t = diag_in_bounds(x, y, rw_bounds);
+                        grad3(V_RIGHT_START, V_RIGHT_MID, V_RIGHT_END, 0.50, t)
                     } else if -edge <= rim {
-                        mix(TILE, RIM, 0.34)
+                        let border_col = grad3(BORDER_START, BORDER_MID, BORDER_END, 0.50, diag_t);
+                        let border_alpha = if diag_t <= 0.5 {
+                            0.8 - 0.4 * (diag_t / 0.5)
+                        } else {
+                            0.4 + 0.4 * ((diag_t - 0.5) / 0.5)
+                        };
+                        mix(bg, border_col, border_alpha)
                     } else {
-                        // The glow fades from the middle to the tile color at 40 units.
-                        let t = ((dx * dx + dy * dy).sqrt() / 40.0).min(1.0);
-                        mix(GLOW, TILE, t)
+                        bg
                     };
+
                     for c in 0..3 {
                         color[c] += paint[c];
                     }
@@ -114,53 +139,61 @@ fn mix(a: [f32; 3], b: [f32; 3], t: f32) -> [f32; 3] {
     [a[0] + (b[0] - a[0]) * t, a[1] + (b[1] - a[1]) * t, a[2] + (b[2] - a[2]) * t]
 }
 
-/// How far (x, y) is outside the rounded square from `inset` to
-/// `100 - inset` with corner radius `r` (negative inside).
+fn grad3(c0: [f32; 3], c1: [f32; 3], c2: [f32; 3], mid: f32, t: f32) -> [f32; 3] {
+    if t <= mid {
+        mix(c0, c1, (t / mid).clamp(0.0, 1.0))
+    } else {
+        mix(c1, c2, ((t - mid) / (1.0 - mid)).clamp(0.0, 1.0))
+    }
+}
+
+fn bounds(poly: &[(f32, f32)]) -> (f32, f32, f32, f32) {
+    let mut min_x = f32::INFINITY;
+    let mut min_y = f32::INFINITY;
+    let mut max_x = f32::NEG_INFINITY;
+    let mut max_y = f32::NEG_INFINITY;
+    for &(x, y) in poly {
+        min_x = min_x.min(x);
+        min_y = min_y.min(y);
+        max_x = max_x.max(x);
+        max_y = max_y.max(y);
+    }
+    (min_x, min_y, max_x, max_y)
+}
+
+fn diag_in_bounds(x: f32, y: f32, (x0, y0, x1, y1): (f32, f32, f32, f32)) -> f32 {
+    let tx = (x - x0) / (x1 - x0).max(1e-3);
+    let ty = (y - y0) / (y1 - y0).max(1e-3);
+    ((tx + ty) * 0.5).clamp(0.0, 1.0)
+}
+
+fn point_in_poly(p: (f32, f32), poly: &[(f32, f32)]) -> bool {
+    let mut inside = false;
+    let n = poly.len();
+    let mut j = n - 1;
+    for i in 0..n {
+        let (xi, yi) = poly[i];
+        let (xj, yj) = poly[j];
+        let crosses = (yi > p.1) != (yj > p.1);
+        if crosses && p.0 < (xj - xi) * (p.1 - yi) / (yj - yi) + xi {
+            inside = !inside;
+        }
+        j = i;
+    }
+    inside
+}
+
+/// Distância externa ao squircle arredondado `[inset .. 100 - inset]` com raio `r`.
 fn rounded_square_distance(x: f32, y: f32, inset: f32, r: f32) -> f32 {
     let (lo, hi) = (inset + r, 100.0 - inset - r);
     let qx = (x.clamp(lo, hi) - x).abs();
     let qy = (y.clamp(lo, hi) - y).abs();
     if x > lo && x < hi || y > lo && y < hi {
-        // Along a straight side.
         let to_x = (x - inset).min(100.0 - inset - x);
         let to_y = (y - inset).min(100.0 - inset - y);
         return -to_x.min(to_y);
     }
     (qx * qx + qy * qy).sqrt() - r
-}
-
-/// A loop's two Béziers as points close enough together to measure against.
-fn polyline(loop_points: &[(f32, f32); 7]) -> Vec<(f32, f32)> {
-    const STEPS: usize = 32;
-    let mut points = Vec::with_capacity(STEPS * 2 + 1);
-    for segment in [&loop_points[0..4], &loop_points[3..7]] {
-        for step in 0..=STEPS {
-            if step == 0 && !points.is_empty() {
-                continue;
-            }
-            let t = step as f32 / STEPS as f32;
-            let u = 1.0 - t;
-            let (a, b, c, d) = (segment[0], segment[1], segment[2], segment[3]);
-            let w = [u * u * u, 3.0 * u * u * t, 3.0 * u * t * t, t * t * t];
-            points.push((
-                w[0] * a.0 + w[1] * b.0 + w[2] * c.0 + w[3] * d.0,
-                w[0] * a.1 + w[1] * b.1 + w[2] * c.1 + w[3] * d.1,
-            ));
-        }
-    }
-    points
-}
-
-fn distance_to(polyline: &[(f32, f32)], p: (f32, f32)) -> f32 {
-    polyline.windows(2).map(|w| dist_to_segment(p, w[0], w[1])).fold(f32::INFINITY, f32::min)
-}
-
-fn dist_to_segment(p: (f32, f32), a: (f32, f32), b: (f32, f32)) -> f32 {
-    let (dx, dy) = (b.0 - a.0, b.1 - a.1);
-    let len2 = dx * dx + dy * dy;
-    let t = if len2 == 0.0 { 0.0 } else { (((p.0 - a.0) * dx + (p.1 - a.1) * dy) / len2).clamp(0.0, 1.0) };
-    let (qx, qy) = (a.0 + t * dx, a.1 + t * dy);
-    ((p.0 - qx).powi(2) + (p.1 - qy).powi(2)).sqrt()
 }
 
 #[cfg(test)]
@@ -173,34 +206,46 @@ mod tests {
     }
 
     #[test]
-    fn corners_are_transparent_and_the_drop_sits_in_the_middle() {
+    fn corners_are_transparent_and_diamond_is_cyan() {
         let size = 64;
         let img = render(size);
         assert_eq!(img.len(), size * size * 4);
-        assert_eq!(pixel(&img, size, 0, 0)[3], 0, "rounded corner");
-        let middle = pixel(&img, size, 32, 32);
-        assert_eq!(middle, [0xFF, 0xB9, 0x5F, 255], "the nectar drop");
-        // Near the top edge, between the loops: the dark tile.
-        let tile = pixel(&img, size, 32, 8);
-        assert!(tile[0] < 0x80 && tile[3] == 255, "{tile:?}");
+        assert_eq!(pixel(&img, size, 0, 0)[3], 0, "canto arredondado transparente");
+
+        // Centro do losango ciano: map_svg(256, 175) = (50.0, 33.69) -> px (32, 21) em 64px.
+        let diamond = pixel(&img, size, 32, 21);
+        assert_eq!(diamond[3], 255);
+        assert!(diamond[2] > diamond[0] && diamond[1] > diamond[0], "losango ciano: {diamond:?}");
+
+        // Fundo superior escuro do squircle (sem cores antigas de mel/marrom #FFB95F/#2C1600).
+        let tile_top = pixel(&img, size, 32, 8);
+        assert_eq!(tile_top[3], 255);
+        assert!(tile_top[2] >= tile_top[0] && tile_top[0] < 0x40, "fundo escuro azulado: {tile_top:?}");
+
+        // Garante que não restou nenhum pixel do antigo #FFB95F (R=255, G=185, B=95).
+        let has_old_honey = img.chunks_exact(4).any(|p| p == [0xFF, 0xB9, 0x5F, 0xFF]);
+        assert!(!has_old_honey, "nenhum pixel do antigo Waggle Dance");
     }
 
     #[test]
-    fn both_loops_are_drawn() {
+    fn both_v_wings_and_tip_are_drawn() {
         let size = 128;
         let img = render(size);
-        let light = |p: [u8; 4]| p[0] > 0xF0 && p[3] == 255;
-        // Somewhere left and right of the drop there's loop ink.
-        let left = (8..56).any(|x| light(pixel(&img, size, x, 64)) || light(pixel(&img, size, x, 70)));
-        let right = (72..120).any(|x| light(pixel(&img, size, x, 64)) || light(pixel(&img, size, x, 58)));
-        assert!(left && right);
+        let is_bright = |p: [u8; 4]| p[3] == 255 && p[0] > 0x90 && p[1] > 0xA0 && p[2] > 0xB0;
+        let left = (16..58).any(|x| is_bright(pixel(&img, size, x, 34)));
+        let right = (70..112).any(|x| is_bright(pixel(&img, size, x, 34)));
+        let tip = pixel(&img, size, 64, 96);
+        assert!(left && right, "ambas as asas do V devem ser desenhadas");
+        assert!(tip[3] == 255 && tip[0] > 0xE0 && tip[1] > 0xE0 && tip[2] > 0xE0, "ponta branca: {tip:?}");
     }
 
     #[test]
-    fn renders_every_tray_size() {
-        for size in [16, 20, 24, 32, 48, 64, 256] {
+    fn renders_every_icon_size() {
+        for size in [16, 20, 24, 32, 40, 48, 64, 128, 256] {
             let img = render(size);
-            assert!(img.chunks(4).any(|p| p[3] == 255), "{size}px has an opaque tile");
+            assert_eq!(img.len(), size * size * 4);
+            let center = pixel(&img, size, size / 2, size / 2);
+            assert_eq!(center[3], 255, "{size}px deve ter centro opaco");
         }
     }
 }

@@ -45,8 +45,9 @@ object AppLanguage {
      * hand back a fuller tag ("zh-Hans-CN") than the one set.
      */
     internal fun normalize(tag: String): String {
-        languages.firstOrNull { it.first.equals(tag, ignoreCase = true) }?.let { return it.first }
-        val lower = tag.lowercase()
+        val cleaned = tag.trim().replace('_', '-')
+        languages.firstOrNull { it.first.equals(cleaned, ignoreCase = true) }?.let { return it.first }
+        val lower = cleaned.lowercase()
         return when {
             lower.startsWith("zh") && ("hans" in lower || "-cn" in lower || "-sg" in lower) -> "zh-CN"
             lower == "de" || lower.startsWith("de-") -> "de"

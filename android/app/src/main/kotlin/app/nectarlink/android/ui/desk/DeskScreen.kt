@@ -2,7 +2,6 @@
 package app.nectarlink.android.ui.desk
 
 import android.app.Activity
-import android.text.format.DateFormat
 import android.view.WindowManager
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.Image
@@ -10,7 +9,6 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
@@ -20,9 +18,9 @@ import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.layout.widthIn
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.FilledTonalButton
 import androidx.compose.material3.FilledTonalIconButton
 import androidx.compose.material3.Icon
@@ -52,15 +50,12 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.asImageBitmap
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.platform.LocalLocale
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
 import androidx.core.view.WindowCompat
 import androidx.core.view.WindowInsetsCompat
 import androidx.core.view.WindowInsetsControllerCompat
@@ -72,8 +67,6 @@ import app.nectarlink.android.ui.power.PowerScheduleSheet
 import app.nectarlink.android.ui.remote.RemoteMode
 import app.nectarlink.core.Link
 import app.nectarlink.core.MediaAction
-import java.text.SimpleDateFormat
-import java.util.Date
 import kotlin.math.cos
 import kotlin.math.roundToInt
 import kotlin.math.sin
@@ -421,19 +414,21 @@ fun DeskScreen(
                                         modifier = Modifier.weight(1f),
                                     )
                                     Text(
-                                        text = if (deckState.muted) "Muted" else "${shownVol.roundToInt()}%",
+                                        text = if (deckState.muted) stringResource(R.string.pc_audio_muted) else "${shownVol.roundToInt()}%",
                                         style = MaterialTheme.typography.labelMedium.copy(fontFeatureSettings = "tnum"),
                                         color = Color(0xFFD1D5DB),
-                                        modifier = Modifier.width(44.dp),
+                                        maxLines = 1,
+                                        modifier = Modifier.widthIn(min = 44.dp),
                                     )
                                 }
                             }
                         }
                     }
-                } else if (!device.online && device.canWake) {
-                    FilledTonalButton(onClick = { core.wake(device.id) }) {
-                        Text(stringResource(R.string.action_wake_pc))
-                    }
+                } else if (!device.online) {
+                    DeskOfflineWakeCard(
+                        device = device,
+                        onWake = { core.wake(device.id) },
+                    )
                 }
             }
 
@@ -494,94 +489,6 @@ fun DeskScreen(
             )
         }
     }
-}
-
-@Composable
-private fun DeskActionButton(
-    label: String,
-    enabled: Boolean,
-    isSecondary: Boolean = false,
-    onClick: () -> Unit,
-    modifier: Modifier = Modifier,
-) {
-    FilledTonalButton(
-        onClick = onClick,
-        enabled = enabled,
-        shape = RoundedCornerShape(18.dp),
-        colors = ButtonDefaults.filledTonalButtonColors(
-            containerColor = if (isSecondary) Color(0xFF12141B) else Color(0xFF171B24),
-            contentColor = if (isSecondary) Color(0xFFD1D5DB) else Color(0xFFF3F4F6),
-            disabledContainerColor = Color(0xFF0C0E12),
-            disabledContentColor = Color(0xFF4B5563),
-        ),
-        border = BorderStroke(
-            1.dp,
-            if (isSecondary) Color(0xFF262A36) else Color(0xFF2B3140),
-        ),
-        contentPadding = PaddingValues(horizontal = 16.dp, vertical = 13.dp),
-        modifier = modifier,
-    ) {
-        Text(
-            text = label,
-            style = MaterialTheme.typography.labelLarge,
-            maxLines = 1,
-            overflow = TextOverflow.Ellipsis,
-        )
-    }
-}
-
-@Composable
-private fun DeskClockDisplay() {
-    var nowMs by remember { mutableLongStateOf(System.currentTimeMillis()) }
-    LaunchedEffect(Unit) {
-        while (true) {
-            val current = System.currentTimeMillis()
-            nowMs = current
-            delay((1_000L - (current % 1_000L)).coerceIn(100L, 1_000L))
-        }
-    }
-
-    val locale = LocalLocale.current.platformLocale
-    val timeFormat = remember(locale) { SimpleDateFormat("HH:mm", locale) }
-    val secFormat = remember(locale) { SimpleDateFormat(":ss", locale) }
-    val dateFormat = remember(locale) {
-        val pattern = DateFormat.getBestDateTimePattern(locale, "EEEEMMMMd")
-        SimpleDateFormat(pattern, locale)
-    }
-
-    val minuteKey = nowMs / 60_000L
-    val secondKey = nowMs / 1_000L
-    val timeText = remember(minuteKey, locale) { timeFormat.format(Date(minuteKey * 60_000L)) }
-    val dateText = remember(minuteKey, locale) { dateFormat.format(Date(minuteKey * 60_000L)) }
-    val secText = remember(secondKey, locale) { secFormat.format(Date(secondKey * 1_000L)) }
-
-    Row(
-        verticalAlignment = Alignment.Bottom,
-        horizontalArrangement = Arrangement.Center,
-    ) {
-        Text(
-            text = timeText,
-            fontSize = 84.sp,
-            lineHeight = 88.sp,
-            fontWeight = FontWeight.Light,
-            fontFamily = FontFamily.Monospace,
-            color = Color(0xFFF3F4F6),
-        )
-        Text(
-            text = secText,
-            fontSize = 28.sp,
-            fontWeight = FontWeight.Normal,
-            fontFamily = FontFamily.Monospace,
-            color = Color(0xFF9CA3AF),
-            modifier = Modifier.padding(bottom = 12.dp, start = 4.dp),
-        )
-    }
-
-    Text(
-        text = dateText,
-        style = MaterialTheme.typography.titleMedium,
-        color = Color(0xFF9CA3AF),
-    )
 }
 
 

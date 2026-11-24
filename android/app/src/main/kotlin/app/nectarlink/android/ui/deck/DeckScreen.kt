@@ -113,6 +113,10 @@ fun DeckScreen(
     var fullScreen by rememberSaveable { mutableStateOf(false) }
     var access by remember(device.id) { mutableStateOf(Core.RemoteAccess.Allowed) }
     var commandsDenied by remember(device.id) { mutableStateOf(false) }
+    var showAddTileDialog by remember { mutableStateOf(false) }
+    var selectedWindowForSnap by remember { mutableStateOf<DeckTile?>(null) }
+    var showSpikeCompanionSheet by remember { mutableStateOf(false) }
+    var spikePlantedTimestamp by remember { mutableStateOf(0L) }
 
     // Keep the phone's screen on while Deck is open, and restore system bars on exit.
     DisposableEffect(view, device.id) {
@@ -168,6 +172,9 @@ fun DeckScreen(
         outputDevices = emptyList(),
     )
     val pages = layout.pages.ifEmpty { fallbackDefaultLayout(context).pages }
+    val activeWindowTiles = remember(pages) {
+        pages.flatMap { it.tiles }.filter { it.id.startsWith("focus_win_") }.distinctBy { it.id }
+    }
     val pagerState = rememberPagerState(pageCount = { pages.size })
 
     Column(
@@ -216,6 +223,36 @@ fun DeckScreen(
                     )
                 }
             }
+            FilledTonalButton(
+                onClick = {
+                    view.performHapticFeedback(HapticFeedbackConstants.KEYBOARD_TAP)
+                    spikePlantedTimestamp = System.currentTimeMillis()
+                    showSpikeCompanionSheet = true
+                },
+                colors = androidx.compose.material3.ButtonDefaults.filledTonalButtonColors(
+                    containerColor = Color(0xFF2B1414),
+                    contentColor = Color(0xFFFF5252),
+                ),
+                border = BorderStroke(1.dp, Color(0xFFFF5252).copy(alpha = 0.5f)),
+                contentPadding = PaddingValues(horizontal = 10.dp, vertical = 6.dp),
+            ) {
+                Text(
+                    "Spike HUD",
+                    style = MaterialTheme.typography.labelMedium,
+                    fontWeight = FontWeight.Bold,
+                )
+            }
+            Spacer(Modifier.width(6.dp))
+            FilledTonalButton(
+                onClick = { showAddTileDialog = true },
+                contentPadding = PaddingValues(horizontal = 12.dp, vertical = 6.dp),
+            ) {
+                Text(
+                    "+ Atalho",
+                    style = MaterialTheme.typography.labelMedium,
+                )
+            }
+            Spacer(Modifier.width(8.dp))
             OutlinedButton(
                 onClick = { fullScreen = !fullScreen },
                 contentPadding = PaddingValues(horizontal = 12.dp, vertical = 6.dp),
@@ -234,6 +271,92 @@ fun DeckScreen(
                 liveState = liveState,
                 onSetPcAudio = { vol, muted -> core.setPcAudio(device.id, vol, muted) },
             )
+        }
+
+        // Quick active PC windows bar
+        if (!fullScreen && device.online && activeWindowTiles.isNotEmpty()) {
+            Surface(
+                shape = MaterialTheme.shapes.large,
+                color = MaterialTheme.colorScheme.surfaceContainer,
+                border = BorderStroke(1.dp, MaterialTheme.colorScheme.outlineVariant),
+                modifier = Modifier.fillMaxWidth(),
+            ) {
+                Column(modifier = Modifier.padding(horizontal = 12.dp, vertical = 8.dp)) {
+                    Row(
+                        modifier = Modifier.fillMaxWidth(),
+                        horizontalArrangement = Arrangement.SpaceBetween,
+                        verticalAlignment = Alignment.CenterVertically,
+                    ) {
+                        Text(
+                            text = "Janelas Abertas no PC (${activeWindowTiles.size})",
+                            style = MaterialTheme.typography.labelMedium,
+                            fontWeight = FontWeight.SemiBold,
+                            color = MaterialTheme.colorScheme.primary,
+                        )
+                        Text(
+                            text = "Toque para alternar no PC",
+                            style = MaterialTheme.typography.labelSmall,
+                            color = MaterialTheme.colorScheme.onSurfaceVariant,
+                        )
+                    }
+                    Spacer(Modifier.height(6.dp))
+                    Row(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .horizontalScroll(rememberScrollState()),
+                        horizontalArrangement = Arrangement.spacedBy(8.dp),
+                    ) {
+                        activeWindowTiles.forEach { tile ->
+                            Surface(
+                                shape = MaterialTheme.shapes.medium,
+                                color = MaterialTheme.colorScheme.surfaceContainerHigh,
+                                border = BorderStroke(1.dp, MaterialTheme.colorScheme.outlineVariant),
+                            ) {
+                                Row(
+                                    verticalAlignment = Alignment.CenterVertically,
+                                    modifier = Modifier.padding(horizontal = 4.dp, vertical = 2.dp),
+                                ) {
+                                    Row(
+                                        modifier = Modifier
+                                            .clickable {
+                                                view.performHapticFeedback(HapticFeedbackConstants.KEYBOARD_TAP)
+                                                scope.launch {
+                                                    core.deckPress(device.id, tile.id)
+                                                }
+                                            }
+                                            .padding(horizontal = 8.dp, vertical = 6.dp),
+                                        verticalAlignment = Alignment.CenterVertically,
+                                    ) {
+                                        Box(modifier = Modifier.size(16.dp)) {
+                                            DeckIcon(name = tile.icon, tint = MaterialTheme.colorScheme.primary)
+                                        }
+                                        Spacer(Modifier.width(6.dp))
+                                        Text(
+                                            text = tile.label,
+                                            style = MaterialTheme.typography.labelMedium,
+                                            fontWeight = FontWeight.Medium,
+                                            maxLines = 1,
+                                        )
+                                    }
+                                    Box(
+                                        modifier = Modifier
+                                            .size(28.dp)
+                                            .clickable {
+                                                view.performHapticFeedback(HapticFeedbackConstants.KEYBOARD_TAP)
+                                                selectedWindowForSnap = tile
+                                            },
+                                        contentAlignment = Alignment.Center,
+                                    ) {
+                                        Box(modifier = Modifier.size(14.dp)) {
+                                            DeckIcon(name = "window", tint = MaterialTheme.colorScheme.outline)
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
         }
 
         // Status / permission banners
@@ -328,6 +451,10 @@ fun DeckScreen(
                             enabled = device.online,
                             onPress = {
                                 view.performHapticFeedback(HapticFeedbackConstants.KEYBOARD_TAP)
+                                if (tile.id.contains("spike") || tile.label.contains("Spike", ignoreCase = true)) {
+                                    spikePlantedTimestamp = System.currentTimeMillis()
+                                    showSpikeCompanionSheet = true
+                                }
                                 scope.launch {
                                     when (core.deckPress(device.id, tile.id)) {
                                         Core.DeckPressResult.Ok -> {
@@ -353,6 +480,46 @@ fun DeckScreen(
                 }
             }
         }
+    }
+
+    if (showAddTileDialog) {
+        DeckAddTileDialog(
+            onDismiss = { showAddTileDialog = false },
+            onAddPreset = { presetId ->
+                view.performHapticFeedback(HapticFeedbackConstants.KEYBOARD_TAP)
+                scope.launch {
+                    core.deckPress(device.id, "add_preset_$presetId")
+                }
+            },
+            onAddCustom = { _, cmd ->
+                view.performHapticFeedback(HapticFeedbackConstants.KEYBOARD_TAP)
+                scope.launch {
+                    core.deckPress(device.id, "launch_app_$cmd")
+                }
+            },
+        )
+    }
+
+    selectedWindowForSnap?.let { tile ->
+        val widHex = tile.id.removePrefix("focus_win_")
+        SnapLayoutDialog(
+            appName = tile.label,
+            widHex = widHex,
+            onSelectLayout = { snapTileId ->
+                scope.launch {
+                    core.deckPress(device.id, snapTileId)
+                }
+            },
+            onDismiss = { selectedWindowForSnap = null },
+        )
+    }
+
+    if (showSpikeCompanionSheet) {
+        SpikeCompanionSheet(
+            initialPlantedTimestampMs = spikePlantedTimestamp,
+            latencyCompensationMs = 0L,
+            onDismiss = { showSpikeCompanionSheet = false },
+        )
     }
 }
 
@@ -853,6 +1020,17 @@ private fun DrawScope.drawDeckIcon(name: String, color: Color, scratchPath: Path
             scratchPath.lineTo(sx(16f), sy(15f))
             drawPath(scratchPath, color = color, style = stroke)
         }
+        "bomb", "spike" -> {
+            drawCircle(
+                color = color,
+                radius = sx(6f),
+                center = pt(11f, 13f),
+                style = stroke,
+            )
+            drawLine(color, pt(15f, 9f), pt(18f, 6f), strokeWidth = stroke.width, cap = StrokeCap.Round)
+            drawLine(color, pt(18f, 6f), pt(21f, 6f), strokeWidth = stroke.width, cap = StrokeCap.Round)
+            drawLine(color, pt(18f, 3f), pt(18f, 6f), strokeWidth = stroke.width, cap = StrokeCap.Round)
+        }
         "screenshot", "camera" -> {
             drawRoundRect(
                 color = color,
@@ -972,6 +1150,46 @@ private fun DrawScope.drawDeckIcon(name: String, color: Color, scratchPath: Path
             scratchPath.lineTo(sx(9.2f), sy(8.8f))
             scratchPath.close()
             drawPath(scratchPath, color = color, style = stroke)
+        }
+        "gamepad" -> {
+            drawRoundRect(
+                color = color,
+                topLeft = pt(3f, 8f),
+                size = Size(sx(18f), sy(10f)),
+                cornerRadius = CornerRadius(sx(4f), sy(4f)),
+                style = stroke,
+            )
+            drawLine(color, pt(6f, 13f), pt(10f, 13f), strokeWidth = stroke.width, cap = StrokeCap.Round)
+            drawLine(color, pt(8f, 11f), pt(8f, 15f), strokeWidth = stroke.width, cap = StrokeCap.Round)
+            drawCircle(color = color, radius = sx(0.9f), center = pt(15f, 12f))
+            drawCircle(color = color, radius = sx(0.9f), center = pt(17f, 14f))
+        }
+        "chat" -> {
+            drawRoundRect(
+                color = color,
+                topLeft = pt(3f, 4f),
+                size = Size(sx(18f), sy(12f)),
+                cornerRadius = CornerRadius(sx(3f), sy(3f)),
+                style = stroke,
+            )
+            scratchPath.rewind()
+            scratchPath.moveTo(sx(7f), sy(16f))
+            scratchPath.lineTo(sx(5f), sy(20f))
+            scratchPath.lineTo(sx(11f), sy(16f))
+            scratchPath.close()
+            drawPath(scratchPath, color = color, style = stroke)
+        }
+        "window" -> {
+            drawRoundRect(
+                color = color,
+                topLeft = pt(3f, 4f),
+                size = Size(sx(18f), sy(16f)),
+                cornerRadius = CornerRadius(sx(2f), sy(2f)),
+                style = stroke,
+            )
+            drawLine(color, pt(3f, 8f), pt(21f, 8f), strokeWidth = stroke.width, cap = StrokeCap.Round)
+            drawCircle(color = color, radius = sx(0.8f), center = pt(6f, 6f))
+            drawCircle(color = color, radius = sx(0.8f), center = pt(8.5f, 6f))
         }
         "bell" -> {
             scratchPath.rewind()

@@ -25,7 +25,7 @@ import app.nectarlink.android.R
  * Android requires. Not now, or swiping the notification away, tells the PC ([MicDeclineReceiver]).
  */
 object MicRequests {
-    private const val CHANNEL = "mic_requests"
+    private const val CHANNEL = "mic_requests_v2"
     private const val TAG = "mic_req"
     private const val REQUEST_TIMEOUT_MS = 2 * 60 * 1000L
 
@@ -36,9 +36,14 @@ object MicRequests {
         ) {
             return false
         }
-        context.getSystemService(NotificationManager::class.java)?.createNotificationChannel(
-            NotificationChannel(CHANNEL, context.getString(R.string.channel_mic_requests), NotificationManager.IMPORTANCE_HIGH),
-        )
+        val channel = NotificationChannel(
+            CHANNEL,
+            context.getString(R.string.channel_mic_requests),
+            NotificationManager.IMPORTANCE_HIGH,
+        ).apply {
+            app.nectarlink.android.notifications.NotificationSoundHelper.configureChannel(this)
+        }
+        context.getSystemService(NotificationManager::class.java)?.createNotificationChannel(channel)
         val start = PendingIntent.getActivity(
             context,
             pcId.hashCode(),
@@ -54,7 +59,7 @@ object MicRequests {
             PendingIntent.FLAG_IMMUTABLE or PendingIntent.FLAG_UPDATE_CURRENT,
         )
         val from = pcName.ifEmpty { context.getString(R.string.your_pc) }
-        val notification = NotificationCompat.Builder(context, CHANNEL)
+        val builder = NotificationCompat.Builder(context, CHANNEL)
             .setSmallIcon(R.drawable.ic_notification)
             .setContentTitle(context.getString(R.string.mic_request_title, from))
             .setContentText(context.getString(R.string.mic_request_text))
@@ -66,7 +71,8 @@ object MicRequests {
             .setTimeoutAfter(REQUEST_TIMEOUT_MS)
             .setCategory(NotificationCompat.CATEGORY_CALL)
             .setPriority(NotificationCompat.PRIORITY_HIGH)
-            .build()
+        app.nectarlink.android.notifications.NotificationSoundHelper.applyBuilderSound(builder)
+        val notification = builder.build()
         return runCatching { NotificationManagerCompat.from(context).notify(TAG, pcId.hashCode(), notification) }.isSuccess
     }
 

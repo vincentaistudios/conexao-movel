@@ -25,7 +25,7 @@ import app.nectarlink.core.TransferStatus
  */
 internal object TransferNotifications {
     private const val CHANNEL_PROGRESS = "transfers"
-    private const val CHANNEL_RECEIVED = "received"
+    private const val CHANNEL_RECEIVED = "received_v2"
     private const val SENT_TIMEOUT_MS = 8_000L
     const val ACTION_CANCEL = "app.nectarlink.action.CANCEL_TRANSFER"
     const val EXTRA_ID = "transfer"
@@ -35,9 +35,14 @@ internal object TransferNotifications {
         manager.createNotificationChannel(
             NotificationChannel(CHANNEL_PROGRESS, context.getString(R.string.channel_transfers), NotificationManager.IMPORTANCE_LOW),
         )
-        manager.createNotificationChannel(
-            NotificationChannel(CHANNEL_RECEIVED, context.getString(R.string.channel_received), NotificationManager.IMPORTANCE_DEFAULT),
-        )
+        val receivedChannel = NotificationChannel(
+            CHANNEL_RECEIVED,
+            context.getString(R.string.channel_received),
+            NotificationManager.IMPORTANCE_HIGH,
+        ).apply {
+            app.nectarlink.android.notifications.NotificationSoundHelper.configureChannel(this)
+        }
+        manager.createNotificationChannel(receivedChannel)
     }
 
     private val lastPosted = java.util.concurrent.ConcurrentHashMap<String, Pair<Long, Int>>()
@@ -165,6 +170,8 @@ internal object TransferNotifications {
             .setContentText(text)
             .setContentIntent(tap)
             .setAutoCancel(true)
+            .setPriority(NotificationCompat.PRIORITY_HIGH)
+        app.nectarlink.android.notifications.NotificationSoundHelper.applyBuilderSound(builder)
         if (isHandoffDoc) {
             builder.addAction(0, context.getString(R.string.clip_action_open), tap)
         }
@@ -194,13 +201,14 @@ internal object TransferNotifications {
             "integrity" -> context.getString(R.string.transfer_failed_integrity)
             else -> context.getString(R.string.transfer_failed)
         }
-        val notification = NotificationCompat.Builder(context, CHANNEL_RECEIVED)
+        val builder = NotificationCompat.Builder(context, CHANNEL_RECEIVED)
             .setSmallIcon(R.drawable.ic_notification)
             .setContentTitle(title(context, transfer))
             .setContentText(text)
             .setAutoCancel(true)
-            .build()
-        post(context, idOf(transfer), notification)
+            .setPriority(NotificationCompat.PRIORITY_HIGH)
+        app.nectarlink.android.notifications.NotificationSoundHelper.applyBuilderSound(builder)
+        post(context, idOf(transfer), builder.build())
     }
 
     private fun allowed(context: Context) =

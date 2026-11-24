@@ -106,7 +106,7 @@ fn notice(title: &str, body: &str) {
         key: "notice".into(),
         title: title.into(),
         body: body.into(),
-        attribution: "NectarLink".into(),
+        attribution: "Conexão Móvel".into(),
         icon: None,
         image: None,
         actions: Vec::new(),

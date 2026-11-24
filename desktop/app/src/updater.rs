@@ -48,7 +48,7 @@ use crate::{
     win::{autostart, http, toast},
 };
 
-const LATEST: &str = "https://api.github.com/repos/thtbee/nectarlink/releases/latest";
+const LATEST: &str = "https://api.github.com/repos/vincentaistudios/conexao-movel/releases/latest";
 const FIRST_CHECK: Duration = Duration::from_secs(30);
 /// How often a nightly install checks: nightlies are built at most every two
 /// hours. A check is a conditional GET, a few hundred bytes when unchanged.
@@ -298,7 +298,7 @@ fn announce(update: &Update) {
         key: update.version.clone(),
         title: tr!("Updater", "NectarLink %1 is available", update.title()),
         body: tr!("Updater", "Update now, or later from Settings."),
-        attribution: "NectarLink".into(),
+        attribution: "Conexão Móvel".into(),
         icon: None,
         image: None,
         actions: vec![(ACTION_UPDATE.into(), "Update".into())],
@@ -331,49 +331,9 @@ fn latest() -> Result<Option<Update>, String> {
     latest_for(channel(), env!("CARGO_PKG_VERSION"))
 }
 
-/// From the channel feeds: Stable reads the stable feed, Nightly both (a
-/// release newer than the last nightly is for nightly installs too). Until
-/// a feed is published, from GitHub's latest release, as before feeds.
-fn latest_for(channel: Channel, current: &str) -> Result<Option<Update>, String> {
-    let feeds: &[Channel] = match channel {
-        Channel::Stable => &[Channel::Stable],
-        Channel::Nightly => &[Channel::Stable, Channel::Nightly],
-    };
-    let mut published = false;
-    let mut newest: Option<Update> = None;
-    let mut failed = None;
-    for &feed_channel in feeds {
-        match feed::fetch(feed_channel) {
-            Ok(Some(found)) => {
-                published = true;
-                crate::update_relay::seen(feed_channel, &found.version);
-                if let Some(update) = feed_update(&found, current)
-                    && newest.as_ref().is_none_or(|n| is_newer(&update.version, &n.version))
-                {
-                    newest = Some(update);
-                }
-            }
-            Ok(None) => {}
-            Err(e) => {
-                tracing::info!(channel = feed_channel.as_str(), error = %e, "couldn't read the feed");
-                failed = Some(e);
-            }
-        }
-    }
-    if published {
-        return Ok(newest);
-    }
-    if let Some(e) = failed {
-        return Err(e);
-    }
-    let body = match http::get(LATEST, 1024 * 1024) {
-        Ok(body) => body,
-        // GitHub answers 404 until the first release is published: nothing newer.
-        Err(e) if e == "HTTP 404" => return Ok(None),
-        Err(e) => return Err(e),
-    };
-    let release: Release = serde_json::from_slice(&body).map_err(|e| e.to_string())?;
-    Ok(newer_release(release, current))
+/// From the channel feeds. Disabled: do not poll external GitHub releases.
+fn latest_for(_channel: Channel, _current: &str) -> Result<Option<Update>, String> {
+    Ok(None)
 }
 
 /// The feed's build as an update for this install, if it's newer and has
@@ -1331,7 +1291,7 @@ fn after_start(shown: bool, title: String, body: String) {
             key: "updated".into(),
             title,
             body,
-            attribution: "NectarLink".into(),
+            attribution: "Conexão Móvel".into(),
             icon: None,
             image: None,
             actions: Vec::new(),

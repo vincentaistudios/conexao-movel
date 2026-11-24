@@ -83,10 +83,17 @@ install -m 0644 "${SCRIPT_DIR}/org.nectarlink.desktop.metainfo.xml" "${PKG_ROOT}
 
 if [[ -f "${REPO_ROOT}/assets/brand/icon-512.png" ]]; then
     install -m 0644 "${REPO_ROOT}/assets/brand/icon-512.png" "${PKG_ROOT}/usr/share/icons/hicolor/512x512/apps/nectarlink.png"
+    install -m 0644 "${REPO_ROOT}/assets/brand/icon-512.png" "${PKG_ROOT}/usr/share/icons/hicolor/512x512/apps/sys-device-link.png"
     install -m 0644 "${REPO_ROOT}/assets/brand/icon-512.png" "${PKG_ROOT}/usr/share/icons/hicolor/256x256/apps/nectarlink.png"
+    install -m 0644 "${REPO_ROOT}/assets/brand/icon-512.png" "${PKG_ROOT}/usr/share/icons/hicolor/256x256/apps/sys-device-link.png"
 fi
 if [[ -f "${REPO_ROOT}/assets/brand/icon.svg" ]]; then
     install -m 0644 "${REPO_ROOT}/assets/brand/icon.svg" "${PKG_ROOT}/usr/share/icons/hicolor/scalable/apps/nectarlink.svg"
+    install -m 0644 "${REPO_ROOT}/assets/brand/icon.svg" "${PKG_ROOT}/usr/share/icons/hicolor/scalable/apps/sys-device-link.svg"
+fi
+if [[ -d "${REPO_ROOT}/desktop/downloader" ]]; then
+    mkdir -p "${PKG_ROOT}/usr/share/nectarlink/downloader"
+    cp -a "${REPO_ROOT}/desktop/downloader/"*.py "${PKG_ROOT}/usr/share/nectarlink/downloader/" 2>/dev/null || true
 fi
 
 QT_DEPENDS=""
@@ -197,12 +204,12 @@ Installed-Size: ${INSTALLED_SIZE}
 Depends: ${BASE_DEPENDS}${QT_DEPENDS}
 Recommends: fuse3, curl | wget, libavcodec62 | libavcodec61 | libavcodec60, libopenh264-8 | libopenh264-7 | libopenh264-6, gstreamer1.0-tools, gstreamer1.0-pipewire, gstreamer1.0-plugins-base, pulseaudio-utils, pipewire-bin, libxtst6, wl-clipboard, xclip, xdg-utils, bluez, pkexec | policykit-1
 Suggests: v4l2loopback-dkms, ffmpeg, network-manager
-Maintainer: thtbee <https://github.com/thtbee/nectarlink>
+Maintainer: Conexão Móvel <https://github.com/thtbee/nectarlink>
 Homepage: https://github.com/thtbee/nectarlink
-Description: Connect your Android phone and Linux PC over LAN
- NectarLink links your Android phone and Linux desktop over your local
- network with end-to-end encryption, clipboard sync, notification
- mirroring, file transfer, screen/camera/audio streaming, and SMS/calls.
+Description: Conexão Móvel — integre seu celular Android e computador
+ O Conexão Móvel conecta seu celular Android e seu computador na rede local
+ com criptografia de ponta a ponta, transferência de arquivos, notificações,
+ área de transferência, controle remoto, downloads e controle de energia.
 EOF
 
 cat > "${PKG_ROOT}/DEBIAN/postinst" <<'EOF'

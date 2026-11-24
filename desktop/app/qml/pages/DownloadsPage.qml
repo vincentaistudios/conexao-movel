@@ -24,6 +24,29 @@ Item {
     property var lastFiles: []
     property var recentHistory: []
 
+    property string downloadsDir: ""
+
+    function openDownloadsFolder() {
+        if (downloadsDir) {
+            Qt.openUrlExternally("file://" + downloadsDir)
+            return
+        }
+        let xhr = new XMLHttpRequest()
+        xhr.open("GET", backendUrl + "/health", true)
+        xhr.onreadystatechange = function() {
+            if (xhr.readyState === XMLHttpRequest.DONE && xhr.status === 200) {
+                try {
+                    let res = JSON.parse(xhr.responseText)
+                    if (res && res.downloads_dir) {
+                        downloadsDir = res.downloads_dir
+                        Qt.openUrlExternally("file://" + res.downloads_dir)
+                    }
+                } catch(e) {}
+            }
+        }
+        xhr.send()
+    }
+
     readonly property string backendUrl: "http://127.0.0.1:28795"
 
     function inspectLink(urlText) {
@@ -478,7 +501,7 @@ Item {
                             text: qsTr("Abrir Pasta Downloads")
                             iconPath: Icons.folder
                             variant: "tonal"
-                            onClicked: Qt.openUrlExternally("file:///home/Vincent/Downloads")
+                            onClicked: page.openDownloadsFolder()
                         }
 
                         Button {
@@ -571,7 +594,7 @@ Item {
                                         iconPath: Icons.folder
                                         iconSize: 14
                                         label: qsTr("Abrir pasta")
-                                        onClicked: Qt.openUrlExternally("file:///home/Vincent/Downloads")
+                                        onClicked: page.openDownloadsFolder()
                                     }
                                 }
                             }

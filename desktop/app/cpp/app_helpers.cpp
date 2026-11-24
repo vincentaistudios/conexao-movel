@@ -679,8 +679,9 @@ std::unique_ptr<QGuiApplication> create_qt_app()
     static char *s_argv[] = { s_arg0, nullptr };
 #ifdef __linux__
     auto app = std::unique_ptr<QGuiApplication>(new QApplication(s_argc, s_argv));
-    // On Wayland this is the app id, which is how the dock finds our icon and name.
+    // Identidade canonica Freedesktop e X11/Wayland:
     QGuiApplication::setDesktopFileName(QStringLiteral("nectarlink"));
+    QGuiApplication::setApplicationDisplayName(QString::fromUtf8("Conexão Móvel"));
     QObject::connect(app.get(), &QCoreApplication::aboutToQuit, app.get(), []() {
         qtEventLoopRunning().store(false, std::memory_order_release);
     });

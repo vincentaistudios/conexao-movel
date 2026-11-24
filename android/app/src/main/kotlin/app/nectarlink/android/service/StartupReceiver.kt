@@ -6,6 +6,7 @@ import android.content.Context
 import android.content.Intent
 import app.nectarlink.android.NectarlinkApplication
 import app.nectarlink.android.core.CoreStatus
+import app.nectarlink.android.power.PowerSchedulerManager
 import app.nectarlink.android.ui.Preferences
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -26,6 +27,8 @@ class StartupReceiver : BroadcastReceiver() {
             Intent.ACTION_BOOT_COMPLETED -> false
             else -> return
         }
+        // Restaura alarmes de agendamentos e temporizadores apos reinicio ou atualizacao
+        runCatching { PowerSchedulerManager(context).rescheduleAll() }
         val app = context.applicationContext as NectarlinkApplication
         if (!Preferences.isBackgroundServiceEnabled(context)) {
             if (updated) app.updater.onUpdated()

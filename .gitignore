@@ -70,3 +70,5 @@ __pycache__/
 
 # Local downloads
 downloads/
+backups/
+dist/

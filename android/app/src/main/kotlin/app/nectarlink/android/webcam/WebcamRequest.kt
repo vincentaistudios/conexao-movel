@@ -31,7 +31,7 @@ data class WebcamRequest(
  * on with the user's explicit action.
  */
 object WebcamRequests {
-    private const val CHANNEL = "webcam_requests"
+    private const val CHANNEL = "webcam_requests_v2"
     private const val TAG = "webcam_req"
     private const val REQUEST_TIMEOUT_MS = 2 * 60 * 1000L
 
@@ -49,13 +49,14 @@ object WebcamRequests {
     internal fun consumeAutoStartToken(token: String?): Boolean = token != null && autoStartTokens.remove(token)
 
     fun createChannel(context: Context) {
-        context.getSystemService(NotificationManager::class.java)?.createNotificationChannel(
-            NotificationChannel(
-                CHANNEL,
-                context.getString(R.string.channel_webcam_requests),
-                NotificationManager.IMPORTANCE_HIGH,
-            ),
-        )
+        val channel = NotificationChannel(
+            CHANNEL,
+            context.getString(R.string.channel_webcam_requests),
+            NotificationManager.IMPORTANCE_HIGH,
+        ).apply {
+            app.nectarlink.android.notifications.NotificationSoundHelper.configureChannel(this)
+        }
+        context.getSystemService(NotificationManager::class.java)?.createNotificationChannel(channel)
     }
 
     /** Shows the request notification; returns true if shown. */
@@ -84,7 +85,7 @@ object WebcamRequests {
             R.string.webcam_request_title,
             pcName.ifEmpty { context.getString(R.string.your_pc) },
         )
-        val notification = NotificationCompat.Builder(context, CHANNEL)
+        val builder = NotificationCompat.Builder(context, CHANNEL)
             .setSmallIcon(R.drawable.ic_notification)
             .setContentTitle(title)
             .setContentText(context.getString(R.string.webcam_request_text))
@@ -93,7 +94,8 @@ object WebcamRequests {
             .setTimeoutAfter(REQUEST_TIMEOUT_MS)
             .setCategory(NotificationCompat.CATEGORY_CALL)
             .setPriority(NotificationCompat.PRIORITY_HIGH)
-            .build()
+        app.nectarlink.android.notifications.NotificationSoundHelper.applyBuilderSound(builder)
+        val notification = builder.build()
         return runCatching {
             NotificationManagerCompat.from(context).notify(TAG, request.pcId.hashCode(), notification)
         }.isSuccess

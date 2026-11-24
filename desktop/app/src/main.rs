@@ -9,6 +9,7 @@
 #![cfg_attr(not(debug_assertions), windows_subsystem = "windows")]
 
 mod automations;
+pub mod adb_setup;
 mod battery;
 mod bridge;
 mod calls;
@@ -18,6 +19,7 @@ mod continuity_camera;
 mod core_host;
 mod deck;
 mod doctor;
+mod downloader_bridge;
 mod feed;
 mod folder_sync;
 mod hotspot;
@@ -60,6 +62,7 @@ mod update_relay;
 mod updater;
 mod version;
 mod webcam;
+pub mod window_switcher;
 #[cfg(windows)]
 mod win;
 #[cfg(target_os = "linux")]
@@ -120,6 +123,14 @@ impl Platform for DesktopPlatform {
     }
     fn open_link(&self, _from: &nectarlink_core::DeviceId, url: &str) -> Result<(), String> {
         links::open_here(url)
+    }
+    fn media_download_rpc(
+        &self,
+        from: &nectarlink_core::DeviceId,
+        op: &str,
+        payload_json: &str,
+    ) -> Result<String, String> {
+        downloader_bridge::handle_rpc(from, op, payload_json)
     }
     fn media_command(
         &self,
@@ -451,7 +462,7 @@ fn run_setup_window(mode: setup::Mode) -> ExitCode {
     #[cfg(not(target_os = "linux"))]
     let mut app = QGuiApplication::new();
     if let Some(mut app) = app.as_mut() {
-        app.as_mut().set_application_name(&QString::from("NectarLink Setup"));
+        app.as_mut().set_application_name(&QString::from("Instalação do Conexão Móvel"));
         app.as_mut().set_application_version(&QString::from(env!("CARGO_PKG_VERSION")));
     }
     // Before any QML loads, so every string is right on the first pass.
@@ -694,7 +705,7 @@ fn main() -> ExitCode {
     #[cfg(not(target_os = "linux"))]
     let mut app = QGuiApplication::new();
     if let Some(mut app) = app.as_mut() {
-        app.as_mut().set_application_name(&QString::from("Nectarlink"));
+        app.as_mut().set_application_name(&QString::from("nectarlink"));
         app.as_mut().set_application_version(&QString::from(env!("CARGO_PKG_VERSION")));
     }
     // Before any QML loads, so every string is right on the first pass.

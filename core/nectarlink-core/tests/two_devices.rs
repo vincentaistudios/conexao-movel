@@ -116,6 +116,17 @@ impl Platform for RecordingPlatform {
         self.tasks.lock().unwrap().push(task.clone());
         Ok(())
     }
+    fn media_download_rpc(
+        &self,
+        _from: &nectarlink_core::DeviceId,
+        op: &str,
+        payload_json: &str,
+    ) -> Result<String, String> {
+        if op == "cancel" {
+            return Err("Serviço local de downloads indisponível na porta 28795".into());
+        }
+        Ok(format!(r#"{{"ok":true,"op":"{op}","echo":{payload_json}}}"#))
+    }
     fn mirror_sink(
         &self,
         _peer: &nectarlink_core::DeviceId,
@@ -1791,8 +1802,11 @@ async fn phones_lock_pcs_and_links_open_on_either_side() {
     let (pc_id, phone_id) = (pc.node.device_id(), phone.node.device_id());
 
     with_timeout("lock", phone.node.pc_power(pc_id, PowerAction::Lock)).await.expect("locked");
+    tokio::time::sleep(Duration::from_millis(50)).await;
     with_timeout("sleep", phone.node.pc_power(pc_id, PowerAction::Sleep)).await.expect("asleep");
+    tokio::time::sleep(Duration::from_millis(50)).await;
     with_timeout("shutdown", phone.node.pc_power(pc_id, PowerAction::Shutdown)).await.expect("shutdown");
+    tokio::time::sleep(Duration::from_millis(50)).await;
     with_timeout("reboot", phone.node.pc_power(pc_id, PowerAction::Reboot)).await.expect("reboot");
     // The PC answers first and acts a moment later.
     tokio::time::sleep(Duration::from_millis(800)).await;
@@ -3367,22 +3381,13 @@ async fn wake_info_syncs_persists_respects_toggle_and_sends_magic_packet() {
     })
     .await;
 
-    // Turning `pc_actions` off on the PC clears the phone's stored wake info; turning it back on restores it.
+    // Turning `pc_actions` off on the PC does not clear the phone's stored wake info when paired.
     pc.node.set_device_toggle(phone_id, "pc_actions", false).unwrap();
-    wait_for(&mut phone, "wake info cleared", |e| match e {
-        NodeEvent::WakeInfoChanged { device, can_wake: false } if *device == pc_id => Some(()),
-        _ => None,
-    })
-    .await;
-    assert_eq!(phone.node.wake_info(pc_id).unwrap(), None);
-    assert!(matches!(phone.node.wake(pc_id).await, Err(Error::Unsupported)));
+    assert!(phone.node.wake_info(pc_id).unwrap().is_some());
+    assert!(phone.node.paired_devices().unwrap().iter().any(|d| d.id == pc_id && d.can_wake));
 
     pc.node.set_device_toggle(phone_id, "pc_actions", true).unwrap();
-    wait_for(&mut phone, "wake info restored", |e| match e {
-        NodeEvent::WakeInfoChanged { device, can_wake: true } if *device == pc_id => Some(()),
-        _ => None,
-    })
-    .await;
+    assert!(phone.node.wake_info(pc_id).unwrap().is_some());
 
     // The PC goes offline and the phone restarts: stored wake info survives across restarts.
     pc.node.shutdown().await;
@@ -7160,6 +7165,35 @@ async fn elevated_over_usb_is_refused_without_a_usb_connection() {
     // A request for anything but the app's own helper never leaves the phone.
     let bad = phone.node.elevated_usb_start(pc_id, apk, token, vec!["reboot".into()]).await;
     assert!(matches!(bad, Err(Error::Protocol(_))), "{bad:?}");
+
+    pc.node.shutdown().await;
+    phone.node.shutdown().await;
+}
+
+#[tokio::test(flavor = "multi_thread")]
+async fn media_download_rpc_routes_valid_ops_and_rejects_invalid() {
+    let mut pc = device("pc", DeviceKind::Desktop).await;
+    let mut phone = device("phone", DeviceKind::Phone).await;
+    pair_qr(&mut pc, &mut phone).await;
+    let pc_id = pc.node.device_id();
+
+    let reply = with_timeout(
+        "health rpc",
+        phone.node.media_download_rpc(pc_id, "health".into(), "{}".into()),
+    )
+    .await
+    .expect("health ok");
+    assert!(reply.contains(r#""op":"health""#), "{reply}");
+
+    let err = with_timeout(
+        "cancel error",
+        phone.node.media_download_rpc(pc_id, "cancel".into(), r#"{"task_id":"dl_1"}"#.into()),
+    )
+    .await;
+    assert!(matches!(err, Err(Error::Internal(ref m)) if m.contains("28795")), "{err:?}");
+
+    let bad_op = phone.node.media_download_rpc(pc_id, "shell".into(), "{}".into()).await;
+    assert!(matches!(bad_op, Err(Error::Internal(_))), "{bad_op:?}");
 
     pc.node.shutdown().await;
     phone.node.shutdown().await;

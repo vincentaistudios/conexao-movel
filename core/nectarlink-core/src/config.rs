@@ -226,6 +226,16 @@ pub trait Platform: Send + Sync + 'static {
         Err("this device doesn't show task notifications".into())
     }
 
+    /// Forward a local media downloader RPC (`media.download_rpc`) from a paired device.
+    fn media_download_rpc(
+        &self,
+        _from: &nectarlink_protocol::DeviceId,
+        _op: &str,
+        _payload_json: &str,
+    ) -> Result<String, String> {
+        Err("this device doesn't run a media downloader service".into())
+    }
+
     /// List photo and video albums on this phone (`photos.albums`).
     fn photo_albums(&self) -> Result<Vec<crate::PhotoAlbum>, String> {
         Err("this device doesn't share photos".into())

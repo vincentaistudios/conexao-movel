@@ -6,6 +6,7 @@ import android.bluetooth.BluetoothDevice
 import android.bluetooth.BluetoothManager
 import android.bluetooth.BluetoothProfile
 import android.content.Context
+import android.os.Build
 import android.provider.Settings
 import android.util.Log
 import app.nectarlink.android.elevated.Elevated
@@ -28,6 +29,10 @@ class BluetoothTogglesHelper(
             val ran = Elevated.runCommand(if (on) "svc bluetooth enable" else "svc bluetooth disable")
             if (ran) return true
         }
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
+            Log.w(TAG, "Alternancia silenciosa de Bluetooth rejeitada: Modo Elevado necessario no Android 10+")
+            return false
+        }
         return runCatching {
             val adapter = bluetooth?.adapter ?: return@runCatching false
             if (on) adapter.enable() else adapter.disable()
@@ -35,7 +40,8 @@ class BluetoothTogglesHelper(
     }
 
     fun readBtDevices(): List<Map<String, Any>> = runCatching {
-        val adapter = bluetooth?.adapter ?: return@runCatching emptyList()
+        val btManager = bluetooth ?: return@runCatching emptyList()
+        val adapter = btManager.adapter ?: return@runCatching emptyList()
         val bonded = runCatching { adapter.bondedDevices }.getOrNull().orEmpty()
 
         bonded.map { device ->
@@ -48,8 +54,8 @@ class BluetoothTogglesHelper(
                 val isConnectedMethod = device.javaClass.getMethod("isConnected")
                 (isConnectedMethod.invoke(device) as? Boolean) == true
             }.getOrNull() ?: runCatching {
-                val a2dpState = bluetooth.getConnectionState(device, BluetoothProfile.A2DP)
-                val headsetState = bluetooth.getConnectionState(device, BluetoothProfile.HEADSET)
+                val a2dpState = btManager.getConnectionState(device, BluetoothProfile.A2DP)
+                val headsetState = btManager.getConnectionState(device, BluetoothProfile.HEADSET)
                 a2dpState == BluetoothProfile.STATE_CONNECTED || headsetState == BluetoothProfile.STATE_CONNECTED
             }.getOrDefault(false)
 

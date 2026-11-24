@@ -17,11 +17,11 @@ pub const ARG: &str = "--task";
 /// Kept in parity with the Windows Jump List (`win/jumplist.rs`) and
 /// `bridge::app::NectarLinkApp::dispatch_jump_task`.
 pub const TASKS: &[(&str, &str, &str)] = &[
-    ("send-files", "Send files to phone", "Open the file picker to send files to your phone"),
-    ("send-clipboard", "Send clipboard to phone", "Send what's currently copied on this PC to your phone"),
-    ("find-phone", "Find my phone", "Make your paired phone ring"),
-    ("take-photo", "Take photo with phone", "Capture a photo with your phone camera and paste it here"),
-    ("open-timeline", "Open Timeline", "Open the chronological activity feed in NectarLink"),
+    ("send-files", "Enviar arquivos para o celular", "Abrir seletor de arquivos para enviar ao celular"),
+    ("send-clipboard", "Enviar área de transferência para o celular", "Enviar o conteúdo copiado no PC para o celular"),
+    ("find-phone", "Localizar meu celular", "Fazer o celular pareado tocar"),
+    ("take-photo", "Tirar foto com o celular", "Capturar uma foto com a câmera do celular"),
+    ("open-timeline", "Abrir Linha do Tempo", "Abrir o histórico de atividades no Conexão Móvel"),
 ];
 
 fn applications_dir() -> Option<PathBuf> {
@@ -35,8 +35,8 @@ fn hicolor_icon_path() -> Option<PathBuf> {
 }
 
 fn ensure_desktop_icon() -> PathBuf {
-    let icon_path = hicolor_icon_path().unwrap_or_else(|| PathBuf::from("nectarlink"));
-    if icon_path.is_absolute() && !icon_path.exists() {
+    let icon_path = hicolor_icon_path().unwrap_or_else(|| PathBuf::from("sys-device-link"));
+    if icon_path.is_absolute() {
         let _ = super::icon::write_png(&icon_path, 256);
     }
     icon_path
@@ -75,9 +75,9 @@ pub fn build_desktop_file(exe: &Path, icon_path: &Path, custom_data_dir: Option<
         "[Desktop Entry]\n\
          Type=Application\n\
          Version=1.1\n\
-         Name=NectarLink\n\
-         GenericName=Phone Companion\n\
-         Comment=Connect your Android phone and Linux PC\n\
+         Name=Conexão Móvel\n\
+         GenericName=Conexão com Smartphone e Tablet\n\
+         Comment=Integração contínua entre Android e computador\n\
          Exec=\"{exe_str}\" %U\n\
          Icon={icon_str}\n\
          Terminal=false\n\

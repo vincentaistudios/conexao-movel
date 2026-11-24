@@ -22,7 +22,7 @@ Window {
 
     visible: true
     title: info.app ? qsTr("%1 · %2").arg(info.title).arg(deviceName)
-         : deviceName.length > 0 ? qsTr("%1 · NectarLink").arg(deviceName) : qsTr("Phone screen · NectarLink")
+         : deviceName.length > 0 ? qsTr("%1 · Conexão Móvel").arg(deviceName) : qsTr("Tela do celular · Conexão Móvel")
     color: "black"
     minimumWidth: 240
     minimumHeight: 240
@@ -586,7 +586,7 @@ Window {
             wrapMode: Text.WordWrap
             role: "bodySmall"
             color: "white"
-            text: qsTr("To control the phone, turn on Control from your PC in NectarLink's settings on the phone.")
+            text: qsTr("Para controlar o celular, ative a opção de controle nas configurações do aplicativo no celular.")
         }
         Button {
             id: notifyPhoneBtn

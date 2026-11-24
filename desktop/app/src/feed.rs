@@ -26,11 +26,11 @@ use crate::{
 };
 
 /// Where the feeds are: `<FEEDS><channel>.json`.
-const FEEDS: &str = "https://raw.githubusercontent.com/thtbee/nectarlink/channels/";
+const FEEDS: &str = "https://raw.githubusercontent.com/vincentaistudios/conexao-movel/channels/";
 /// The only place a feed's files may come from.
-pub const RELEASE_DOWNLOADS: &str = "https://github.com/thtbee/nectarlink/releases/download/";
+pub const RELEASE_DOWNLOADS: &str = "https://github.com/vincentaistudios/conexao-movel/releases/download/";
 /// Release notes live on the repository's own pages.
-const NOTES: &str = "https://github.com/thtbee/nectarlink/";
+const NOTES: &str = "https://github.com/vincentaistudios/conexao-movel/";
 /// A feed is a few hundred bytes; anything near this is not one.
 const MAX_FEED: usize = 64 * 1024;
 const SCHEMA: u32 = 1;

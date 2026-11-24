@@ -36,16 +36,20 @@ class PcNotificationPoster(context: Context) {
         val channel = NotificationChannel(
             CHANNEL_ID,
             this.context.getString(R.string.channel_pc_notifications),
-            NotificationManager.IMPORTANCE_DEFAULT,
-        )
+            NotificationManager.IMPORTANCE_HIGH,
+        ).apply {
+            NotificationSoundHelper.configureChannel(this)
+        }
         manager?.createNotificationChannel(channel)
-        manager?.createNotificationChannel(
-            NotificationChannel(
-                PEER_CHANNEL_ID,
-                this.context.getString(R.string.channel_peer_notifications),
-                NotificationManager.IMPORTANCE_DEFAULT,
-            ),
-        )
+
+        val peerChannel = NotificationChannel(
+            PEER_CHANNEL_ID,
+            this.context.getString(R.string.channel_peer_notifications),
+            NotificationManager.IMPORTANCE_HIGH,
+        ).apply {
+            NotificationSoundHelper.configureChannel(this)
+        }
+        manager?.createNotificationChannel(peerChannel)
     }
 
     /**
@@ -80,8 +84,9 @@ class PcNotificationPoster(context: Context) {
             .setContentText(body)
             .setSubText(sub.takeIf(String::isNotBlank))
             .setAutoCancel(true)
-            .setSilent(n.silent)
             .setContentIntent(tapIntent)
+            .setPriority(NotificationCompat.PRIORITY_HIGH)
+        NotificationSoundHelper.applyBuilderSound(builder, silent = n.silent)
         if (fromPeer) {
             builder.setDeleteIntent(
                 PendingIntent.getBroadcast(
@@ -145,8 +150,8 @@ class PcNotificationPoster(context: Context) {
     }
 
     companion object {
-        const val CHANNEL_ID = "pc_notifications"
-        const val PEER_CHANNEL_ID = "peer_notifications"
+        const val CHANNEL_ID = "pc_notifications_v2"
+        const val PEER_CHANNEL_ID = "peer_notifications_v2"
     }
 
     /** The user dismissed a paired phone's or tablet's notification here: dismiss it there. */

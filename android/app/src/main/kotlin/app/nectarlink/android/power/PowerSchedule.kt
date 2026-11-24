@@ -15,8 +15,16 @@ enum class PowerActionType {
     Lock;
 
     companion object {
-        fun fromString(value: String): PowerActionType =
-            entries.firstOrNull { it.name.equals(value.trim(), ignoreCase = true) } ?: Lock
+        /**
+         * Converte uma string de acao de energia de forma estrita (fail-closed),
+         * retornando null caso esteja ausente, vazia ou fora dos valores suportados.
+         */
+        fun fromStringOrNull(value: String?): PowerActionType? {
+            val normalized = value?.trim()?.takeIf { it.isNotEmpty() } ?: return null
+            return entries.firstOrNull { it.name.equals(normalized, ignoreCase = true) }
+        }
+
+        fun fromString(value: String): PowerActionType = fromStringOrNull(value) ?: Lock
     }
 }
 
@@ -55,6 +63,9 @@ data class PowerSchedule(
 
     companion object {
         fun fromJson(json: JSONObject): PowerSchedule {
+            val rawAction = json.optString("action", "")
+            val parsedAction = PowerActionType.fromStringOrNull(rawAction)
+                ?: throw IllegalArgumentException("Acao de energia invalida no JSON: $rawAction")
             val daysSet = mutableSetOf<Int>()
             val daysArray = json.optJSONArray("daysOfWeek")
             if (daysArray != null) {
@@ -66,7 +77,7 @@ data class PowerSchedule(
                 id = json.getString("id"),
                 pcId = json.getString("pcId"),
                 pcName = json.optString("pcName", ""),
-                action = PowerActionType.fromString(json.getString("action")),
+                action = parsedAction,
                 hour = json.getInt("hour"),
                 minute = json.getInt("minute"),
                 daysOfWeek = daysSet,

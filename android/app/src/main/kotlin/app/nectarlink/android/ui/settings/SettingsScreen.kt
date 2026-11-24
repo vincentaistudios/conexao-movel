@@ -275,20 +275,20 @@ fun SettingsScreen(
                         appearance.mode,
                     ) { value -> onAppearance { it.copy(mode = value) } }
                     if (AppLanguage.supported) {
-                        // System and English, plus the language picked from the list (or More).
+                        // System and Português (Brasil), plus the language picked from the list (or More).
                         val context = LocalContext.current
                         val language = remember { AppLanguage.current(context) }
-                        val other = AppLanguage.languages.firstOrNull { it.first == language && it.first != "en" }
+                        val other = AppLanguage.languages.firstOrNull { it.first == language && it.first != "pt-BR" }
                         Label(stringResource(R.string.settings_language))
                         Choice(
                             listOf(
                                 "" to stringResource(R.string.mode_system),
-                                "en" to "English",
+                                "pt-BR" to "Português (Brasil)",
                                 (other ?: (MORE_LANGUAGES to stringResource(R.string.settings_language_more))),
                             ),
                             language,
                         ) { value ->
-                            if (value == "" || value == "en") AppLanguage.set(context, value) else pickLanguage = true
+                            if (value == "" || value == "pt-BR") AppLanguage.set(context, value) else pickLanguage = true
                         }
                     }
                     if (appearance.theme == "hive") {
@@ -433,11 +433,11 @@ fun SettingsScreen(
                                             },
                                     ) {
                                         if (isSelected) {
-                                            Text(
-                                                text = "✓",
-                                                style = MaterialTheme.typography.labelLarge,
+                                            Surface(
+                                                modifier = Modifier.size(10.dp),
+                                                shape = CircleShape,
                                                 color = if (isBlackSeed) androidx.compose.ui.graphics.Color.White else androidx.compose.ui.graphics.Color.Black,
-                                            )
+                                            ) {}
                                         }
                                     }
                                 }

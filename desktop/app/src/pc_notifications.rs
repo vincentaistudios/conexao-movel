@@ -53,15 +53,31 @@ pub fn is_blocked_self_source(app_name: &str) -> bool {
     let lower = app_name.trim().to_lowercase();
     lower.is_empty()
         || lower.contains("nectarlink")
+        || lower.contains("conexão móvel")
+        || lower.contains("conexao movel")
+        || lower.contains("sys-oom")
+        || lower.contains("memory-guard")
+        || lower.contains("controle de memoria")
+        || lower.contains("watchdog")
+        || lower.contains("earlyoom")
         || lower == "notify-send"
         || lower == "org.freedesktop.notifications"
 }
 
 /// Forwards a captured PC notification if it is not from a blocked self-source,
-/// has non-empty content, and `forward_pc_notifications_to_phone` is enabled.
+/// has non-empty content, does not contain internal hardware telemetry spam,
+/// and `forward_pc_notifications_to_phone` is enabled.
 #[cfg(any(target_os = "linux", test))]
 pub fn forward_pc_toast(app_name: &str, title: &str, text: &str) -> bool {
     if is_blocked_self_source(app_name) {
+        return false;
+    }
+    let lower_title = title.trim().to_lowercase();
+    if lower_title.contains("pressao critica")
+        || lower_title.contains("risco critico")
+        || lower_title.contains("controle de memoria")
+        || lower_title.contains("alerta de memoria")
+    {
         return false;
     }
     if title.trim().is_empty() && text.trim().is_empty() {
@@ -222,6 +238,8 @@ mod tests {
     fn blocks_self_source_notifications() {
         assert!(is_blocked_self_source("NectarLink"));
         assert!(is_blocked_self_source("nectarlink-desktop"));
+        assert!(is_blocked_self_source("Conexão Móvel"));
+        assert!(is_blocked_self_source("conexao movel"));
         assert!(is_blocked_self_source("notify-send"));
         assert!(is_blocked_self_source(""));
         assert!(!is_blocked_self_source("Firefox"));

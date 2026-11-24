@@ -87,6 +87,7 @@ import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
+import kotlinx.coroutines.withTimeoutOrNull
 
 /**
  * The app's single connection to `nectarlink-core`. Owns the node, folds
@@ -1962,7 +1963,7 @@ class Core(context: Context, private val scope: CoroutineScope) : EventListener 
             it.pairingJoin(link)
         } catch (e: NectarlinkException) {
             val failure = when (e) {
-                is NectarlinkException.InvalidPairingLink -> PairingFailure.Other("not a NectarLink code")
+                is NectarlinkException.InvalidPairingLink -> PairingFailure.Other("não é um código do Conexão Móvel")
                 is NectarlinkException.Denied -> PairingFailure.Rejected
                 else -> PairingFailure.Unreachable
             }
@@ -2050,6 +2051,10 @@ class Core(context: Context, private val scope: CoroutineScope) : EventListener 
      */
     fun pcPower(id: String, action: String) {
         val normalizedAction = action.lowercase().trim()
+        if (normalizedAction !in ALLOWED_POWER_ACTIONS) {
+            Log.w(TAG, "ignoring unsupported power action: $action")
+            return
+        }
         if (normalizedAction == "wake") {
             wake(id)
             return
@@ -2064,7 +2069,8 @@ class Core(context: Context, private val scope: CoroutineScope) : EventListener 
                     "shutdown" -> context.getString(R.string.pc_shutting_down, name)
                     "reboot" -> context.getString(R.string.pc_rebooting, name)
                     "sleep" -> context.getString(R.string.pc_sleeping, name)
-                    else -> context.getString(R.string.pc_locked, name)
+                    "lock" -> context.getString(R.string.pc_locked, name)
+                    else -> return@launch
                 }
             } catch (e: NectarlinkException) {
                 if (e is NectarlinkException.Denied) context.getString(R.string.pc_actions_off, name) else describe(e)
@@ -2115,6 +2121,91 @@ class Core(context: Context, private val scope: CoroutineScope) : EventListener 
                 }
                 _messages.tryEmit(msg)
             }
+        }
+    }
+
+    private suspend fun awaitStartedNode(timeoutMs: Long = 8_000L): NectarlinkNode? {
+        node?.let { return it }
+        start()
+        return withTimeoutOrNull(timeoutMs) {
+            while (node == null && startJob == null) {
+                delay(25L)
+            }
+            startJob?.join()
+            node
+        }
+    }
+
+    /**
+     * Executa acao de energia de forma suspensa aguardando o inicio do no com timeout seguro.
+     * Retorna true se o envio ao no foi concluido sem falhas.
+     */
+    suspend fun pcPowerNow(id: String, action: String): Boolean {
+        val normalizedAction = action.lowercase().trim()
+        if (normalizedAction !in ALLOWED_POWER_ACTIONS) {
+            Log.w(TAG, "ignoring unsupported power action: $action")
+            return false
+        }
+        if (normalizedAction == "wake") {
+            return wakeNow(id)
+        }
+        val activeNode = awaitStartedNode(8_000L) ?: return false
+        val name = _state.value.nameOf(id).orEmpty()
+        return try {
+            activeNode.pcPower(id, normalizedAction)
+            val message = when (normalizedAction) {
+                "shutdown" -> context.getString(R.string.pc_shutting_down, name)
+                "reboot" -> context.getString(R.string.pc_rebooting, name)
+                "sleep" -> context.getString(R.string.pc_sleeping, name)
+                "lock" -> context.getString(R.string.pc_locked, name)
+                else -> return false
+            }
+            _messages.tryEmit(message)
+            true
+        } catch (e: NectarlinkException) {
+            val message = if (e is NectarlinkException.Denied) {
+                context.getString(R.string.pc_actions_off, name)
+            } else {
+                describe(e)
+            }
+            _messages.tryEmit(message)
+            false
+        }
+    }
+
+    /**
+     * Envia pacote Wake-on-LAN aguardando o inicio do no dentro de um timeout seguro.
+     * Retorna true se o disparo foi enviado ao no, false se expirou ou falhou.
+     */
+    suspend fun wakeNow(id: String): Boolean {
+        val activeNode = awaitStartedNode(8_000L) ?: return false
+        return try {
+            activeNode.wake(id)
+            runCatching { activeNode.refresh() }
+            true
+        } catch (e: NectarlinkException) {
+            val name = _state.value.nameOf(id).orEmpty()
+            val msg = when (e) {
+                is NectarlinkException.Unsupported -> context.getString(R.string.wake_not_ready, name)
+                else -> describe(e)
+            }
+            _messages.tryEmit(msg)
+            false
+        }
+    }
+
+    /**
+     * Executa chamada RPC autenticada para o servico de download de midia do PC pareado.
+     */
+    suspend fun mediaDownloadRpc(id: String, op: String, payloadJson: String): Result<String> {
+        val activeNode = awaitStartedNode(8_000L)
+            ?: return Result.failure(IllegalStateException(context.getString(R.string.clip_no_pc)))
+        return try {
+            Result.success(activeNode.mediaDownloadRpc(id, op, payloadJson))
+        } catch (e: NectarlinkException) {
+            Result.failure(IllegalStateException(describe(e), e))
+        } catch (t: Throwable) {
+            Result.failure(t)
         }
     }
 
@@ -2353,7 +2444,7 @@ class Core(context: Context, private val scope: CoroutineScope) : EventListener 
                     } else {
                         current.outputDevices + app.nectarlink.core.AudioOutputDevice(
                             id = PHONE_SPEAKER_OUTPUT,
-                            name = "Phone speaker (NectarLink)",
+                            name = "Alto-falante do celular (Conexão Móvel)",
                             isDefault = false,
                         )
                     }
@@ -2433,7 +2524,7 @@ class Core(context: Context, private val scope: CoroutineScope) : EventListener 
      * Blocks; call off the main thread.
      */
     fun readWatchFile(pcId: String, offset: Long, length: Long): ByteArray {
-        val running = node ?: throw java.io.IOException("NectarLink isn't running")
+        val running = node ?: throw java.io.IOException("Conexão Móvel não está em execução")
         return running.watchFileRead(pcId, offset.toULong(), length.toULong()).data
     }
 
@@ -2559,6 +2650,7 @@ class Core(context: Context, private val scope: CoroutineScope) : EventListener 
 
     private companion object {
         const val TAG = "Nectarlink"
+        val ALLOWED_POWER_ACTIONS = setOf("wake", "lock", "sleep", "shutdown", "reboot")
         /** Offered while notification access is granted (docs/protocol/capabilities.md). */
         val NOTIFICATION_CAPABILITIES = listOf("notify.mirror", "notify.reply", "notify.live")
         /** Sharing this phone's players, which also needs notification access. */

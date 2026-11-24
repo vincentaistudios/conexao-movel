@@ -3934,6 +3934,13 @@ impl NectarlinkNode {
         self.run(async move { Ok(node.open_link(id, url).await?) }).await
     }
 
+    /// Calls the paired PC's local media downloader service (`media.download_rpc`).
+    pub async fn media_download_rpc(&self, id: String, op: String, payload_json: String) -> Result<String> {
+        let id = parse_id(&id)?;
+        let node = self.node.clone();
+        self.run(async move { Ok(node.media_download_rpc(id, op, payload_json).await?) }).await
+    }
+
     // ---- Remote input (touchpad, keyboard, presentation) ----
 
     /// Checks whether a paired PC allows remote mouse/keyboard input from this

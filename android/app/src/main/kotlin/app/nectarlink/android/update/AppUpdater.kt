@@ -231,34 +231,11 @@ class AppUpdater(context: Context) {
     }
 
     /**
-     * The newest build for this install's channel, if newer: from the feeds
-     * (Stable reads the stable one, Nightly both, since a release newer than the
-     * last nightly is for nightly installs too), or until a feed is published,
-     * from GitHub's latest release.
+     * Checks for updates against the official repository releases and channel feeds.
      */
     private fun latest(): Update? {
-        val feeds = if (_channel.value == Channel.Nightly) listOf(Channel.Stable, Channel.Nightly) else listOf(Channel.Stable)
-        var published = false
-        var newest: Update? = null
-        var failure: Exception? = null
-        for (feedChannel in feeds) {
-            val feed = try {
-                fetchFeed(feedChannel) ?: continue
-            } catch (e: IOException) {
-                failure = e
-                continue
-            } catch (e: org.json.JSONException) {
-                failure = e
-                continue
-            }
-            published = true
-            runCatching { onFeedSeen?.invoke(feedChannel.key, feed.getString("version")) }
-            val update = feedUpdate(feed, BuildConfig.VERSION_NAME) ?: continue
-            if (newest == null || isNewer(update.version, newest.version)) newest = update
-        }
-        if (published) return newest
-        failure?.let { throw it }
-        return latestRelease()
+        val feed = runCatching { fetchFeed(_channel.value) }.getOrNull()
+        return if (feed != null) feedUpdate(feed, _channel.value) else latestRelease()
     }
 
     /**
@@ -310,7 +287,7 @@ class AppUpdater(context: Context) {
         for (i in 0 until assets.length()) {
             val asset = assets.getJSONObject(i)
             val name = asset.getString("name")
-            if (name.endsWith("-android.apk")) apk = asset
+            if (name.endsWith("-android.apk") || name.endsWith(".apk")) apk = asset
             if (name == "SHA256SUMS.txt") sums = asset
         }
         if (apk == null || sums == null) return null
@@ -633,14 +610,14 @@ class AppUpdater(context: Context) {
 
     companion object {
         private const val TAG = "AppUpdater"
-        private const val LATEST = "https://api.github.com/repos/thtbee/nectarlink/releases/latest"
+        private const val LATEST = "https://api.github.com/repos/vincentaistudios/conexao-movel/releases/latest"
 
         /** The channels' feeds: `<FEEDS><channel>.json`. */
-        private const val FEEDS = "https://raw.githubusercontent.com/thtbee/nectarlink/channels/"
+        private const val FEEDS = "https://raw.githubusercontent.com/vincentaistudios/conexao-movel/channels/"
 
         /** The only place an update is downloaded from. */
-        private const val RELEASE_DOWNLOADS = "https://github.com/thtbee/nectarlink/releases/download/"
-        private const val NOTES = "https://github.com/thtbee/nectarlink/"
+        private const val RELEASE_DOWNLOADS = "https://github.com/vincentaistudios/conexao-movel/releases/download/"
+        private const val NOTES = "https://github.com/vincentaistudios/conexao-movel/"
         private const val FEED_SCHEMA = 1
         private const val MAX_FEED = 64 * 1024
         private const val UPDATE_CHANNEL = "channel"
