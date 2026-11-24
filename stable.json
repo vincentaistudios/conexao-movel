@@ -2,8 +2,8 @@
   "schema": 1,
   "channel": "stable",
   "version": "0.1.8",
-  "name": "Pollen",
-  "published": "2026-11-24T14:49:36Z",
+  "name": "Conexão Móvel v0.1.8",
+  "published": "2026-11-24T16:20:06Z",
   "notes": "https://github.com/vincentaistudios/conexao-movel/releases/tag/v0.1.8",
   "files": [
     {
@@ -15,14 +15,14 @@
     {
       "name": "ConexaoMovel-android.apk",
       "url": "https://github.com/vincentaistudios/conexao-movel/releases/download/v0.1.8/ConexaoMovel-android.apk",
-      "sha256": "746b38d421a11d937965c3cd97628f4f2e2d8d94e5040cd81d59e92614b7d62e",
-      "size": 62932692
+      "sha256": "df6b4f7d0ed75cce2cef1c49fb8d2d377bd08527f8c343ee14802895c849bfcc",
+      "size": 81030219
     },
     {
       "name": "ConexaoMovel-linux-x86_64",
       "url": "https://github.com/vincentaistudios/conexao-movel/releases/download/v0.1.8/ConexaoMovel-linux-x86_64",
-      "sha256": "83c3ae93dd19c91cd0827cc1e1fa01b2abbee3172228143fa4004d0b1c312322",
-      "size": 47501304
+      "sha256": "b53ba6f19b6d8075b6126c7f0bc3a95835e11cd08dfb3629822f5f2193deed9d",
+      "size": 46603384
     }
   ]
 }
