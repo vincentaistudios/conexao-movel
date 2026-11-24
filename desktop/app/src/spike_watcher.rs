@@ -8,11 +8,7 @@ use std::time::{Duration, Instant};
 
 /// Assinatura cromática do Vermelho característico da Spike armada no Valorant (#FF4655).
 pub fn classify_pixel_is_spike_red(r: u8, g: u8, b: u8) -> bool {
-    r > 190
-        && g < 115
-        && b < 135
-        && r.saturating_sub(g) > 90
-        && r.saturating_sub(b) > 75
+    r > 190 && g < 115 && b < 135 && r.saturating_sub(g) > 90 && r.saturating_sub(b) > 75
 }
 
 /// Avalia se uma matriz de pixels amostrada contém densidade suficiente de vermelho Spike.
@@ -20,10 +16,7 @@ pub fn is_spike_hud_active(pixels: &[(u8, u8, u8)]) -> bool {
     if pixels.is_empty() {
         return false;
     }
-    let count = pixels
-        .iter()
-        .filter(|&&(r, g, b)| classify_pixel_is_spike_red(r, g, b))
-        .count();
+    let count = pixels.iter().filter(|&&(r, g, b)| classify_pixel_is_spike_red(r, g, b)).count();
     let ratio = count as f32 / pixels.len() as f32;
     // Se ao menos 12% da área central apresentar o vermelho Spike característico
     ratio >= 0.12
@@ -148,10 +141,7 @@ fn run_watcher_loop() {
             }
 
             let sample = sample_hud_pixels_windows();
-            let is_positive = sample
-                .as_deref()
-                .map(is_spike_hud_active)
-                .unwrap_or(false);
+            let is_positive = sample.as_deref().map(is_spike_hud_active).unwrap_or(false);
 
             if let Some(action) = state_machine.update(is_positive) {
                 tracing::info!(action, "Spike Watcher disparou transição automática");
@@ -191,11 +181,9 @@ fn is_valorant_foreground() -> bool {
 
 #[cfg(windows)]
 fn sample_hud_pixels_windows() -> Option<Vec<(u8, u8, u8)>> {
-    use windows::Win32::Foundation::HWND;
     use windows::Win32::Graphics::Gdi::{
-        BitBlt, CreateCompatibleBitmap, CreateCompatibleDC, DeleteDC, DeleteObject, GetDC,
-        GetDIBits, ReleaseDC, SelectObject, BITMAPINFO, BITMAPINFOHEADER, BI_RGB, DIB_RGB_COLORS,
-        SRCCOPY,
+        BI_RGB, BITMAPINFO, BITMAPINFOHEADER, BitBlt, CreateCompatibleBitmap, CreateCompatibleDC,
+        DIB_RGB_COLORS, DeleteDC, DeleteObject, GetDC, GetDIBits, ReleaseDC, SRCCOPY, SelectObject,
     };
     use windows::Win32::UI::WindowsAndMessaging::{GetSystemMetrics, SM_CXSCREEN, SM_CYSCREEN};
 
@@ -215,37 +203,27 @@ fn sample_hud_pixels_windows() -> Option<Vec<(u8, u8, u8)>> {
         let start_x = (center_x - sample_w / 2).max(0);
         let start_y = (center_y - sample_h / 2).max(0);
 
-        let hdc_screen = GetDC(HWND(std::ptr::null_mut()));
+        let hdc_screen = GetDC(None);
         if hdc_screen.0.is_null() {
             return None;
         }
 
-        let hdc_mem = CreateCompatibleDC(hdc_screen);
+        let hdc_mem = CreateCompatibleDC(Some(hdc_screen));
         if hdc_mem.0.is_null() {
-            ReleaseDC(HWND(std::ptr::null_mut()), hdc_screen);
+            let _ = ReleaseDC(None, hdc_screen);
             return None;
         }
 
         let hbitmap = CreateCompatibleBitmap(hdc_screen, sample_w, sample_h);
         if hbitmap.0.is_null() {
-            DeleteDC(hdc_mem);
-            ReleaseDC(HWND(std::ptr::null_mut()), hdc_screen);
+            let _ = DeleteDC(hdc_mem);
+            let _ = ReleaseDC(None, hdc_screen);
             return None;
         }
 
-        let old_bmp = SelectObject(hdc_mem, hbitmap);
+        let old_bmp = SelectObject(hdc_mem, hbitmap.into());
 
-        let blt_res = BitBlt(
-            hdc_mem,
-            0,
-            0,
-            sample_w,
-            sample_h,
-            hdc_screen,
-            start_x,
-            start_y,
-            SRCCOPY,
-        );
+        let blt_res = BitBlt(hdc_mem, 0, 0, sample_w, sample_h, Some(hdc_screen), start_x, start_y, SRCCOPY);
 
         let mut pixels = Vec::with_capacity((sample_w * sample_h) as usize);
 
@@ -284,15 +262,11 @@ fn sample_hud_pixels_windows() -> Option<Vec<(u8, u8, u8)>> {
             }
         }
 
-        SelectObject(hdc_mem, old_bmp);
-        DeleteObject(hbitmap);
-        DeleteDC(hdc_mem);
-        ReleaseDC(HWND(std::ptr::null_mut()), hdc_screen);
+        let _ = SelectObject(hdc_mem, old_bmp);
+        let _ = DeleteObject(hbitmap.into());
+        let _ = DeleteDC(hdc_mem);
+        let _ = ReleaseDC(None, hdc_screen);
 
-        if pixels.is_empty() {
-            None
-        } else {
-            Some(pixels)
-        }
+        if pixels.is_empty() { None } else { Some(pixels) }
     }
 }
