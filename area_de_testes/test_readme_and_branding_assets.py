@@ -94,6 +94,23 @@ class TestReadmeAndBrandingAssets(unittest.TestCase):
             )
 
 
+    def test_stream_deck_mockup_responsive_and_no_overflow(self):
+        """Valida que o mockup do stream deck não possui nomes rígidos e expandiu os contêineres contra overflow."""
+        mockup_path = os.path.join(REPO_ROOT, "docs/assets/mockup-stream-deck.svg")
+        with open(mockup_path, "r", encoding="utf-8") as f:
+            content = f.read()
+
+        # Garante que nomes rígidos específicos não estão presentes
+        self.assertNotIn("PC VINCENT", content)
+        self.assertIn("COMPUTADOR CONECTADO", content)
+        self.assertIn("REDE LOCAL", content)
+
+        # Garante que os contêineres do painel direito foram expandidos para evitar overflow
+        self.assertIn('width="450"', content)
+        self.assertIn('width="402"', content)
+        self.assertIn("Maximizar aplicativo no monitor principal", content)
+
+
 if __name__ == "__main__":
     unittest.main()
 
