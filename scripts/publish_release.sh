@@ -138,3 +138,4 @@ rm -rf "${TEMP_FEED}" "${CHANNELS_TMP}"
 echo "Publicacao da versao ${TAG} concluida com sucesso!"
 echo "URL da Release: https://github.com/${REPO}/releases/tag/${TAG}"
 echo "URL do Feed: https://raw.githubusercontent.com/${REPO}/channels/stable.json"
+
