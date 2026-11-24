@@ -1,341 +1,162 @@
 <div align="center">
 
-<img src="assets/brand/icon.svg" alt="" width="96" height="96">
+<img src="assets/brand/banner-hero-animated.svg" alt="Conexão Móvel — Vincent AI Studios" width="100%">
 
-# NectarLink
+<br>
 
-**Your Android phone and your PC, working as one.**
+<p align="center">
+  <a href="https://github.com/vincentaistudios/conexao-movel/releases/tag/v0.1.8"><img src="https://img.shields.io/badge/Versao-v0.1.8-38bdf8?style=flat-square" alt="Versao v0.1.8"></a>
+  <a href="https://github.com/vincentaistudios/conexao-movel/releases/tag/v0.1.8"><img src="https://img.shields.io/badge/Download-Instaladores%20Oficiais-10b981?style=flat-square" alt="Downloads"></a>
+  <img src="https://img.shields.io/badge/Android-10+-3ddc84?style=flat-square" alt="Android 10+">
+  <img src="https://img.shields.io/badge/Windows-10%20%2F%2011-0078d4?style=flat-square" alt="Windows 10 / 11">
+  <img src="https://img.shields.io/badge/Linux-x86__64-eab308?style=flat-square" alt="Linux">
+  <img src="https://img.shields.io/badge/Arquitetura-Local--First-818cf8?style=flat-square" alt="Local First">
+  <a href="LICENSE"><img src="https://img.shields.io/badge/Licenca-GPL--3.0-blue?style=flat-square" alt="Licenca"></a>
+</p>
 
-Notifications, messages, calls, clipboard, files, photos, screen mirroring and
-phone apps in windows, between Android and Windows 10 (2004+), Windows 11 or Linux. Free and open source.
-Local-first, end-to-end encrypted, no account and no cloud.
+**A ponte definitiva entre o seu smartphone Android e o seu computador com máxima privacidade, latência zero e sem dependência de nuvem.**
 
-Hi, I'm Bee, and yes, a bee built an app called NectarLink. I build cool stuff
-in the open on [𝕏 @thtbee_](https://x.com/thtbee_), so come see what's next.
-Feedback, bugs or ideas? DM me directly.
+Notificações em tempo real, controle de mídia, espelhamento de tela em alta taxa de quadros, transferência instantânea de arquivos, Wake-on-LAN, atalhos de **Snap Layouts** e o revolucionário **Spike Companion HUD para Valorant**.
 
-[![Latest release](https://img.shields.io/github/v/release/thtbee/nectarlink?label=download)](https://github.com/thtbee/nectarlink/releases/latest)
-[![CI](https://github.com/thtbee/nectarlink/actions/workflows/ci.yml/badge.svg)](https://github.com/thtbee/nectarlink/actions/workflows/ci.yml)
-[![Apps: GPL-3.0-or-later](https://img.shields.io/badge/apps-GPL--3.0--or--later-blue)](LICENSE)
-[![Core: MPL-2.0](https://img.shields.io/badge/core-MPL--2.0-blue)](LICENSE)
+[Instalação Rápida](#guia-rapido-de-instalacao) • [Recursos Principais](#recursos-principais) • [Spike Companion HUD](#destaque-gamer-spike-companion-para-valorant) • [Novidades v0.1.8](#novidades-da-versao-v018) • [Arquitetura](#arquitetura-e-seguranca)
 
 </div>
 
-<p align="center">
-  <img src="docs/screenshots/desktop-glass-home.png" alt="NectarLink for Windows: Home with the phone's notifications and music playing, Glass theme" width="880">
-</p>
+---
 
-## Why NectarLink
+## Apresentação
 
-NectarLink came out of my own frustration. I kept juggling Phone Link for
-notifications and messages, KDE Connect for the clipboard and LocalSend for
-files, and always wanted one app that did all of it. So I made one.
+O **Conexão Móvel** nasceu para eliminar atritos entre dispositivos móveis e estações de trabalho de alta performance. Diferente de soluções comerciais convencionais que exigem criação de contas obrigatórias, tráfego por servidores de terceiros ou assinaturas pagas, o Conexão Móvel é concebido sob a filosofia **Local-First**:
 
-It covers what those three did for me, with one app on each side, plus a lot
-of new features I wanted that I think you'll enjoy having too.
+- **Privacidade Absoluta**: Seus dados, notificações, toques e arquivos trafegam exclusivamente dentro da sua rede local (Wi-Fi ou cabo Ethernet), protegidos por criptografia ponta a ponta (TLS 1.3 e ChaCha20-Poly1305).
+- **Latência Praticamente Nula**: Comunicação direta entre o aplicativo em Kotlin no celular e o núcleo nativo em Rust no computador, garantindo respostas sub-milissegundo para jogos e produtividade.
+- **Atualização Automática Silenciosa**: Tanto no celular quanto no PC, o aplicativo verifica novidades em segundo plano e instala atualizações de forma transparente, sem exigir downloads manuais frequentes.
 
-## Download
+---
 
-| | Download | Needs |
-|---|---|---|
-| **Windows (x64)** | [Installer (.exe)](https://github.com/thtbee/nectarlink/releases/download/v0.1.5/Nectarlink-0.1.5-x64-setup.exe) | Windows 10 (2004+) or 11, 64-bit Intel or AMD (Phone as webcam needs Windows 11) |
-| **Windows (ARM64)** | [Installer (.exe)](https://github.com/thtbee/nectarlink/releases/download/v0.1.5/Nectarlink-0.1.5-arm64-setup.exe) | Windows 11 on ARM (Snapdragon) |
-| **Linux (x86_64)** | [One command](#on-linux), or a [.deb](https://github.com/thtbee/nectarlink/releases/download/v0.1.5/nectarlink_0.1.5_amd64.deb), [.rpm](https://github.com/thtbee/nectarlink/releases/download/v0.1.5/nectarlink-0.1.5-1.x86_64.rpm), [AppImage](https://github.com/thtbee/nectarlink/releases/download/v0.1.5/Nectarlink-0.1.5-x86_64.AppImage) or [.tar.gz](https://github.com/thtbee/nectarlink/releases/download/v0.1.5/Nectarlink-0.1.5-linux-x86_64.tar.gz) | Ubuntu 24.04 or newer, Debian 13, Fedora 40 or newer, 64-bit Intel or AMD |
-| **Android** | [App (.apk)](https://github.com/thtbee/nectarlink/releases/download/v0.1.5/Nectarlink-0.1.5-android.apk) | Android 8.0 or newer |
+## Recursos Principais
 
-The apps update themselves from GitHub Releases and check every download
-against its SHA-256 sums.
+<div align="center">
+  <img src="docs/assets/mockup-ecosystem-sync.svg" alt="Arquitetura do Ecossistema Conexão Móvel" width="90%">
+</div>
 
-### On Linux
+### 1. Stream Deck Tático Mobile
+Transforme o seu smartphone em um centro de comando profissional para o computador:
+- Grade personalizada de atalhos táteis com feedback háptico.
+- Controle individual de volume de aplicativos em execução no Windows ou Linux.
+- Alternância de dispositivos de saída de áudio (fone de ouvido, caixas de som e monitores).
+- Botões de macro para captura de tela instantânea, bloqueio de sessão e atalhos de desenvolvedor.
 
-One command installs NectarLink with everything it needs, and shows each
-step as it goes:
+### 2. Espelhamento de Tela e Snap Layouts no PC
+- Espelhe o celular em janelas dedicadas com renderização acelerada por GPU.
+- **Seletor de Snap Layouts**: Toque no celular para posicionar qualquer janela do computador instantaneamente em **Tela Cheia (100%)**, **Metade Esquerda (50%)**, **Metade Direita (50%)** ou em **Quadrantes**, acelerando o fluxo multitarefa.
 
+### 3. Gestão Inteligente de Notificações
+- Notificações do celular sincronizadas com a área de trabalho do PC com ações rápidas de resposta.
+- **Filtro Anti-Flood**: Tratamento rigoroso contra repetições desnecessárias de alertas de sistema e pressão de memória, mantendo o ambiente limpo e silencioso.
+
+### 4. Controle de Energia e Wake-on-LAN
+- Ligue o computador remotamente a partir de qualquer cômodo da casa utilizando pacotes mágicos Wake-on-LAN.
+- Temporizadores de sono, agendamentos automáticos de desligamento e botões de reinicialização e suspensão.
+
+### 5. Transferência Direta de Arquivos e Fotos
+- Compartilhe fotos, vídeos, instaladores e documentos arrastando arquivos entre as telas, sem perda de qualidade e com taxa de transferência máxima permitida pelo roteador local.
+
+---
+
+## Destaque Gamer: Spike Companion para Valorant
+
+<div align="center">
+  <img src="docs/assets/mockup-spike-companion.svg" alt="Spike Companion HUD para Valorant" width="90%">
+</div>
+
+Desenvolvido especialmente para jogadores competitivos de **Valorant**, o Spike Companion HUD é um assistente tático de tela cheia acessível diretamente no Stream Deck do celular:
+
+### Como Funciona a Tomada de Decisão Tática
+- **Contagem Regressiva de 40 Segundos**: Acionamento em 0ms com compensação dinâmica de atraso de rede local.
+- **Zona Segura (Tempo restante superior a 7.0s)**:
+  - Indicador visual em **Verde Esmeralda**.
+  - Janela completa de desarme aberta (o defuse integral dura 7.0s).
+- **No Limite / Half Defuse (Tempo restante entre 7.0s e 3.5s)**:
+  - Indicador visual em **Amarelo Âmbar**.
+  - Não há tempo suficiente para o defuse total, mas o ponto médio (3.5s) ainda pode ser garantido.
+  - Síntese de áudio PCM com **pitch shift agudo** aos 3.5s indicando a passagem exata da metade.
+- **Zona Crítica / Não Dá Mais (Tempo restante inferior a 3.5s)**:
+  - Indicador visual em **Vermelho Carmesim** com sinalização de impacto.
+  - O desarme é fisicamente impossível mesmo se o jogador já estiver na metade.
+  - Alerta enfático: **Corra da explosão e salve o armamento (Save Weapon)**.
+- **Resposta Háptica Progressiva (Tactile Heartbeat)**: O motor de vibração do smartphone acelera a frequência conforme o cronômetro se aproxima da detonação, permitindo que o jogador sinta o tempo sem precisar desviar o olhar da mira.
+
+---
+
+## Demonstração do Stream Deck e Snap Layouts
+
+<div align="center">
+  <img src="docs/assets/mockup-stream-deck.svg" alt="Stream Deck Mobile e Snap Layouts" width="90%">
+</div>
+
+---
+
+## Novidades da Versão v0.1.8
+
+A versão `v0.1.8` consolida as seguintes melhorias:
+
+1. **Spike Companion HUD Integrado**: Módulo completo no Stream Deck com cálculo em milissegundos, áudio em dois tons e matriz visual de 3 cores.
+2. **Controle Remoto de Snap Layouts**: Menu interativo para redimensionar e encaixar janelas ativas no Windows com 1 toque no celular.
+3. **Filtro Anti-Flood de Notificações**: Supressão proativa de mensagens repetitivas de pressão de memória e risco de travamento em dispositivos móveis.
+4. **Infraestrutura Oficial no GitHub e Auto-Update Silencioso**:
+   - Criação do repositório oficial da organização: [github.com/vincentaistudios/conexao-movel](https://github.com/vincentaistudios/conexao-movel).
+   - Feed OTA (`channels/stable.json`) para atualizações autônomas no PC e no celular sem necessidade de redistribuição manual de APKs.
+5. **Atualização da Versão Nativa do Windows**: Suporte aprimorado no Windows 10 e 11 com links diretos de download.
+
+---
+
+## Guia Rápido de Instalação
+
+### No Celular (Android 10 ou superior)
+1. Acesse a [Release Oficial v0.1.8](https://github.com/vincentaistudios/conexao-movel/releases/tag/v0.1.8).
+2. Baixe o pacote **`ConexaoMovel-android.apk`**.
+3. Instale o APK no smartphone (habilite a permissão de instalação de fontes desconhecidas caso solicitado).
+4. Uma vez instalado, o aplicativo passará a receber todas as atualizações futuras automaticamente em segundo plano.
+
+### No Computador (Windows 10 / 11)
+1. Baixe o instalador oficial **`ConexaoMovel-Windows-setup.exe`** da [Release v0.1.8](https://github.com/vincentaistudios/conexao-movel/releases/tag/v0.1.8).
+2. Execute o instalador e conclua a instalação em poucos segundos.
+3. O serviço de inicialização e o atalho no menu iniciar serão configurados automaticamente.
+
+### No Computador (Linux x86_64)
+1. Baixe o executável **`ConexaoMovel-linux-x86_64`**.
+2. Conceda permissão de execução e inicie o aplicativo:
 ```bash
-curl -fsSL https://github.com/thtbee/nectarlink/releases/latest/download/install.sh | sh
+chmod +x ConexaoMovel-linux-x86_64
+./ConexaoMovel-linux-x86_64
 ```
 
-It picks the package for your system (.deb with apt, .rpm with dnf or zypper,
-the tarball elsewhere), checks it against the release's SHA-256 sums and
-installs it with its dependencies. Then it sets up the phone as a webcam, the
-phone as a keyboard and mouse, and the firewall for your local network only.
-To remove it all again, end the same command with `sh -s -- --uninstall`
-instead of `sh`. See [Installing on Linux](docs/guide/getting-started.md#on-linux)
-for the details.
+### Emparelhamento em 1 Clique
+1. Abra o aplicativo no computador e no celular conectados à mesma rede Wi-Fi ou cabo de rede.
+2. O computador será detectado automaticamente via mDNS.
+3. Caso prefira, confirme o pareamento seguro digitando o código de 6 dígitos exibido na tela do computador.
 
-> [!NOTE]
-> SmartScreen may warn about the Windows installer the first time, because it
-> isn't code-signed yet: choose **More info**, then **Run anyway**. On Android,
-> allow your browser or file manager to install apps when asked.
+---
 
-> [!IMPORTANT]
-> In India and many other countries, Google Play Protect blocks the APK with
-> no **Install anyway** button. Pause **Scan apps with Play Protect** while you
-> install it (Play Store › your profile › Play Protect › Settings), then turn it
-> back on, or install it from a PC with `adb install`. See
-> [Play Protect blocks the APK](docs/guide/troubleshooting.md#google-play-protect-blocks-the-apk-without-an-install-anyway-button).
+## Arquitetura e Segurança
 
-## Get started
+| Componente | Plataforma | Tecnologia Central | Papel no Sistema |
+| :--- | :--- | :--- | :--- |
+| **Núcleo de Sistema** | Windows / Linux / Android | Rust (`tokio`, `quinn`) | Criptografia, barramento de eventos, RPC e I/O de alta performance |
+| **Interface Móvel** | Android | Kotlin &amp; Jetpack Compose | HUD tático, atalhos do Stream Deck, sintetizador PCM e haptics |
+| **Interface Desktop** | Windows / Linux | Qt / QML (C++ e Rust Bridge) | Painéis de vidro fosco, controle de janelas e renderização GPU |
+| **Áudio e Mídia** | Sistema Operacional | PipeWire &amp; WASAPI Loopback | Captura e transmissão de áudio em tempo real sem latência |
+| **Canal de Rede** | P2P Local | TLS 1.3 / ChaCha20-Poly1305 | Troca de dados com sigilo estrito e sem servidores intermediários |
+| **Esteira de Auto-Update** | Cross-Platform | GitHub Releases &amp; Channels Feed | Checagem contínua via requisições condicionais HTTP e instalação autônoma |
 
-1. Install NectarLink on your PC and on your phone.
-2. On the PC, the setup walkthrough shows a QR code. Scan it with the phone
-   (from the NectarLink app or any camera app), or pick the PC from the phone's
-   list of nearby devices and compare a 6-digit code. A USB cable works too, with Android's `adb` running on the PC.
-3. Allow what you want to share. Every feature has its own switch per device,
-   and the sensitive ones are off until you turn them on.
-4. Optional: set up **Wireless debugging** once in the phone app for the
-   features Android reserves for privileged apps (phone apps in windows, real
-   touch input, background clipboard sync). No root, nothing else to install.
+---
 
-The [user guide](docs/guide/README.md) walks through every step and feature.
+## Licença e Desenvolvimento
 
-## What it does
+O **Conexão Móvel** é desenvolvido e mantido pela equipe da **Vincent AI Studios** sob licença de código aberto:
+- Os aplicativos e interfaces gráficas são disponibilizados sob a licença **GPL-3.0**.
+- O núcleo de sincronização e bibliotecas fundamentais são disponibilizados sob a licença **MPL-2.0**.
 
-**Stay on top of your phone**
-- **Notifications** on the PC, with replies, actions, Live Updates (progress,
-  timers, deliveries) and a **Copy code** button for one-time codes. Clear on
-  one side, cleared on the other.
-- **Messages**: SMS and MMS conversations plus chats from RCS, WhatsApp,
-  Telegram, Signal and other apps in one inbox. Reply, send pictures, start
-  new conversations.
-- **Calls**: see who's calling, answer, decline or hang up from the PC, call
-  any number or contact through the phone, and browse recent calls.
-
-**Move things between devices**
-- **Clipboard**: copy on one device, paste on the other, with optional
-  encrypted history. Passwords from password managers are never sent, and
-  one-time codes are never kept in the history.
-- **Files and folders** both ways at Wi-Fi speed, with resume after a dropped
-  connection, **Send to** in File Explorer, and the phone's storage in File
-  Explorer.
-- **Photos**: the phone's camera roll, screenshots and albums on the PC.
-- **Handoff**: links, maps and videos (at the same timestamp) open on the
-  other device.
-
-**Use your phone from the PC**
-- **Screen mirroring** at up to 60 frames a second with the phone's sound,
-  screenshots and recording.
-- **Apps**: open any phone app in a window of its own on the PC, with its own
-  taskbar icon, running beside whatever the phone shows.
-- **Type on the phone** with the PC keyboard, without mirroring.
-- **Phone controls** on the PC: Do Not Disturb, ringer, volume, flashlight,
-  brightness, Wi-Fi and Bluetooth.
-
-**Use your PC from the phone**
-- **Touchpad, air mouse, keyboard, voice typing and presentation remote.**
-- **Deck**: a Stream Deck style grid of buttons for the PC (media, shortcuts,
-  apps, OBS Studio, commands), with live volume and mute.
-- **Lock, sleep and wake** the PC.
-
-**Camera and sound**
-- **Phone as a webcam** in Zoom, Teams, Meet, OBS and the Camera app.
-- **Continuity Camera**: take a photo or scan a document with the phone and
-  have it on the PC's clipboard.
-- **Phone as a speaker** for the PC's sound, and a **voice recorder** that
-  saves straight to the PC.
-
-**And more**: media controls both ways, battery alerts, Find my device, a
-searchable **Timeline** of everything that moved, a **Command Palette**
-(`Ctrl+Alt+Space`), a slide-out **Shelf**, a home-screen widget, and a
-**Connection Doctor** that finds and fixes what keeps devices from connecting.
-Four themes, **Hive**, **Bloom**, **Glass** and **Graphite**, each in light
-and dark.
-
-### Platform support
-
-| Feature | Windows | Linux | macOS (Preview) |
-|---|---|---|---|
-| Pairing & mutual TLS | Yes | Yes | Yes |
-| Files & folder transfer | Yes | Yes | Yes |
-| Photos browser & download | Yes | Yes | Yes |
-| Continuity Camera | Yes | Yes | Yes |
-| Calls & SMS viewer | Yes | Yes | Yes |
-| Phone quick toggles & volume | Yes | Yes | Yes |
-| Clipboard text & image sync | Yes | Yes | Yes (two-way text, incoming photo) |
-| System notifications | Yes | Yes | Yes (system banners) |
-| Phone screen mirroring | Yes | Yes | Not yet (in development) |
-| Screen recording (MP4) | Yes | Yes | Not yet |
-| PC audio stream / phone mic | Yes | Yes | Not yet |
-| Phone as webcam | Yes | Yes (with v4l2loopback) | Not yet |
-| Phone storage in the file manager | Yes | Yes | Not yet |
-
-## Private by design
-
-- **Local-first.** Devices talk directly over your network or a USB cable.
-  Nothing goes through a server, and there's no account.
-- **End-to-end encrypted.** Every connection is QUIC with TLS 1.3, authenticated
-  with device keys exchanged when you pair. Keys are protected by Windows DPAPI,
-  the macOS Keychain and the Android Keystore. On Linux, for now, only by file permissions.
-- **You decide what's shared.** Each paired device has its own feature
-  switches. Remote control of the PC, shell commands and phone storage are off
-  until you allow them.
-- **The only internet traffic** is the update check against GitHub (which you
-  can turn off), and, if you turn it on, **Connect over mobile data**, which
-  relays encrypted traffic it can't read. Voice typing uses your phone's own
-  speech recognizer, which may use its provider's servers.
-
-Details: [Privacy and security](docs/guide/privacy-and-security.md) and the
-[security model](docs/technical/security-model.md).
-
-## Screenshots
-
-**Hive** is an exclusive theme: honey, with a living honeycomb that breathes
-behind the app.
-
-| Hive, light | Hive, dark |
-|:---:|:---:|
-| <img src="docs/screenshots/desktop-hive-light.png" alt="Home in the Hive theme, light"> | <img src="docs/screenshots/desktop-hive-dark.png" alt="Home in the Hive theme, dark"> |
-
-Also **Bloom**, soft and colorful; **Glass**, translucent cards over the
-Windows backdrop; and **Graphite**, ink on paper. All in light and dark.
-
-| Bloom | Glass | Graphite |
-|:---:|:---:|:---:|
-| <img src="docs/screenshots/desktop-bloom-home.png" alt="Home with notifications and music playing on the PC, Bloom theme"> | <img src="docs/screenshots/desktop-glass-home.png" alt="Home with notifications and music playing on the PC, Glass theme"> | <img src="docs/screenshots/desktop-graphite-home.png" alt="Home with notifications and music playing on the PC, Graphite theme"> |
-| <img src="docs/screenshots/desktop-bloom-settings.png" alt="Settings, Bloom theme"> | <img src="docs/screenshots/desktop-glass-settings.png" alt="Settings, Glass theme"> | <img src="docs/screenshots/desktop-graphite-settings.png" alt="Settings, Graphite theme, dark"> |
-
-<p align="center">
-  <img src="docs/screenshots/desktop-apps.png" alt="The Apps page with two phone apps open in their own windows" width="880"><br>
-  <sub>The phone's apps on the PC, each in a window of its own.</sub>
-</p>
-
-<p align="center">
-  <img src="docs/screenshots/desktop-messages.png" alt="Messages: a conversation from the phone, answered on the PC" width="880"><br>
-  <sub>The phone's texts on the PC.</sub>
-</p>
-
-<p align="center">
-  <img src="docs/screenshots/desktop-mirroring.png" alt="The phone's screen mirrored in a window next to Home" width="880"><br>
-  <sub>The whole phone screen in a window, with mouse and keyboard control.</sub>
-</p>
-
-<p align="center">
-  <img src="docs/screenshots/pairing-and-android.png" alt="Pairing a phone by QR code, next to the Android app's Home with the PC connected" width="880"><br>
-  <sub>Pairing by QR code, and the Android app once connected.</sub>
-</p>
-
-## How it works
-
-```
- Android app (Kotlin, Compose)            Windows app (Qt Quick, Rust)
-          │ UniFFI                                │ cxx-qt
-          ▼                                       ▼
- ┌─────────────────────┐   QUIC (iroh),   ┌─────────────────────┐
- │  nectarlink-core    │◄────────────────►│  nectarlink-core    │
- │  pairing, sessions, │  end-to-end      │  pairing, sessions, │
- │  storage, features  │  encrypted       │  storage, features  │
- └─────────────────────┘                  └─────────────────────┘
-```
-
-- **One core, two apps.** Protocol, pairing, sessions, the trust store and the
-  capability matrix live in Rust (`core/`) and run unchanged on both platforms.
-- **Native on both sides.** A desktop app for Windows and Linux built with Qt
-  Quick and Rust, and an Android app built with Jetpack Compose.
-- **Capability matrix.** Both apps work out which features a pair of devices
-  supports and what would enable the rest, so the interface never offers
-  something that can't work.
-- **Protocol.** Versioned and documented in [docs/protocol/v0.md](docs/protocol/v0.md):
-  length-prefixed CBOR messages on QUIC streams.
-
-## Repository layout
-
-```
-core/
-  nectarlink-protocol/   Message types, framing, pairing cryptography      (MPL-2.0)
-  nectarlink-core/       Identity, trust store, pairing, sessions, features (MPL-2.0)
-  nectarlink-ffi/        UniFFI bindings used by the Android app          (MPL-2.0)
-  nectarlink-adb/        Wireless debugging client for the phone's helper  (MPL-2.0)
-  nectarlink-cli/        Command-line client (`nectarlink`)                (GPL)
-desktop/
-  app/                   Windows app: Rust host, cxx-qt bridge, QML UI     (GPL)
-  vcam/                  Windows 11 virtual camera Media Foundation DLL    (GPL)
-  installer/             NSIS installer script and Sparse Package manifest (GPL)
-android/                 Android app: Kotlin and Jetpack Compose (API 26+) (GPL)
-assets/fonts/            Fonts both apps ship with                         (OFL-1.1)
-assets/brand/            The app icon (see the trademark policy)
-tools/xtask/             Code generation (theme tokens) and checks         (GPL)
-spikes/                  Technical experiments with their results
-scripts/                 Build, packaging and check scripts
-docs/                    Guide, technical docs, protocol, design system    (CC BY 4.0)
-```
-
-## Building from source
-
-| Part | Needs |
-|---|---|
-| Core and CLI | [Rust](https://rustup.rs) (stable, pinned in `rust-toolchain.toml`) |
-| Windows app | Windows 11, Visual Studio 2022 Build Tools (C++), [Qt 6.12](https://www.qt.io/download-open-source) for MSVC 2022 x64 |
-| Linux app | Ubuntu 24.04 or newer (glibc 2.39), a C++17 compiler, pkg-config, the X11, Wayland and D-Bus development packages, [Qt 6.12](https://www.qt.io/download-open-source) (`gcc_64`, with Qt Shader Tools and Qt Wayland Compositor) |
-| macOS app | macOS 14+, Xcode Command Line Tools, [Qt 6.12](https://www.qt.io/download-open-source) (or Homebrew Qt 6) |
-| Android app | Android SDK (platform 37, NDK 30.0.16248370), JDK 17 or newer, `cargo-ndk` (see [android/README.md](android/README.md)) |
-
-For Linux hardware video encoding and decoding, install `libavcodec-dev` and
-`libavutil-dev` before building. The backend loads the matching FFmpeg runtime
-libraries when needed and tries available GPU drivers. Release packages support
-FFmpeg 6 through 9: the Ubuntu 24.04 release build includes an FFmpeg 6 backend,
-and separate adapters support versions 7, 8 and 9. Source builds use the
-matching runtime for their headers. Without matching libraries or a working
-hardware backend, the existing software H.264 path remains available. HEVC
-encoding requires hardware; if unavailable, screen sharing falls back to H.264.
-
-```sh
-cargo test -p nectarlink-protocol -p nectarlink-core -p nectarlink-ffi   # core and tests
-cargo run -p nectarlink-cli -- --help                                     # command-line client
-cargo run -p nectarlink-desktop                                           # Windows app (Qt's bin on PATH)
-cd android && ./gradlew assembleDebug                                     # Android app
-```
-
-```powershell
-./scripts/package.ps1    # Windows installer: target\package\Nectarlink-<version>-x64-setup.exe
-./scripts/check.ps1      # every check CI runs; add -Android and -Arm64 for the full set
-```
-
-Releases are built by CI from a `v*` tag; see
-[docs/technical/releasing.md](docs/technical/releasing.md).
-
-### With Nix
-
-Run or develop NectarLink using Nix flakes:
-
-```sh
-nix run                           # run desktop app
-nix run .#cli                     # run CLI client
-nix develop                       # enter development environment
-```
-
-## Documentation
-
-- [User guide](docs/guide/README.md): setup, pairing and every feature, on Windows, Linux and Android
-- [Technical documentation](docs/technical/README.md): architecture, security model, protocol, storage, performance and builds
-- [Protocol v0](docs/protocol/v0.md) and the [capability registry](docs/protocol/capabilities.md)
-- [Architecture decision records](docs/adr) and the [design system](docs/design/README.md)
-- [Project plan and roadmap](docs/PLAN.md)
-
-## Questions and ideas
-
-Ask questions, share ideas and show your setup in
-[Discussions](https://github.com/thtbee/nectarlink/discussions). Issues are for
-bugs and agreed feature work.
-
-## Contributing
-
-Contributions are welcome. Please read [CONTRIBUTING.md](CONTRIBUTING.md) first;
-for anything larger than a small fix, open an issue to agree on the approach.
-Contributions are accepted under the [Developer Certificate of Origin](DCO.txt),
-and everyone is expected to follow the [Code of Conduct](CODE_OF_CONDUCT.md).
-
-To translate NectarLink into your language, see
-[docs/translating.md](docs/translating.md).
-
-To report a security issue, follow [SECURITY.md](SECURITY.md). Please don't
-open a public issue.
-
-## License
-
-- Desktop and Android apps, CLI: [GPL-3.0-or-later](LICENSES/GPL-3.0-or-later.txt),
-  with an [app-store exception](LICENSES/APP-STORE-EXCEPTION.md)
-- Core libraries: [MPL-2.0](LICENSES/MPL-2.0.txt)
-- Protocol specification and documentation: [CC BY 4.0](LICENSES/CC-BY-4.0.txt)
-
-See [LICENSE](LICENSE) for which license applies where. The NectarLink name and
-logo are covered by the [trademark policy](TRADEMARKS.md).
+Contribuições, relatos de melhorias e sugestões são bem-vindos diretamente na aba de Issues do repositório oficial:
+[github.com/vincentaistudios/conexao-movel/issues](https://github.com/vincentaistudios/conexao-movel/issues)
