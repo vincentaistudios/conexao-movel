@@ -1,0 +1,9 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="124" height="22" viewBox="0 0 124 22">
+  <rect width="124" height="22" rx="4" fill="#334155" />
+  <rect width="55" height="20" x="1" y="1" rx="3" fill="#1e293b" />
+  <rect width="68" height="20" x="56" y="1" rx="3" fill="#15803d" />
+  <g fill="#ffffff" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif" font-size="11" font-weight="600">
+    <text x="28.0" y="15" text-anchor="middle" fill="#e2e8f0">Android</text>
+    <text x="90.0" y="15" text-anchor="middle">10 ou superior</text>
+  </g>
+</svg>

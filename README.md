@@ -5,13 +5,13 @@
 <br>
 
 <p align="center">
-  <a href="https://github.com/vincentaistudios/conexao-movel/releases/tag/v0.1.8"><img src="https://img.shields.io/badge/Versao-v0.1.8-38bdf8?style=flat-square" alt="Versao v0.1.8"></a>
-  <a href="https://github.com/vincentaistudios/conexao-movel/releases/tag/v0.1.8"><img src="https://img.shields.io/badge/Download-Instaladores%20Oficiais-10b981?style=flat-square" alt="Downloads"></a>
-  <img src="https://img.shields.io/badge/Android-10+-3ddc84?style=flat-square" alt="Android 10+">
-  <img src="https://img.shields.io/badge/Windows-10%20%2F%2011-0078d4?style=flat-square" alt="Windows 10 / 11">
-  <img src="https://img.shields.io/badge/Linux-x86__64-eab308?style=flat-square" alt="Linux">
-  <img src="https://img.shields.io/badge/Arquitetura-Local--First-818cf8?style=flat-square" alt="Local First">
-  <a href="LICENSE"><img src="https://img.shields.io/badge/Licenca-GPL--3.0-blue?style=flat-square" alt="Licenca"></a>
+  <a href="https://github.com/vincentaistudios/conexao-movel/releases/tag/v0.1.8"><img src="assets/badges/badge-version.svg" alt="Versao v0.1.8"></a>
+  <a href="https://github.com/vincentaistudios/conexao-movel/releases/tag/v0.1.8"><img src="assets/badges/badge-download.svg" alt="Download Oficial"></a>
+  <img src="assets/badges/badge-android.svg" alt="Android 10 ou superior">
+  <img src="assets/badges/badge-windows.svg" alt="Windows 10 e 11">
+  <img src="assets/badges/badge-linux.svg" alt="Linux x86_64">
+  <img src="assets/badges/badge-localfirst.svg" alt="Arquitetura Local-First">
+  <a href="LICENSE"><img src="assets/badges/badge-license.svg" alt="Licenca GPL-3.0"></a>
 </p>
 
 **A ponte definitiva entre o seu smartphone Android e o seu computador com máxima privacidade, latência zero e sem dependência de nuvem.**
