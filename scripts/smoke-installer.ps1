@@ -1,4 +1,4 @@
-# SPDX-License-Identifier: GPL-3.0-or-later
+﻿# SPDX-License-Identifier: GPL-3.0-or-later
 <#
 .SYNOPSIS
   Installs, starts, quits and uninstalls the packaged app silently, checking
@@ -23,8 +23,8 @@ if (-not $Setup -or -not (Test-Path $Setup)) { throw "no setup installer found t
 $dir = Join-Path $env:ProgramFiles 'Nectarlink'
 $exe = Join-Path $dir 'nectarlink-desktop.exe'
 $uninstallKey = 'HKLM:\Software\Microsoft\Windows\CurrentVersion\Uninstall\Nectarlink'
-$shortcut = Join-Path $env:ProgramData 'Microsoft\Windows\Start Menu\Programs\Nectarlink.lnk'
-$desktopShortcut = Join-Path $env:PUBLIC 'Desktop\NectarLink.lnk'
+$shortcut = Join-Path $env:ProgramData 'Microsoft\Windows\Start Menu\Programs\Conexão Móvel.lnk'
+$desktopShortcut = Join-Path $env:PUBLIC 'Desktop\Conexão Móvel.lnk'
 $data = if ($env:RUNNER_TEMP) { Join-Path $env:RUNNER_TEMP 'nectarlink-smoke' } else { Join-Path $env:TEMP 'nectarlink-smoke' }
 
 function Check($what, [bool]$ok) {
