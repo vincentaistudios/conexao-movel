@@ -576,9 +576,9 @@ pub fn install_update_in_background() {
             let _ = qt.queue(move |mut object| match result {
                 Ok(()) => {
                     object.as_mut().set_update_progress(-1.0);
-                    object
-                        .as_mut()
-                        .set_update_status(QString::from("Instalando. O Conexão Móvel será reaberto automaticamente."));
+                    object.as_mut().set_update_status(QString::from(
+                        "Instalando. O Conexão Móvel será reaberto automaticamente.",
+                    ));
                 }
                 Err(message) => {
                     object.as_mut().set_update_busy(false);
@@ -1815,7 +1815,10 @@ impl qobject::AppController {
                     let latest = node.phone_toggles(device);
                     core_host::host().hub.update(|s| s.set_toggles(device, latest));
                     if failed_id == "bluetooth" || failed_id == "wifi" {
-                        show_message(tr!("Errors", "This action requires Elevated mode active on the phone (Settings › Elevated)."));
+                        show_message(tr!(
+                            "Errors",
+                            "This action requires Elevated mode active on the phone (Settings › Elevated)."
+                        ));
                     } else {
                         show_message(describe(&e));
                     }

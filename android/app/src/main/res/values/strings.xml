@@ -647,6 +647,7 @@
     <string name="deck_default_switch_window">Alternar janela</string>
     <string name="deck_default_screenshot">Captura de tela</string>
     <string name="deck_default_lock_pc">Bloquear PC</string>
+    <string name="deck_default_valorant">Valorant</string>
 
     <!-- Remote special keys -->
     <string name="remote_key_ctrl">Ctrl</string>

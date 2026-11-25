@@ -240,26 +240,6 @@ fun DeckScreen(
                 }
             }
             FilledTonalButton(
-                onClick = {
-                    view.performHapticFeedback(HapticFeedbackConstants.KEYBOARD_TAP)
-                    spikePlantedTimestamp = System.currentTimeMillis()
-                    showSpikeCompanionSheet = true
-                },
-                colors = androidx.compose.material3.ButtonDefaults.filledTonalButtonColors(
-                    containerColor = Color(0xFF2B1414),
-                    contentColor = Color(0xFFFF5252),
-                ),
-                border = BorderStroke(1.dp, Color(0xFFFF5252).copy(alpha = 0.5f)),
-                contentPadding = PaddingValues(horizontal = 10.dp, vertical = 6.dp),
-            ) {
-                Text(
-                    "Spike HUD",
-                    style = MaterialTheme.typography.labelMedium,
-                    fontWeight = FontWeight.Bold,
-                )
-            }
-            Spacer(Modifier.width(6.dp))
-            FilledTonalButton(
                 onClick = { showAddTileDialog = true },
                 contentPadding = PaddingValues(horizontal = 12.dp, vertical = 6.dp),
             ) {
@@ -1269,6 +1249,7 @@ private fun fallbackDefaultLayout(context: Context): DeckLayout = DeckLayout(
                 DeckTile("switch_window", context.getString(R.string.deck_default_switch_window), "switch_window", "blue", "switch_window"),
                 DeckTile("screenshot", context.getString(R.string.deck_default_screenshot), "screenshot", "violet", "screenshot"),
                 DeckTile("lock_pc", context.getString(R.string.deck_default_lock_pc), "lock", "red", "lock_pc"),
+                DeckTile("valorant_spike", context.getString(R.string.deck_default_valorant), "gamepad", "ruby", "valorant_spike"),
             ),
         ),
     ),
@@ -1290,6 +1271,7 @@ internal fun defaultDeckLabel(label: String): Int? = when (label) {
     "Switch window" -> R.string.deck_default_switch_window
     "Screenshot" -> R.string.deck_default_screenshot
     "Lock PC" -> R.string.deck_default_lock_pc
+    "Valorant" -> R.string.deck_default_valorant
     else -> null
 }
 

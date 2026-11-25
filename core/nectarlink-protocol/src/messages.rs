@@ -3505,8 +3505,19 @@ pub mod toggle_ids {
     pub const BT_CONNECT: &str = "bt_connect";
     pub const BT_DISCONNECT: &str = "bt_disconnect";
     pub const ALL: &[&str] = &[
-        DND, RINGER, FLASHLIGHT, VOLUME, BRIGHTNESS, WIFI, BLUETOOTH, HOTSPOT, PC_ACTIVE,
-        WIFI_SCAN, WIFI_CONNECT, BT_CONNECT, BT_DISCONNECT,
+        DND,
+        RINGER,
+        FLASHLIGHT,
+        VOLUME,
+        BRIGHTNESS,
+        WIFI,
+        BLUETOOTH,
+        HOTSPOT,
+        PC_ACTIVE,
+        WIFI_SCAN,
+        WIFI_CONNECT,
+        BT_CONNECT,
+        BT_DISCONNECT,
     ];
 }
 
@@ -3614,9 +3625,7 @@ impl PhoneToggleSet {
             ) => true,
             (toggle_ids::VOLUME | toggle_ids::BRIGHTNESS, PhoneToggleValue::Level(n)) => *n <= 100,
             (
-                toggle_ids::WIFI_CONNECT
-                | toggle_ids::BT_CONNECT
-                | toggle_ids::BT_DISCONNECT,
+                toggle_ids::WIFI_CONNECT | toggle_ids::BT_CONNECT | toggle_ids::BT_DISCONNECT,
                 PhoneToggleValue::Mode(_),
             ) => true,
             (toggle_ids::RINGER, PhoneToggleValue::Mode(m)) => {
@@ -4497,8 +4506,7 @@ impl std::fmt::Debug for MediaDownloadRpc {
 impl MediaDownloadRpc {
     /// Validates operation whitelist and size limits.
     pub fn is_valid(&self) -> bool {
-        media_download::is_valid_op(&self.op)
-            && self.payload_json.len() <= media_download::MAX_PAYLOAD_BYTES
+        media_download::is_valid_op(&self.op) && self.payload_json.len() <= media_download::MAX_PAYLOAD_BYTES
     }
 }
 
@@ -5453,14 +5461,12 @@ mod tests {
                     is_secure: false,
                 },
             ]),
-            bt_devices: Some(vec![
-                BtDeviceInfo {
-                    name: "Headphones".into(),
-                    address: "00:11:22:33:44:55".into(),
-                    is_connected: true,
-                    device_type: "audio".into(),
-                },
-            ]),
+            bt_devices: Some(vec![BtDeviceInfo {
+                name: "Headphones".into(),
+                address: "00:11:22:33:44:55".into(),
+                is_connected: true,
+                device_type: "audio".into(),
+            }]),
         };
         assert!(extended.is_valid());
         let env_ext = Envelope::new(types::PHONE_TOGGLES, &extended).unwrap();
@@ -6290,13 +6296,15 @@ mod tests {
             let rpc = MediaDownloadRpc { op: (*op).to_owned(), payload_json: r#"{"ok":true}"#.into() };
             assert!(rpc.is_valid(), "op {op} should be valid");
             let env = crate::Envelope::new(types::MEDIA_DOWNLOAD_RPC, &rpc).unwrap();
-            let decoded: MediaDownloadRpc = crate::Envelope::from_cbor(&env.to_cbor()).unwrap().body().unwrap();
+            let decoded: MediaDownloadRpc =
+                crate::Envelope::from_cbor(&env.to_cbor()).unwrap().body().unwrap();
             assert_eq!(decoded, rpc);
         }
 
         let bad_op = MediaDownloadRpc { op: "exec".into(), payload_json: "{}".into() };
         assert!(!bad_op.is_valid());
-        let long_op = MediaDownloadRpc { op: "a".repeat(media_download::MAX_OP_BYTES + 1), payload_json: "{}".into() };
+        let long_op =
+            MediaDownloadRpc { op: "a".repeat(media_download::MAX_OP_BYTES + 1), payload_json: "{}".into() };
         assert!(!long_op.is_valid());
         let big_payload = MediaDownloadRpc {
             op: "inspect".into(),
@@ -6304,21 +6312,14 @@ mod tests {
         };
         assert!(!big_payload.is_valid());
 
-        let reply = MediaDownloadReply {
-            ok: true,
-            body_json: r#"{"status":"ok"}"#.into(),
-            error: None,
-        };
+        let reply = MediaDownloadReply { ok: true, body_json: r#"{"status":"ok"}"#.into(), error: None };
         assert!(reply.is_valid());
         let env = crate::Envelope::new(types::MEDIA_DOWNLOAD_REPLY, &reply).unwrap();
         let decoded: MediaDownloadReply = crate::Envelope::from_cbor(&env.to_cbor()).unwrap().body().unwrap();
         assert_eq!(decoded, reply);
 
-        let err_reply = MediaDownloadReply {
-            ok: false,
-            body_json: String::new(),
-            error: Some("indisponivel".into()),
-        };
+        let err_reply =
+            MediaDownloadReply { ok: false, body_json: String::new(), error: Some("indisponivel".into()) };
         assert!(err_reply.is_valid());
         let env = crate::Envelope::new(types::MEDIA_DOWNLOAD_REPLY, &err_reply).unwrap();
         let decoded: MediaDownloadReply = crate::Envelope::from_cbor(&env.to_cbor()).unwrap().body().unwrap();

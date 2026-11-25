@@ -7177,12 +7177,10 @@ async fn media_download_rpc_routes_valid_ops_and_rejects_invalid() {
     pair_qr(&mut pc, &mut phone).await;
     let pc_id = pc.node.device_id();
 
-    let reply = with_timeout(
-        "health rpc",
-        phone.node.media_download_rpc(pc_id, "health".into(), "{}".into()),
-    )
-    .await
-    .expect("health ok");
+    let reply =
+        with_timeout("health rpc", phone.node.media_download_rpc(pc_id, "health".into(), "{}".into()))
+            .await
+            .expect("health ok");
     assert!(reply.contains(r#""op":"health""#), "{reply}");
 
     let err = with_timeout(

@@ -8,8 +8,8 @@
 // A GUI app: no console window in release builds.
 #![cfg_attr(not(debug_assertions), windows_subsystem = "windows")]
 
-mod automations;
 pub mod adb_setup;
+mod automations;
 mod battery;
 mod bridge;
 mod calls;
@@ -54,6 +54,7 @@ mod remote;
 mod send_to;
 mod settings;
 mod setup;
+pub mod spike_watcher;
 mod startup;
 mod state;
 mod storage;
@@ -62,8 +63,6 @@ mod update_relay;
 mod updater;
 mod version;
 mod webcam;
-pub mod window_switcher;
-pub mod spike_watcher;
 #[cfg(windows)]
 mod win;
 #[cfg(target_os = "linux")]
@@ -72,6 +71,7 @@ mod win;
 #[cfg(target_os = "macos")]
 #[path = "mac/mod.rs"]
 mod win;
+pub mod window_switcher;
 
 use std::{
     path::{Path, PathBuf},

@@ -3911,9 +3911,8 @@ impl NectarlinkNode {
     /// Sends a power action ("lock", "sleep", "shutdown", "reboot") to a paired PC.
     pub async fn pc_power(&self, id: String, action: String) -> Result<()> {
         let id = parse_id(&id)?;
-        let action = core::PowerAction::parse(action.trim().to_ascii_lowercase().as_str()).ok_or_else(|| {
-            NectarlinkError::Internal { reason: format!("unknown power action: {action}") }
-        })?;
+        let action = core::PowerAction::parse(action.trim().to_ascii_lowercase().as_str())
+            .ok_or_else(|| NectarlinkError::Internal { reason: format!("unknown power action: {action}") })?;
         let node = self.node.clone();
         self.run(async move { Ok(node.pc_power(id, action).await?) }).await
     }

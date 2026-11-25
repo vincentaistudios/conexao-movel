@@ -57,7 +57,7 @@ val DECK_PRESET_LIST = listOf(
     DeckPresetItem("crunchyroll", "Crunchyroll", "Animes e Series", "video", "orange"),
     DeckPresetItem("terminal", "Terminal", "Linha de Comando", "terminal", "graphite"),
     DeckPresetItem("calculator", "Calculadora", "Utilitario", "calc", "slate"),
-    DeckPresetItem("valorant_spike", "Spike Companion", "Temporizador Tático Valorant", "bomb", "ruby"),
+    DeckPresetItem("valorant_spike", "Valorant", "HUD e Temporizador da Spike", "gamepad", "ruby"),
 )
 
 @OptIn(ExperimentalLayoutApi::class)

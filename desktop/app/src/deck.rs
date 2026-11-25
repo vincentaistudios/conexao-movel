@@ -82,10 +82,7 @@ pub fn set_page_active(active: bool) {
 pub fn current_wire_layout() -> nectarlink_core::DeckLayout {
     let base_config = {
         let guard = lock(&DECK);
-        guard
-            .as_ref()
-            .map(|rt| rt.config.clone())
-            .unwrap_or_else(DeckConfig::default_deck)
+        guard.as_ref().map(|rt| rt.config.clone()).unwrap_or_else(DeckConfig::default_deck)
     };
     let mut layout = base_config.to_wire_layout();
     let open_wins = crate::window_switcher::list_open_windows();
@@ -305,9 +302,16 @@ pub fn execute_tile(tile_id: &str) -> Result<(), String> {
     if let Some(rest) = tile_id.strip_prefix("snap_win_") {
         // Format: snap_win_<layout>_<wid>
         let layouts = [
-            "fullscreen", "maximize", "max",
-            "top_left", "top_right", "bottom_left", "bottom_right",
-            "left", "right", "center",
+            "fullscreen",
+            "maximize",
+            "max",
+            "top_left",
+            "top_right",
+            "bottom_left",
+            "bottom_right",
+            "left",
+            "right",
+            "center",
         ];
         for layout in layouts {
             let prefix = format!("{layout}_");
@@ -363,14 +367,32 @@ fn launch_named_app(name: &str) -> Result<(), String> {
 fn add_preset_tile(preset: &str) -> Result<(), String> {
     let (label, icon, color, action) = match preset {
         "spotify" => ("Spotify", "music", "emerald", DeckAction::RunCommand { command: "spotify".into() }),
-        "minecraft" => ("Minecraft", "gamepad", "amber", DeckAction::RunCommand { command: "minecraft-launcher".into() }),
+        "minecraft" => {
+            ("Minecraft", "gamepad", "amber", DeckAction::RunCommand { command: "minecraft-launcher".into() })
+        }
         "discord" => ("Discord", "chat", "indigo", DeckAction::RunCommand { command: "discord".into() }),
         "obs" => ("OBS Studio", "video", "ruby", DeckAction::RunCommand { command: "obs".into() }),
-        "browser" => ("Navegador", "globe", "sapphire", DeckAction::RunCommand { command: "chromium".into() }),
-        "twitch" => ("Twitch", "video", "purple", DeckAction::OpenUrl { url: "https://www.twitch.tv".into() }),
-        "crunchyroll" => ("Crunchyroll", "video", "orange", DeckAction::OpenUrl { url: "https://www.crunchyroll.com".into() }),
-        "terminal" => ("Terminal", "terminal", "graphite", DeckAction::RunCommand { command: "x-terminal-emulator".into() }),
-        "valorant_spike" | "spike" => ("Spike Timer", "bomb", "ruby", DeckAction::RunCommand { command: "spike:plant".into() }),
+        "browser" => {
+            ("Navegador", "globe", "sapphire", DeckAction::RunCommand { command: "chromium".into() })
+        }
+        "twitch" => {
+            ("Twitch", "video", "purple", DeckAction::OpenUrl { url: "https://www.twitch.tv".into() })
+        }
+        "crunchyroll" => (
+            "Crunchyroll",
+            "video",
+            "orange",
+            DeckAction::OpenUrl { url: "https://www.crunchyroll.com".into() },
+        ),
+        "terminal" => (
+            "Terminal",
+            "terminal",
+            "graphite",
+            DeckAction::RunCommand { command: "x-terminal-emulator".into() },
+        ),
+        "valorant_spike" | "spike" => {
+            ("Valorant", "gamepad", "ruby", DeckAction::RunCommand { command: "spike:plant".into() })
+        }
         _ => return Err(format!("Unknown preset: {preset}")),
     };
     let page_id = {

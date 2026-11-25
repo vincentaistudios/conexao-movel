@@ -200,10 +200,38 @@ fn looks_virtual_name(friendly: &str, description: &str) -> bool {
     let f = friendly.to_ascii_lowercase();
     let d = description.to_ascii_lowercase();
     const VIRTUAL_WORDS: &[&str] = &[
-        "virtual", "vethernet", "hyper-v", "wsl", "vmware", "virtualbox", "vbox", "loopback",
-        "tap-", "tap-windows", "tuntap", "wintun", "vpn", "wireguard", "openvpn", "tailscale",
-        "zerotier", "bluetooth", "wan miniport", "ndis", "teredo", "isatap", "docker", "npcap",
-        "wi-fi direct", "hosted network", "radmin", "famatech", "hamachi", "podman", "warp", "nordlynx",
+        "virtual",
+        "vethernet",
+        "hyper-v",
+        "wsl",
+        "vmware",
+        "virtualbox",
+        "vbox",
+        "loopback",
+        "tap-",
+        "tap-windows",
+        "tuntap",
+        "wintun",
+        "vpn",
+        "wireguard",
+        "openvpn",
+        "tailscale",
+        "zerotier",
+        "bluetooth",
+        "wan miniport",
+        "ndis",
+        "teredo",
+        "isatap",
+        "docker",
+        "npcap",
+        "wi-fi direct",
+        "hosted network",
+        "radmin",
+        "famatech",
+        "hamachi",
+        "podman",
+        "warp",
+        "nordlynx",
     ];
     VIRTUAL_WORDS.iter().any(|w| f.contains(w) || d.contains(w))
 }
@@ -324,9 +352,13 @@ pub fn query_wake_status() -> WakeStatus {
     let mut macs = Vec::new();
     let mut broadcasts = Vec::new();
     for a in &adapters {
-        if !macs.contains(&a.mac) { macs.push(a.mac.clone()); }
+        if !macs.contains(&a.mac) {
+            macs.push(a.mac.clone());
+        }
         for b in &a.broadcasts {
-            if !broadcasts.contains(b) { broadcasts.push(b.clone()); }
+            if !broadcasts.contains(b) {
+                broadcasts.push(b.clone());
+            }
         }
     }
     let info = PcWakeInfo { macs, broadcasts }.sanitized();
@@ -366,15 +398,29 @@ pub fn is_fast_startup_enabled() -> bool {
 pub fn normalize_motherboard_vendor(raw: &str) -> String {
     let trimmed = raw.trim();
     let u = trimmed.to_ascii_uppercase();
-    if u.contains("ASUSTEK") || u.contains("ASUS") { "ASUS".into() }
-    else if u.contains("MICRO-STAR") || u.contains("MSI") { "MSI".into() }
-    else if u.contains("GIGABYTE") { "Gigabyte".into() }
-    else if u.contains("ASROCK") { "ASRock".into() }
-    else if u.contains("DELL") { "Dell".into() }
-    else if u.contains("HP") || u.contains("HEWLETT-PACKARD") { "HP".into() }
-    else if u.contains("LENOVO") { "Lenovo".into() }
-    else if u.is_empty() || u.contains("TO BE FILLED") || u.contains("DEFAULT STRING") || u == "SYSTEM MANUFACTURER" { String::new() }
-    else { trimmed.to_string() }
+    if u.contains("ASUSTEK") || u.contains("ASUS") {
+        "ASUS".into()
+    } else if u.contains("MICRO-STAR") || u.contains("MSI") {
+        "MSI".into()
+    } else if u.contains("GIGABYTE") {
+        "Gigabyte".into()
+    } else if u.contains("ASROCK") {
+        "ASRock".into()
+    } else if u.contains("DELL") {
+        "Dell".into()
+    } else if u.contains("HP") || u.contains("HEWLETT-PACKARD") {
+        "HP".into()
+    } else if u.contains("LENOVO") {
+        "Lenovo".into()
+    } else if u.is_empty()
+        || u.contains("TO BE FILLED")
+        || u.contains("DEFAULT STRING")
+        || u == "SYSTEM MANUFACTURER"
+    {
+        String::new()
+    } else {
+        trimmed.to_string()
+    }
 }
 
 /// Identifies the motherboard manufacturer via registry (BaseBoardManufacturer/SystemManufacturer) or WMI.
@@ -382,7 +428,9 @@ pub fn detect_motherboard_vendor() -> String {
     for val_name in ["BaseBoardManufacturer", "SystemManufacturer", "BIOSVendor"] {
         if let Some(raw) = reg_string(BIOS_KEY, val_name) {
             let normalized = normalize_motherboard_vendor(&raw);
-            if !normalized.is_empty() { return normalized; }
+            if !normalized.is_empty() {
+                return normalized;
+            }
         }
     }
     #[cfg(windows)]
@@ -390,13 +438,20 @@ pub fn detect_motherboard_vendor() -> String {
         use std::os::windows::process::CommandExt;
         const CREATE_NO_WINDOW: u32 = 0x0800_0000;
         if let Ok(output) = std::process::Command::new("powershell.exe")
-            .args(["-NoProfile", "-NonInteractive", "-Command", "(Get-CimInstance Win32_BaseBoard).Manufacturer"])
+            .args([
+                "-NoProfile",
+                "-NonInteractive",
+                "-Command",
+                "(Get-CimInstance Win32_BaseBoard).Manufacturer",
+            ])
             .creation_flags(CREATE_NO_WINDOW)
             .output()
         {
             if output.status.success() {
                 let normalized = normalize_motherboard_vendor(&String::from_utf8_lossy(&output.stdout));
-                if !normalized.is_empty() { return normalized; }
+                if !normalized.is_empty() {
+                    return normalized;
+                }
             }
         }
     }
@@ -415,7 +470,9 @@ pub fn reboot_to_uefi_firmware() -> Result<(), String> {
     cmd.creation_flags(CREATE_NO_WINDOW);
 
     if let Ok(output) = cmd.output() {
-        if output.status.success() { return Ok(()); }
+        if output.status.success() {
+            return Ok(());
+        }
     }
 
     match super::elevated::start(std::path::Path::new("shutdown.exe"), "/r /fw /t 0") {
@@ -432,21 +489,35 @@ pub fn apply_wol_and_power_optimizations() -> Result<(), String> {
     const CREATE_NO_WINDOW: u32 = 0x0800_0000;
 
     let mut cmd = std::process::Command::new("powershell.exe");
-    cmd.args(["-NoProfile", "-NonInteractive", "-ExecutionPolicy", "Bypass", "-Command", WOL_OPTIMIZE_SCRIPT]);
+    cmd.args([
+        "-NoProfile",
+        "-NonInteractive",
+        "-ExecutionPolicy",
+        "Bypass",
+        "-Command",
+        WOL_OPTIMIZE_SCRIPT,
+    ]);
     #[cfg(windows)]
     cmd.creation_flags(CREATE_NO_WINDOW);
 
     if let Ok(status) = cmd.status() {
-        if status.success() && !is_fast_startup_enabled() { return Ok(()); }
+        if status.success() && !is_fast_startup_enabled() {
+            return Ok(());
+        }
     }
 
-    let params = format!("-NoProfile -NonInteractive -ExecutionPolicy Bypass -Command \"{WOL_OPTIMIZE_SCRIPT}\"");
+    let params =
+        format!("-NoProfile -NonInteractive -ExecutionPolicy Bypass -Command \"{WOL_OPTIMIZE_SCRIPT}\"");
     match super::elevated::start(std::path::Path::new("powershell.exe"), &params) {
         Ok(proc) => {
             let start = std::time::Instant::now();
             while start.elapsed() < std::time::Duration::from_secs(10) {
                 if let Some(code) = proc.exit_code() {
-                    return if code == 0 { Ok(()) } else { Err(format!("Optimization failed with code {code}")) };
+                    return if code == 0 {
+                        Ok(())
+                    } else {
+                        Err(format!("Optimization failed with code {code}"))
+                    };
                 }
                 std::thread::sleep(std::time::Duration::from_millis(100));
             }

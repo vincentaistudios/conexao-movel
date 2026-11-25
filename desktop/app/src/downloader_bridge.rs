@@ -97,11 +97,26 @@ fn prepare_request(peer: &DeviceId, op: &str, payload_json: &str) -> Result<Prep
         return Err(format!("Operação não permitida: {op}"));
     }
     match op {
-        "health" => Ok(PreparedRequest { method: "GET", path: "/health".into(), body: None, timeout: DEFAULT_TIMEOUT }),
-        "history" => Ok(PreparedRequest { method: "GET", path: "/history".into(), body: None, timeout: DEFAULT_TIMEOUT }),
+        "health" => Ok(PreparedRequest {
+            method: "GET",
+            path: "/health".into(),
+            body: None,
+            timeout: DEFAULT_TIMEOUT,
+        }),
+        "history" => Ok(PreparedRequest {
+            method: "GET",
+            path: "/history".into(),
+            body: None,
+            timeout: DEFAULT_TIMEOUT,
+        }),
         "status" => {
             let task_id = sanitize_task_id(extract_str(&parse_obj(payload_json)?, "task_id"))?;
-            Ok(PreparedRequest { method: "GET", path: format!("/status?task_id={task_id}"), body: None, timeout: DEFAULT_TIMEOUT })
+            Ok(PreparedRequest {
+                method: "GET",
+                path: format!("/status?task_id={task_id}"),
+                body: None,
+                timeout: DEFAULT_TIMEOUT,
+            })
         }
         "inspect" => {
             let obj = parse_obj(payload_json)?;
@@ -134,11 +149,21 @@ fn prepare_request(peer: &DeviceId, op: &str, payload_json: &str) -> Result<Prep
                 "destination": destination,
                 "device_id": peer.to_string(),
             });
-            Ok(PreparedRequest { method: "POST", path: "/download".into(), body: Some(body.to_string()), timeout: DEFAULT_TIMEOUT })
+            Ok(PreparedRequest {
+                method: "POST",
+                path: "/download".into(),
+                body: Some(body.to_string()),
+                timeout: DEFAULT_TIMEOUT,
+            })
         }
         "cancel" => {
             let task_id = sanitize_task_id(extract_str(&parse_obj(payload_json)?, "task_id"))?;
-            Ok(PreparedRequest { method: "POST", path: "/cancel".into(), body: Some(serde_json::json!({ "task_id": task_id }).to_string()), timeout: DEFAULT_TIMEOUT })
+            Ok(PreparedRequest {
+                method: "POST",
+                path: "/cancel".into(),
+                body: Some(serde_json::json!({ "task_id": task_id }).to_string()),
+                timeout: DEFAULT_TIMEOUT,
+            })
         }
         _ => Err(format!("Operação não permitida: {op}")),
     }
@@ -169,7 +194,9 @@ fn execute_http(addr: SocketAddr, req: &PreparedRequest) -> Result<String, Strin
     let raw_req = match req.body.as_deref() {
         Some(body) => format!(
             "{} {} HTTP/1.1\r\nHost: 127.0.0.1:{DOWNLOADER_PORT}\r\nContent-Type: application/json\r\nContent-Length: {}\r\nConnection: close\r\n\r\n{body}",
-            req.method, req.path, body.len()
+            req.method,
+            req.path,
+            body.len()
         ),
         None => format!(
             "{} {} HTTP/1.1\r\nHost: 127.0.0.1:{DOWNLOADER_PORT}\r\nConnection: close\r\n\r\n",
@@ -188,8 +215,12 @@ fn execute_http(addr: SocketAddr, req: &PreparedRequest) -> Result<String, Strin
     if raw_resp.len() > MAX_HTTP_RESPONSE_BYTES {
         return Err("Resposta do serviço de downloads excedeu o limite permitido".into());
     }
-    let split_pos = raw_resp.windows(4).position(|w| w == b"\r\n\r\n").ok_or_else(|| "Resposta HTTP inválida".to_owned())?;
-    let head = std::str::from_utf8(&raw_resp[..split_pos]).map_err(|_| "Cabeçalho HTTP inválido".to_owned())?;
+    let split_pos = raw_resp
+        .windows(4)
+        .position(|w| w == b"\r\n\r\n")
+        .ok_or_else(|| "Resposta HTTP inválida".to_owned())?;
+    let head =
+        std::str::from_utf8(&raw_resp[..split_pos]).map_err(|_| "Cabeçalho HTTP inválido".to_owned())?;
     let status = head
         .lines()
         .next()
@@ -256,8 +287,16 @@ mod tests {
         assert!(prepare_request(&peer, "start", r#"{"url":"https://example.com/v with space"}"#).is_err());
         assert!(prepare_request(&peer, "status", r#"{"task_id":"../secret"}"#).is_err());
 
-        let start = prepare_request(&peer, "start", r#"{"url":"https://example.com/watch?v=1","format":"audio","device_id":"forged","extra":"drop"}"#).unwrap();
-        assert_eq!((start.method, start.path.as_str(), start.timeout), ("POST", "/download", DEFAULT_TIMEOUT));
+        let start = prepare_request(
+            &peer,
+            "start",
+            r#"{"url":"https://example.com/watch?v=1","format":"audio","device_id":"forged","extra":"drop"}"#,
+        )
+        .unwrap();
+        assert_eq!(
+            (start.method, start.path.as_str(), start.timeout),
+            ("POST", "/download", DEFAULT_TIMEOUT)
+        );
         let body: Value = serde_json::from_str(start.body.as_deref().unwrap()).unwrap();
         assert_eq!(body.get("device_id").and_then(Value::as_str), Some(peer.to_string().as_str()));
         assert!(body.get("extra").is_none());
@@ -278,10 +317,13 @@ mod tests {
             if let Ok((mut s, _)) = listener.accept() {
                 let mut buf = [0u8; 512];
                 let _ = s.read(&mut buf);
-                let _ = s.write_all(b"HTTP/1.1 200 OK\r\nContent-Type: application/json\r\n\r\n{\"status\":\"ok\"}");
+                let _ = s.write_all(
+                    b"HTTP/1.1 200 OK\r\nContent-Type: application/json\r\n\r\n{\"status\":\"ok\"}",
+                );
             }
         });
-        let req = PreparedRequest { method: "GET", path: "/health".into(), body: None, timeout: DEFAULT_TIMEOUT };
+        let req =
+            PreparedRequest { method: "GET", path: "/health".into(), body: None, timeout: DEFAULT_TIMEOUT };
         assert_eq!(execute_http(addr, &req).unwrap(), r#"{"status":"ok"}"#);
         let err = execute_http(SocketAddr::from(([127, 0, 0, 1], closed_port)), &req).unwrap_err();
         assert_eq!(err, UNAVAILABLE_MSG);
