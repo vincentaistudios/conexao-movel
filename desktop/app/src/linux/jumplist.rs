@@ -18,7 +18,11 @@ pub const ARG: &str = "--task";
 /// `bridge::app::NectarLinkApp::dispatch_jump_task`.
 pub const TASKS: &[(&str, &str, &str)] = &[
     ("send-files", "Enviar arquivos para o celular", "Abrir seletor de arquivos para enviar ao celular"),
-    ("send-clipboard", "Enviar área de transferência para o celular", "Enviar o conteúdo copiado no PC para o celular"),
+    (
+        "send-clipboard",
+        "Enviar área de transferência para o celular",
+        "Enviar o conteúdo copiado no PC para o celular",
+    ),
     ("find-phone", "Localizar meu celular", "Fazer o celular pareado tocar"),
     ("take-photo", "Tirar foto com o celular", "Capturar uma foto com a câmera do celular"),
     ("open-timeline", "Abrir Linha do Tempo", "Abrir o histórico de atividades no Conexão Móvel"),

@@ -1,36 +1,45 @@
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1000 580" width="100%" height="100%">
   <defs>
-    <!-- Gradiente de Fundo do Card Geral -->
+    <!-- Gradiente de Fundo do Card Geral (Dark Titanium / Mica Glass) -->
     <linearGradient id="deckBg" x1="0%" y1="0%" x2="100%" y2="100%">
-      <stop offset="0%" stop-color="#080c14" />
-      <stop offset="60%" stop-color="#0e1726" />
-      <stop offset="100%" stop-color="#070a10" />
+      <stop offset="0%" stop-color="#070a12" />
+      <stop offset="50%" stop-color="#0c1322" />
+      <stop offset="100%" stop-color="#060910" />
     </linearGradient>
 
-    <!-- Gradiente das Teclas Táteis OLED -->
+    <!-- Gradiente das Teclas Táteis OLED Base -->
     <linearGradient id="tileDark" x1="0%" y1="0%" x2="0%" y2="100%">
       <stop offset="0%" stop-color="#1e293b" />
       <stop offset="100%" stop-color="#0f172a" />
     </linearGradient>
 
-    <linearGradient id="tileSpike" x1="0%" y1="0%" x2="100%" y2="100%">
-      <stop offset="0%" stop-color="#2e1065" />
-      <stop offset="100%" stop-color="#1e1b4b" />
+    <!-- Gradiente Tático para a Tecla Valorant (Estilo Escuro Profundo com Acabamento Carmim Sutil) -->
+    <linearGradient id="tileValorant" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" stop-color="#24141d" />
+      <stop offset="100%" stop-color="#140d13" />
     </linearGradient>
 
-    <linearGradient id="tileSnap" x1="0%" y1="0%" x2="100%" y2="100%">
-      <stop offset="0%" stop-color="#0369a1" />
-      <stop offset="100%" stop-color="#0c4a6e" />
+    <!-- Gradiente para a Tecla Snap Layouts -->
+    <linearGradient id="tileSnap" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" stop-color="#0f2b48" />
+      <stop offset="100%" stop-color="#0a1d33" />
     </linearGradient>
 
-    <linearGradient id="tilePower" x1="0%" y1="0%" x2="100%" y2="100%">
-      <stop offset="0%" stop-color="#065f46" />
-      <stop offset="100%" stop-color="#064e3b" />
+    <!-- Gradiente para Teclas de Midia / Volume -->
+    <linearGradient id="tileMedia" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" stop-color="#182438" />
+      <stop offset="100%" stop-color="#0e1726" />
     </linearGradient>
 
-    <!-- Filtro de Sombra Suave para Elevação das Teclas -->
+    <!-- Filtro de Sombra Suave para Elevacao das Teclas -->
     <filter id="tileShadow" x="-10%" y="-10%" width="120%" height="120%">
-      <feDropShadow dx="0" dy="3" stdDeviation="3" flood-color="#000000" flood-opacity="0.5" />
+      <feDropShadow dx="0" dy="4" stdDeviation="4" flood-color="#000000" flood-opacity="0.6" />
+    </filter>
+
+    <!-- Filtro de Brilho Sutil de Destaque -->
+    <filter id="glowGlow" x="-20%" y="-20%" width="140%" height="140%">
+      <feGaussianBlur stdDeviation="3" result="blur" />
+      <feComposite in="SourceGraphic" in2="blur" operator="over" />
     </filter>
   </defs>
 
@@ -39,104 +48,130 @@
     .font-mono { font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", monospace; }
   </style>
 
-  <!-- Fundo com Borda Estilizada -->
+  <!-- Fundo Geral com Borda Estilizada Fluent -->
   <rect width="1000" height="580" rx="16" fill="url(#deckBg)" />
-  <rect width="998" height="578" x="1" y="1" rx="15" fill="none" stroke="#1e293b" stroke-width="1.5" />
+  <rect width="998" height="578" x="1" y="1" rx="15" fill="none" stroke="#1e293b" stroke-width="1.2" />
 
   <!-- Cabecalho do Modulo -->
-  <g transform="translate(45, 42)">
-    <rect width="180" height="28" rx="6" fill="#1e293b" />
-    <text x="90" y="18" text-anchor="middle" fill="#38bdf8" font-size="11" class="font-mono" font-weight="700">CONTROLE MULTITAREFA</text>
+  <g transform="translate(45, 38)">
+    <rect width="185" height="26" rx="6" fill="#1e293b" />
+    <text x="92" y="17" text-anchor="middle" fill="#38bdf8" font-size="10.5" class="font-mono" font-weight="700">CONTROLE MULTITAREFA</text>
 
-    <text x="200" y="20" fill="#f8fafc" font-size="21" class="font-sans" font-weight="800">
+    <text x="205" y="20" fill="#f8fafc" font-size="20" class="font-sans" font-weight="800">
       Stream Deck Móvel e Gerenciador de Snap Layouts
     </text>
-    <text x="0" y="48" fill="#94a3b8" font-size="13" class="font-sans">
-      Controle tático de janelas, atalhos do PC e multimídia diretamente da tela do seu smartphone Android.
+    <text x="0" y="46" fill="#94a3b8" font-size="12.5" class="font-sans">
+      Controle total de mídia, janelas ativas do PC e macros táteis diretamente da tela do seu smartphone Android.
     </text>
   </g>
 
-  <!-- Painel Esquerdo: Smartphone Moderno de Alta Precisao -->
-  <g transform="translate(45, 115)">
-    <!-- Moldura Externa do Smartphone (Borda Metalica Escura) -->
-    <rect width="435" height="425" rx="30" fill="#070a12" stroke="#334155" stroke-width="2" />
-    <!-- Tela OLED Interna -->
-    <rect width="415" height="405" x="10" y="10" rx="22" fill="#0b0f19" />
+  <!-- PAINEL ESQUERDO: Smartphone com Stream Deck Tatil -->
+  <g transform="translate(45, 108)">
+    <!-- Moldura Externa do Smartphone -->
+    <rect width="435" height="438" rx="28" fill="#080c14" stroke="#334155" stroke-width="2" />
+    <!-- Tela Interna do Smartphone -->
+    <rect width="415" height="418" x="10" y="10" rx="20" fill="#0b0f19" />
 
-    <!-- Recorte de Camera Frontal / Dynamic Island Minimalista -->
-    <circle cx="217" cy="22" r="4.5" fill="#1e293b" />
-    <circle cx="217" cy="22" r="2" fill="#0f172a" />
+    <!-- Dynamic Island / Camera Minimalista -->
+    <circle cx="217" cy="22" r="4" fill="#1e293b" />
+    <circle cx="217" cy="22" r="1.8" fill="#0f172a" />
 
-    <!-- Barra de Conexao Universal e Inteligente (Sem nomes rigidos de maquina) -->
-    <g transform="translate(25, 38)">
+    <!-- Barra de Conexao Inteligente e Adaptativa (Respeita o nome do PC configurado pelo usuario) -->
+    <g transform="translate(25, 36)">
       <circle cx="6" cy="6" r="4" fill="#10b981" />
       <text x="18" y="10" fill="#f8fafc" font-size="10.5" class="font-mono" font-weight="700">
-        COMPUTADOR CONECTADO • REDE LOCAL
+        CONECTADO: SEU COMPUTADOR
       </text>
-      <text x="365" y="10" text-anchor="end" fill="#38bdf8" font-size="10" class="font-mono">
-        1ms • P2P SEGURO
+      <text x="365" y="10" text-anchor="end" fill="#38bdf8" font-size="9.5" class="font-mono">
+        LATÊNCIA 1ms • P2P
       </text>
     </g>
 
     <!-- Linha Divisoria Sutil da Barra de Status -->
-    <line x1="25" y1="56" x2="390" y2="56" stroke="#1e293b" stroke-width="1" />
+    <line x1="25" y1="54" x2="390" y2="54" stroke="#1e293b" stroke-width="1" />
 
-    <!-- Grade 3x2 de Teclas Tateis Estilo Stream Deck com Relevo 3D -->
+    <!-- GRADE 3x2 DE TECLAS TATEIS (Com "Valorant" integrado aos atalhos de midia e sistema) -->
     
-    <!-- Tecla 1: Spike Valorant (Destaque Neon Indigo/Vermelho) -->
-    <g transform="translate(25, 68)" filter="url(#tileShadow)">
-      <rect width="112" height="96" rx="14" fill="url(#tileSpike)" stroke="#6366f1" stroke-width="1.5" />
-      <circle cx="56" cy="36" r="16" fill="#312e81" stroke="#4f46e5" stroke-width="1" />
-      <circle cx="56" cy="36" r="7" fill="#ef4444" />
-      <text x="56" y="70" text-anchor="middle" fill="#e0e7ff" font-size="11.5" class="font-sans" font-weight="700">SPIKE HUD</text>
-      <text x="56" y="84" text-anchor="middle" fill="#a5b4fc" font-size="9" class="font-mono">VALORANT</text>
+    <!-- Tecla 1: VALORANT (Totalmente integrado na grade de atalhos) -->
+    <g transform="translate(25, 66)" filter="url(#tileShadow)">
+      <rect width="112" height="98" rx="14" fill="url(#tileValorant)" stroke="#ff4655" stroke-width="1.2" stroke-opacity="0.8" />
+      <!-- Icone Tatico Mira de Precisao Valorant -->
+      <g transform="translate(56, 36)">
+        <circle cx="0" cy="0" r="14" fill="none" stroke="#ff4655" stroke-width="1.8" stroke-dasharray="16, 5" />
+        <circle cx="0" cy="0" r="4" fill="#ff4655" />
+        <line x1="-18" y1="0" x2="-8" y2="0" stroke="#ff4655" stroke-width="1.8" />
+        <line x1="8" y1="0" x2="18" y2="0" stroke="#ff4655" stroke-width="1.8" />
+        <line x1="0" y1="-18" x2="0" y2="-8" stroke="#ff4655" stroke-width="1.8" />
+        <line x1="0" y1="8" x2="0" y2="18" stroke="#ff4655" stroke-width="1.8" />
+      </g>
+      <text x="56" y="70" text-anchor="middle" fill="#ffe4e6" font-size="11.5" class="font-sans" font-weight="700">VALORANT</text>
+      <text x="56" y="85" text-anchor="middle" fill="#fda4af" font-size="9" class="font-mono">AUTO SPIKE</text>
     </g>
 
-    <!-- Tecla 2: Snap Layouts (Destaque Azul Ciano) -->
-    <g transform="translate(151, 68)" filter="url(#tileShadow)">
-      <rect width="112" height="96" rx="14" fill="url(#tileSnap)" stroke="#0284c7" stroke-width="1.5" />
-      <rect x="42" y="24" width="28" height="20" rx="3" fill="none" stroke="#38bdf8" stroke-width="2" />
-      <line x1="56" y1="24" x2="56" y2="44" stroke="#38bdf8" stroke-width="1.5" />
+    <!-- Tecla 2: SNAP LAYOUT (Organizacao de Janelas) -->
+    <g transform="translate(151, 66)" filter="url(#tileShadow)">
+      <rect width="112" height="98" rx="14" fill="url(#tileSnap)" stroke="#0284c7" stroke-width="1.2" stroke-opacity="0.8" />
+      <!-- Icone de Encaixe Snap Layout -->
+      <g transform="translate(56, 36)">
+        <rect x="-14" y="-10" width="28" height="20" rx="3" fill="none" stroke="#38bdf8" stroke-width="1.8" />
+        <line x1="0" y1="-10" x2="0" y2="10" stroke="#38bdf8" stroke-width="1.5" />
+      </g>
       <text x="56" y="70" text-anchor="middle" fill="#e0f2fe" font-size="11.5" class="font-sans" font-weight="700">SNAP LAYOUT</text>
-      <text x="56" y="84" text-anchor="middle" fill="#7dd3fc" font-size="9" class="font-mono">ORGANIZAR</text>
+      <text x="56" y="85" text-anchor="middle" fill="#7dd3fc" font-size="9" class="font-mono">ORGANIZAR</text>
     </g>
 
-    <!-- Tecla 3: Captura de Tela -->
-    <g transform="translate(277, 68)" filter="url(#tileShadow)">
-      <rect width="112" height="96" rx="14" fill="url(#tileDark)" stroke="#334155" stroke-width="1.5" />
-      <rect x="43" y="24" width="26" height="20" rx="4" fill="none" stroke="#cbd5e1" stroke-width="2" />
-      <circle cx="56" cy="34" r="4.5" fill="#94a3b8" />
+    <!-- Tecla 3: PRINT PC (Captura Instantanea de Tela) -->
+    <g transform="translate(277, 66)" filter="url(#tileShadow)">
+      <rect width="112" height="98" rx="14" fill="url(#tileDark)" stroke="#334155" stroke-width="1.2" />
+      <!-- Icone de Camera / Captura -->
+      <g transform="translate(56, 36)">
+        <rect x="-14" y="-10" width="28" height="20" rx="4" fill="none" stroke="#cbd5e1" stroke-width="1.8" />
+        <circle cx="0" cy="0" r="4.5" fill="#94a3b8" />
+      </g>
       <text x="56" y="70" text-anchor="middle" fill="#f8fafc" font-size="11.5" class="font-sans" font-weight="700">PRINT PC</text>
-      <text x="56" y="84" text-anchor="middle" fill="#64748b" font-size="9" class="font-mono">INSTANTÂNEO</text>
+      <text x="56" y="85" text-anchor="middle" fill="#64748b" font-size="9" class="font-mono">INSTANTÂNEO</text>
     </g>
 
-    <!-- Tecla 4: Audio Switcher -->
+    <!-- Tecla 4: PLAY / PAUSE (Reproduzir e Pausar Midia) -->
     <g transform="translate(25, 178)" filter="url(#tileShadow)">
-      <rect width="112" height="96" rx="14" fill="url(#tileDark)" stroke="#334155" stroke-width="1.5" />
-      <path d="M 46 38 L 54 38 L 62 46 L 62 26 L 54 34 L 46 34 Z" fill="#cbd5e1" />
-      <text x="56" y="70" text-anchor="middle" fill="#f8fafc" font-size="11.5" class="font-sans" font-weight="700">ÁUDIO MASTER</text>
-      <text x="56" y="84" text-anchor="middle" fill="#64748b" font-size="9" class="font-mono">MUDAR SAÍDA</text>
-    </g>
-
-    <!-- Tecla 5: Play/Pause Midia -->
-    <g transform="translate(151, 178)" filter="url(#tileShadow)">
-      <rect width="112" height="96" rx="14" fill="url(#tileDark)" stroke="#334155" stroke-width="1.5" />
-      <polygon points="51,27 65,36 51,45" fill="#cbd5e1" />
+      <rect width="112" height="98" rx="14" fill="url(#tileMedia)" stroke="#334155" stroke-width="1.2" />
+      <!-- Icone Play/Pause -->
+      <g transform="translate(56, 36)">
+        <polygon points="-8,-9 4,0 -8,9" fill="#cbd5e1" />
+        <line x1="8" y1="-8" x2="8" y2="8" stroke="#cbd5e1" stroke-width="2" stroke-linecap="round" />
+        <line x1="12" y1="-8" x2="12" y2="8" stroke="#cbd5e1" stroke-width="2" stroke-linecap="round" />
+      </g>
       <text x="56" y="70" text-anchor="middle" fill="#f8fafc" font-size="11.5" class="font-sans" font-weight="700">PLAY / PAUSE</text>
-      <text x="56" y="84" text-anchor="middle" fill="#64748b" font-size="9" class="font-mono">MULTIMÍDIA</text>
+      <text x="56" y="85" text-anchor="middle" fill="#64748b" font-size="9" class="font-mono">YOUTUBE/SPOTIFY</text>
     </g>
 
-    <!-- Tecla 6: Wake-on-LAN Energia -->
+    <!-- Tecla 5: DIMINUIR VOLUME (Controle de Audio) -->
+    <g transform="translate(151, 178)" filter="url(#tileShadow)">
+      <rect width="112" height="98" rx="14" fill="url(#tileDark)" stroke="#334155" stroke-width="1.2" />
+      <!-- Icone Volume Baixo -->
+      <g transform="translate(56, 36)">
+        <path d="M -10 3 L -5 3 L 1 8 L 1 -8 L -5 -3 L -10 -3 Z" fill="#cbd5e1" />
+        <path d="M 5 -3 Q 8 0 5 3" fill="none" stroke="#94a3b8" stroke-width="1.8" stroke-linecap="round" />
+      </g>
+      <text x="56" y="70" text-anchor="middle" fill="#f8fafc" font-size="11.5" class="font-sans" font-weight="700">VOLUME -</text>
+      <text x="56" y="85" text-anchor="middle" fill="#64748b" font-size="9" class="font-mono">ÁUDIO MASTER</text>
+    </g>
+
+    <!-- Tecla 6: AUMENTAR VOLUME / ENERGIA -->
     <g transform="translate(277, 178)" filter="url(#tileShadow)">
-      <rect width="112" height="96" rx="14" fill="url(#tilePower)" stroke="#059669" stroke-width="1.5" />
-      <circle cx="56" cy="36" r="13" fill="none" stroke="#10b981" stroke-width="2" />
-      <line x1="56" y1="28" x2="56" y2="38" stroke="#10b981" stroke-width="2" stroke-linecap="round" />
-      <text x="56" y="70" text-anchor="middle" fill="#ecfdf5" font-size="11.5" class="font-sans" font-weight="700">ENERGIA PC</text>
-      <text x="56" y="84" text-anchor="middle" fill="#6ee7b7" font-size="9" class="font-mono">WAKE-ON-LAN</text>
+      <rect width="112" height="98" rx="14" fill="url(#tileDark)" stroke="#334155" stroke-width="1.2" />
+      <!-- Icone Volume Alto -->
+      <g transform="translate(56, 36)">
+        <path d="M -10 3 L -5 3 L 1 8 L 1 -8 L -5 -3 L -10 -3 Z" fill="#cbd5e1" />
+        <path d="M 5 -4 Q 9 0 5 4" fill="none" stroke="#cbd5e1" stroke-width="1.8" stroke-linecap="round" />
+        <path d="M 8 -7 Q 14 0 8 7" fill="none" stroke="#38bdf8" stroke-width="1.8" stroke-linecap="round" />
+      </g>
+      <text x="56" y="70" text-anchor="middle" fill="#f8fafc" font-size="11.5" class="font-sans" font-weight="700">VOLUME +</text>
+      <text x="56" y="85" text-anchor="middle" fill="#64748b" font-size="9" class="font-mono">ÁUDIO MASTER</text>
     </g>
 
     <!-- Barra Inferior de Navegacao de Perfis -->
-    <g transform="translate(25, 292)">
+    <g transform="translate(25, 302)">
       <rect width="364" height="42" rx="12" fill="#1e293b" stroke="#334155" stroke-width="1" />
       <text x="182" y="26" text-anchor="middle" fill="#94a3b8" font-size="10.5" class="font-mono">
         DESLIZE PARA ALTERNAR PERFIS DE STREAM DECK
@@ -144,79 +179,79 @@
     </g>
   </g>
 
-  <!-- Painel Direito: Seletor de Snap Layouts com Espacamento Amplo (Sem Vazamentos) -->
-  <g transform="translate(505, 115)">
-    <!-- Painel Fluido Ampliado de 370px para 450px -->
-    <rect width="450" height="425" rx="18" fill="#0f172a" stroke="#334155" stroke-width="1.5" />
+  <!-- PAINEL DIREITO: Seletor de Snap Layouts no PC (Espacoso, Sem Textos Vazados) -->
+  <g transform="translate(505, 108)">
+    <!-- Painel Fluido Ampliado para 450px de largura -->
+    <rect width="450" height="438" rx="20" fill="#0c1322" stroke="#334155" stroke-width="1.5" />
 
-    <text x="26" y="36" fill="#f8fafc" font-size="16" class="font-sans" font-weight="800">
+    <text x="24" y="36" fill="#f8fafc" font-size="16" class="font-sans" font-weight="800">
       Seletor de Snap Layouts no PC
     </text>
-    <text x="26" y="56" fill="#94a3b8" font-size="12" class="font-sans">
+    <text x="24" y="56" fill="#94a3b8" font-size="12" class="font-sans">
       Toque no celular para posicionar a janela ativa no monitor:
     </text>
 
-    <!-- Opcao 1: Tela Cheia (100% do Monitor) - Largura 402px, Margem Segura de >100px -->
-    <g transform="translate(24, 74)">
-      <rect width="402" height="68" rx="12" fill="#1e293b" stroke="#475569" stroke-width="1.2" />
-      <!-- Miniatura Grafica do Monitor 100% Preenchido -->
+    <!-- Opcao 1: Tela Cheia (100%) - Cartao de 402px de largura, texto com folga de mais de 80px -->
+    <g transform="translate(24, 76)">
+      <rect width="402" height="70" rx="12" fill="#131d31" stroke="#334155" stroke-width="1.2" />
+      <!-- Miniatura Grafica do Monitor 100% -->
       <g transform="translate(16, 17)">
-        <rect width="44" height="32" rx="3" fill="#0f172a" stroke="#64748b" stroke-width="1.5" />
-        <rect width="38" height="26" x="3" y="3" rx="2" fill="#0284c7" opacity="0.9" />
+        <rect width="44" height="34" rx="4" fill="#0b0f19" stroke="#475569" stroke-width="1.5" />
+        <rect width="38" height="28" x="3" y="3" rx="2" fill="#0284c7" opacity="0.95" />
       </g>
-      <text x="74" y="32" fill="#f8fafc" font-size="13" class="font-sans" font-weight="700">
-        Tela Cheia (100% do Monitor)
+      <text x="74" y="32" fill="#f8fafc" font-size="13.5" class="font-sans" font-weight="700">
+        Tela Cheia (100%)
       </text>
-      <text x="74" y="49" fill="#94a3b8" font-size="11" class="font-mono">
+      <text x="74" y="51" fill="#94a3b8" font-size="11" class="font-sans">
         Maximizar aplicativo no monitor principal
       </text>
     </g>
 
     <!-- Opcao 2: Metade Esquerda (50%) -->
-    <g transform="translate(24, 154)">
-      <rect width="402" height="68" rx="12" fill="#1e293b" stroke="#475569" stroke-width="1.2" />
-      <!-- Miniatura Grafica com Metade Esquerda em Destaque -->
+    <g transform="translate(24, 158)">
+      <rect width="402" height="70" rx="12" fill="#131d31" stroke="#334155" stroke-width="1.2" />
+      <!-- Miniatura Grafica Metade Esquerda -->
       <g transform="translate(16, 17)">
-        <rect width="44" height="32" rx="3" fill="#0f172a" stroke="#64748b" stroke-width="1.5" />
-        <rect width="18" height="26" x="3" y="3" rx="2" fill="#0284c7" opacity="0.9" />
+        <rect width="44" height="34" rx="4" fill="#0b0f19" stroke="#475569" stroke-width="1.5" />
+        <rect width="18" height="28" x="3" y="3" rx="2" fill="#0284c7" opacity="0.95" />
       </g>
-      <text x="74" y="32" fill="#f8fafc" font-size="13" class="font-sans" font-weight="700">
-        Metade Esquerda (50% do Monitor)
+      <text x="74" y="32" fill="#f8fafc" font-size="13.5" class="font-sans" font-weight="700">
+        Metade Esquerda (50%)
       </text>
-      <text x="74" y="49" fill="#94a3b8" font-size="11" class="font-mono">
-        Encaixe magnético no lado esquerdo da tela
+      <text x="74" y="51" fill="#94a3b8" font-size="11" class="font-sans">
+        Encaixe magnético no lado esquerdo
       </text>
     </g>
 
     <!-- Opcao 3: Metade Direita (50%) -->
-    <g transform="translate(24, 234)">
-      <rect width="402" height="68" rx="12" fill="#1e293b" stroke="#475569" stroke-width="1.2" />
-      <!-- Miniatura Grafica com Metade Direita em Destaque -->
+    <g transform="translate(24, 240)">
+      <rect width="402" height="70" rx="12" fill="#131d31" stroke="#334155" stroke-width="1.2" />
+      <!-- Miniatura Grafica Metade Direita -->
       <g transform="translate(16, 17)">
-        <rect width="44" height="32" rx="3" fill="#0f172a" stroke="#64748b" stroke-width="1.5" />
-        <rect width="18" height="26" x="23" y="3" rx="2" fill="#0284c7" opacity="0.9" />
+        <rect width="44" height="34" rx="4" fill="#0b0f19" stroke="#475569" stroke-width="1.5" />
+        <rect width="18" height="28" x="23" y="3" rx="2" fill="#0284c7" opacity="0.95" />
       </g>
-      <text x="74" y="32" fill="#f8fafc" font-size="13" class="font-sans" font-weight="700">
-        Metade Direita (50% do Monitor)
+      <text x="74" y="32" fill="#f8fafc" font-size="13.5" class="font-sans" font-weight="700">
+        Metade Direita (50%)
       </text>
-      <text x="74" y="49" fill="#94a3b8" font-size="11" class="font-mono">
-        Encaixe magnético no lado direito da tela
+      <text x="74" y="51" fill="#94a3b8" font-size="11" class="font-sans">
+        Encaixe magnético no lado direito
       </text>
     </g>
 
-    <!-- Opcao 4: Quatro Quadrantes (25%) -->
-    <g transform="translate(24, 314)">
-      <rect width="402" height="68" rx="12" fill="#1e293b" stroke="#475569" stroke-width="1.2" />
-      <!-- Miniatura Grafica com Quadrante Superior Esquerdo -->
+    <!-- Opcao 4: Quadrante Superior Esquerdo (25%) -->
+    <g transform="translate(24, 322)">
+      <rect width="402" height="70" rx="12" fill="#131d31" stroke="#334155" stroke-width="1.2" />
+      <!-- Miniatura Grafica Quadrante 25% -->
       <g transform="translate(16, 17)">
-        <rect width="44" height="32" rx="3" fill="#0f172a" stroke="#64748b" stroke-width="1.5" />
-        <rect width="18" height="12" x="3" y="3" rx="2" fill="#0284c7" opacity="0.9" />
+        <rect width="44" height="34" rx="4" fill="#0b0f19" stroke="#475569" stroke-width="1.5" />
+        <rect width="18" height="13" x="3" y="3" rx="2" fill="#0284c7" opacity="0.95" />
       </g>
-      <text x="74" y="32" fill="#f8fafc" font-size="13" class="font-sans" font-weight="700">
+      <text x="74" y="32" fill="#f8fafc" font-size="13.5" class="font-sans" font-weight="700">
         Quadrante Superior Esquerdo (25%)
       </text>
-      <text x="74" y="49" fill="#94a3b8" font-size="11" class="font-mono">
-        Encaixe ideal para multitarefa de 4 janelas
+      <text x="74" y="51" fill="#94a3b8" font-size="11" class="font-sans">
+        Ideal para multitarefa de 4 janelas
       </text>
     </g>
   </g>

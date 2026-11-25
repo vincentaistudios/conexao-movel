@@ -2,9 +2,9 @@
 //! Modulo de assistente automatizado ADB para concessao de permissoes em 1 clique
 //! e inicializacao do Modo Elevado (InputServer) no smartphone via USB.
 
-use std::{net::SocketAddr, process::Command};
 use nectarlink_adb::{DEFAULT_ADB_ADDR, is_serial_allowed};
 use serde::{Deserialize, Serialize};
+use std::{net::SocketAddr, process::Command};
 
 const PKG: &str = "app.nectarlink";
 
@@ -30,11 +30,7 @@ pub async fn list_attached_devices(addr: Option<SocketAddr>) -> Vec<AdbDeviceSum
     if let Ok(devs) = nectarlink_adb::list_devices(server).await {
         return devs
             .into_iter()
-            .map(|d| AdbDeviceSummary {
-                serial: d.serial,
-                state: d.state,
-                model: d.model,
-            })
+            .map(|d| AdbDeviceSummary { serial: d.serial, state: d.state, model: d.model })
             .collect();
     }
 
@@ -51,11 +47,7 @@ fn run_cli_list_devices() -> Vec<AdbDeviceSummary> {
     let text = String::from_utf8_lossy(&out.stdout);
     nectarlink_adb::parse_devices_l(&text)
         .into_iter()
-        .map(|d| AdbDeviceSummary {
-            serial: d.serial,
-            state: d.state,
-            model: d.model,
-        })
+        .map(|d| AdbDeviceSummary { serial: d.serial, state: d.state, model: d.model })
         .collect()
 }
 
@@ -155,11 +147,17 @@ pub async fn run_auto_setup(target_serial: Option<String>) -> AdbSetupResult {
     }
 
     // 3. Notificacoes e Nao Perturbe
-    let _ = run_shell_command(&serial, &format!("cmd notification allow_listener {PKG}/app.nectarlink.android.notifications.NotificationListener"));
+    let _ = run_shell_command(
+        &serial,
+        &format!(
+            "cmd notification allow_listener {PKG}/app.nectarlink.android.notifications.NotificationListener"
+        ),
+    );
     let _ = run_shell_command(&serial, &format!("cmd notification allow_dnd {PKG}"));
 
     // 4. Servico de Acessibilidade (Controle por Toque)
-    let current_acc = run_shell_command(&serial, "settings get secure enabled_accessibility_services").unwrap_or_default();
+    let current_acc =
+        run_shell_command(&serial, "settings get secure enabled_accessibility_services").unwrap_or_default();
     let service_id = format!("{PKG}/app.nectarlink.android.accessibility.InputService");
     if !current_acc.contains(PKG) {
         let new_val = if current_acc.is_empty() || current_acc == "null" {
@@ -167,7 +165,10 @@ pub async fn run_auto_setup(target_serial: Option<String>) -> AdbSetupResult {
         } else {
             format!("{current_acc}:{service_id}")
         };
-        let _ = run_shell_command(&serial, &format!("settings put secure enabled_accessibility_services {new_val}"));
+        let _ = run_shell_command(
+            &serial,
+            &format!("settings put secure enabled_accessibility_services {new_val}"),
+        );
     }
     let _ = run_shell_command(&serial, "settings put secure accessibility_enabled 1");
 
@@ -183,8 +184,12 @@ pub async fn run_auto_setup(target_serial: Option<String>) -> AdbSetupResult {
             .map(|s| s.trim());
 
         if let Some(apk) = base_apk {
-            let token = blake3::hash(format!("{serial}_{:?}", std::time::SystemTime::now()).as_bytes()).to_hex().to_string();
-            let launch_cmd = format!("nohup env CLASSPATH={apk} app_process /system/bin app.nectarlink.android.elevated.InputServer {token} >/dev/null 2>&1 &");
+            let token = blake3::hash(format!("{serial}_{:?}", std::time::SystemTime::now()).as_bytes())
+                .to_hex()
+                .to_string();
+            let launch_cmd = format!(
+                "nohup env CLASSPATH={apk} app_process /system/bin app.nectarlink.android.elevated.InputServer {token} >/dev/null 2>&1 &"
+            );
             let _ = run_shell_command(&serial, &launch_cmd);
             elevated_started = true;
         }
@@ -195,6 +200,7 @@ pub async fn run_auto_setup(target_serial: Option<String>) -> AdbSetupResult {
         serial,
         permissions_granted: granted_count,
         elevated_started,
-        message: "Configuracao concluida com sucesso! Todas as permissoes e o Modo Elevado foram ativados.".into(),
+        message: "Configuracao concluida com sucesso! Todas as permissoes e o Modo Elevado foram ativados."
+            .into(),
     }
 }

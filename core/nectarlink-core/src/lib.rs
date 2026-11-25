@@ -83,8 +83,8 @@ pub use nectarlink_protocol::messages::clip::{
 pub use nectarlink_protocol::{
     DeviceId, PacketKind,
     messages::{
-        AudioOutputDevice, Battery, BtDeviceInfo, CLIP_MAX_BYTES, CallControls, CallLogEntry, CallSim, CallSims, CallState,
-        CameraCaptureCancel, CameraCaptureMode, CameraCaptureOk, CameraCaptureRequest,
+        AudioOutputDevice, Battery, BtDeviceInfo, CLIP_MAX_BYTES, CallControls, CallLogEntry, CallSim,
+        CallSims, CallState, CameraCaptureCancel, CameraCaptureMode, CameraCaptureOk, CameraCaptureRequest,
         CameraCaptureResultMeta, Contact, ContactNumber, DeviceInfo, DeviceKind, LivePoint, LiveSegment,
         MediaPlayer, MirrorAudioConfig, MirrorConfig, MirrorInput, MirrorPower, MirrorResize, MirrorStart,
         Notification, NotificationAction, NotificationChatMessage, NotificationConversation,

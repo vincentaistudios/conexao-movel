@@ -2,8 +2,8 @@
 //! Real-time active window detection, semantic app mapping, and window focusing
 //! for the NectarLink mobile Stream Deck.
 
-use std::process::Command;
 use nectarlink_core::{DeckAction, DeckPageConfig, DeckTileConfig};
+use std::process::Command;
 
 #[derive(Debug, Clone, PartialEq, Eq)]
 pub struct OpenAppWindow {
@@ -93,18 +93,9 @@ fn list_linux_windows() -> Vec<OpenAppWindow> {
         }
 
         let (app_name, icon, color) = classify_window(&comm_lower, &title);
-        let is_focused = active_wid.as_deref().is_some_and(|act| {
-            normalize_wid(act) == normalize_wid(wid)
-        });
+        let is_focused = active_wid.as_deref().is_some_and(|act| normalize_wid(act) == normalize_wid(wid));
 
-        result.push(OpenAppWindow {
-            wid: wid.to_string(),
-            title,
-            app_name,
-            icon,
-            color,
-            is_focused,
-        });
+        result.push(OpenAppWindow { wid: wid.to_string(), title, app_name, icon, color, is_focused });
     }
 
     result
@@ -115,9 +106,7 @@ fn get_process_comm(pid: u32) -> String {
     if pid == 0 {
         return String::new();
     }
-    std::fs::read_to_string(format!("/proc/{pid}/comm"))
-        .map(|s| s.trim().to_string())
-        .unwrap_or_default()
+    std::fs::read_to_string(format!("/proc/{pid}/comm")).map(|s| s.trim().to_string()).unwrap_or_default()
 }
 
 #[cfg(target_os = "linux")]
@@ -142,11 +131,7 @@ fn normalize_wid(wid: &str) -> String {
     let trimmed = wid.trim();
     let hex = trimmed.strip_prefix("0x").or_else(|| trimmed.strip_prefix("0X")).unwrap_or(trimmed);
     let hex_clean = hex.trim_start_matches('0');
-    if hex_clean.is_empty() {
-        "0".to_string()
-    } else {
-        hex_clean.to_ascii_lowercase()
-    }
+    if hex_clean.is_empty() { "0".to_string() } else { hex_clean.to_ascii_lowercase() }
 }
 
 /// Maps process name and window title to semantic app name, vector icon, and color.
@@ -239,11 +224,7 @@ pub fn focus_window_by_id(wid_str: &str) -> Result<(), String> {
     #[cfg(target_os = "windows")]
     {
         let focused = crate::win::tray::focus_window(hwnd);
-        if focused {
-            Ok(())
-        } else {
-            Err("Failed to focus window on Windows".to_string())
-        }
+        if focused { Ok(()) } else { Err("Failed to focus window on Windows".to_string()) }
     }
 
     #[cfg(not(any(target_os = "linux", target_os = "windows")))]
@@ -262,7 +243,8 @@ pub fn get_screen_dimensions() -> (i32, i32) {
             for line in text.lines() {
                 if let Some(idx) = line.find("current ") {
                     let rest = &line[idx + 8..];
-                    let parts: Vec<&str> = rest.split(',').next().unwrap_or("").split('x').map(|s| s.trim()).collect();
+                    let parts: Vec<&str> =
+                        rest.split(',').next().unwrap_or("").split('x').map(|s| s.trim()).collect();
                     if parts.len() == 2 {
                         let w = parts[0].parse::<i32>().unwrap_or(0);
                         let h = parts[1].parse::<i32>().unwrap_or(0);
@@ -289,9 +271,7 @@ pub fn snap_window(wid_raw: &str, layout: &str) -> Result<(), String> {
 
         match layout {
             "fullscreen" => {
-                let _ = Command::new("wmctrl")
-                    .args(["-i", "-r", &clean, "-b", "add,fullscreen"])
-                    .status();
+                let _ = Command::new("wmctrl").args(["-i", "-r", &clean, "-b", "add,fullscreen"]).status();
             }
             "maximize" | "max" => {
                 let _ = Command::new("wmctrl")
@@ -304,9 +284,7 @@ pub fn snap_window(wid_raw: &str, layout: &str) -> Result<(), String> {
                     .status();
                 let half_w = sw / 2;
                 let geom = format!("0,0,0,{half_w},{sh}");
-                let _ = Command::new("wmctrl")
-                    .args(["-i", "-r", &clean, "-e", &geom])
-                    .status();
+                let _ = Command::new("wmctrl").args(["-i", "-r", &clean, "-e", &geom]).status();
             }
             "right" => {
                 let _ = Command::new("wmctrl")
@@ -314,9 +292,7 @@ pub fn snap_window(wid_raw: &str, layout: &str) -> Result<(), String> {
                     .status();
                 let half_w = sw / 2;
                 let geom = format!("0,{half_w},0,{half_w},{sh}");
-                let _ = Command::new("wmctrl")
-                    .args(["-i", "-r", &clean, "-e", &geom])
-                    .status();
+                let _ = Command::new("wmctrl").args(["-i", "-r", &clean, "-e", &geom]).status();
             }
             "center" => {
                 let _ = Command::new("wmctrl")
@@ -327,9 +303,7 @@ pub fn snap_window(wid_raw: &str, layout: &str) -> Result<(), String> {
                 let cx = (sw - cw) / 2;
                 let cy = (sh - ch) / 2;
                 let geom = format!("0,{cx},{cy},{cw},{ch}");
-                let _ = Command::new("wmctrl")
-                    .args(["-i", "-r", &clean, "-e", &geom])
-                    .status();
+                let _ = Command::new("wmctrl").args(["-i", "-r", &clean, "-e", &geom]).status();
             }
             "top_left" | "topleft" => {
                 let _ = Command::new("wmctrl")
@@ -338,9 +312,7 @@ pub fn snap_window(wid_raw: &str, layout: &str) -> Result<(), String> {
                 let half_w = sw / 2;
                 let half_h = sh / 2;
                 let geom = format!("0,0,0,{half_w},{half_h}");
-                let _ = Command::new("wmctrl")
-                    .args(["-i", "-r", &clean, "-e", &geom])
-                    .status();
+                let _ = Command::new("wmctrl").args(["-i", "-r", &clean, "-e", &geom]).status();
             }
             "top_right" | "topright" => {
                 let _ = Command::new("wmctrl")
@@ -349,9 +321,7 @@ pub fn snap_window(wid_raw: &str, layout: &str) -> Result<(), String> {
                 let half_w = sw / 2;
                 let half_h = sh / 2;
                 let geom = format!("0,{half_w},0,{half_w},{half_h}");
-                let _ = Command::new("wmctrl")
-                    .args(["-i", "-r", &clean, "-e", &geom])
-                    .status();
+                let _ = Command::new("wmctrl").args(["-i", "-r", &clean, "-e", &geom]).status();
             }
             "bottom_left" | "bottomleft" => {
                 let _ = Command::new("wmctrl")
@@ -360,9 +330,7 @@ pub fn snap_window(wid_raw: &str, layout: &str) -> Result<(), String> {
                 let half_w = sw / 2;
                 let half_h = sh / 2;
                 let geom = format!("0,0,{half_h},{half_w},{half_h}");
-                let _ = Command::new("wmctrl")
-                    .args(["-i", "-r", &clean, "-e", &geom])
-                    .status();
+                let _ = Command::new("wmctrl").args(["-i", "-r", &clean, "-e", &geom]).status();
             }
             "bottom_right" | "bottomright" => {
                 let _ = Command::new("wmctrl")
@@ -371,9 +339,7 @@ pub fn snap_window(wid_raw: &str, layout: &str) -> Result<(), String> {
                 let half_w = sw / 2;
                 let half_h = sh / 2;
                 let geom = format!("0,{half_w},{half_h},{half_w},{half_h}");
-                let _ = Command::new("wmctrl")
-                    .args(["-i", "-r", &clean, "-e", &geom])
-                    .status();
+                let _ = Command::new("wmctrl").args(["-i", "-r", &clean, "-e", &geom]).status();
             }
             _ => {
                 // Default: focus and maximize full screen
@@ -421,11 +387,7 @@ pub fn build_active_windows_page(windows: &[OpenAppWindow]) -> DeckPageConfig {
         });
     }
 
-    DeckPageConfig {
-        id: "page_active_windows".to_string(),
-        name: "Janelas no PC".to_string(),
-        tiles,
-    }
+    DeckPageConfig { id: "page_active_windows".to_string(), name: "Janelas no PC".to_string(), tiles }
 }
 
 #[cfg(target_os = "windows")]
@@ -436,15 +398,7 @@ fn list_windows_windows() -> Vec<OpenAppWindow> {
         let wid = format!("0x{:x}", w.hwnd.0 as usize);
         let comm_lower = w.program.to_ascii_lowercase();
         let (app_name, icon, color) = classify_window(&comm_lower, &w.title);
-        out.push(OpenAppWindow {
-            wid,
-            title: w.title,
-            app_name,
-            icon,
-            color,
-            is_focused: false,
-        });
+        out.push(OpenAppWindow { wid, title: w.title, app_name, icon, color, is_focused: false });
     }
     out
 }
-

@@ -645,6 +645,7 @@
     <string name="deck_default_switch_window">Pencere değiştir</string>
     <string name="deck_default_screenshot">Ekran görüntüsü</string>
     <string name="deck_default_lock_pc">Bilgisayarı kilitle</string>
+    <string name="deck_default_valorant">Valorant</string>
 
     <!-- Remote special keys -->
     <string name="remote_key_ctrl">Ctrl</string>

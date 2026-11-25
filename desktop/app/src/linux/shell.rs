@@ -515,9 +515,12 @@ pub fn take_screenshot() -> Result<(), String> {
     if take_screenshot_to(&save_path).is_ok() {
         let _ = Command::new("notify-send")
             .args([
-                "-a", "Conexão Móvel",
-                "-i", "camera-photo",
-                "-u", "low",
+                "-a",
+                "Conexão Móvel",
+                "-i",
+                "camera-photo",
+                "-u",
+                "low",
                 "Captura de Tela Realizada",
                 "Salva em Imagens e copiada para a área de transferência",
             ])

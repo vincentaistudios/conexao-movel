@@ -645,6 +645,7 @@
     <string name="deck_default_switch_window">Fenster wechseln</string>
     <string name="deck_default_screenshot">Screenshot</string>
     <string name="deck_default_lock_pc">PC sperren</string>
+    <string name="deck_default_valorant">Valorant</string>
 
     <!-- Remote special keys -->
     <string name="remote_key_ctrl">Strg</string>

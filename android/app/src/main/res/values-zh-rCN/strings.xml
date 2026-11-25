@@ -607,6 +607,7 @@
     <string name="deck_default_switch_window">切换窗口</string>
     <string name="deck_default_screenshot">截屏</string>
     <string name="deck_default_lock_pc">锁定电脑</string>
+    <string name="deck_default_valorant">Valorant</string>
     <string name="remote_key_ctrl">Ctrl</string>
     <string name="remote_key_alt">Alt</string>
     <string name="remote_key_shift">Shift</string>

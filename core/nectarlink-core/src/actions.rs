@@ -468,7 +468,10 @@ pub(crate) async fn handle(shared: &Arc<Shared>, session: &Arc<Session>, env: &E
                         session.send(reply).await?;
                         tokio::spawn(async move {
                             // Give the answer time to leave before sleep, shutdown or reboot cuts the network.
-                            if matches!(action, PowerAction::Sleep | PowerAction::Shutdown | PowerAction::Reboot) {
+                            if matches!(
+                                action,
+                                PowerAction::Sleep | PowerAction::Shutdown | PowerAction::Reboot
+                            ) {
                                 tokio::time::sleep(std::time::Duration::from_millis(300)).await;
                             }
                             if let Err(reason) = tokio::task::spawn_blocking(move || platform.power(action))
