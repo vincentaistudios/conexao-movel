@@ -360,7 +360,8 @@ fn feed_update(found: &feed::Feed, current: &str) -> Option<Update> {
 /// a file name under %TEMP%: a plain name only, never a path.
 fn is_installer_name(name: &str, suffix: &str) -> bool {
     name.ends_with(suffix)
-        && (name.starts_with("Nectarlink-")
+        && (name.starts_with("ConexaoMovel-")
+            || name.starts_with("Nectarlink-")
             || name.starts_with("nectarlink_")
             || name.starts_with("nectarlink-"))
         && feed::is_plain_name(name)
@@ -1327,38 +1328,38 @@ mod tests {
     fn release(tag: &str) -> Release {
         Release {
             tag_name: tag.into(),
-            html_url: "https://github.com/thtbee/nectarlink/releases/tag/v9".into(),
+            html_url: "https://github.com/vincentaistudios/conexao-movel/releases/tag/v9".into(),
             draft: false,
             prerelease: false,
             assets: vec![
                 Asset {
                     name: "Nectarlink-9.0.0-x64-setup.exe".into(),
-                    browser_download_url: "https://github.com/thtbee/nectarlink/releases/download/v9/setup"
+                    browser_download_url: "https://github.com/vincentaistudios/conexao-movel/releases/download/v9/setup"
                         .into(),
                 },
                 Asset {
                     name: "Nectarlink-9.0.0-arm64-setup.exe".into(),
                     browser_download_url:
-                        "https://github.com/thtbee/nectarlink/releases/download/v9/setup-arm64".into(),
+                        "https://github.com/vincentaistudios/conexao-movel/releases/download/v9/setup-arm64".into(),
                 },
                 Asset {
                     name: "Nectarlink-9.0.0-x86_64.AppImage".into(),
                     browser_download_url:
-                        "https://github.com/thtbee/nectarlink/releases/download/v9/appimage-x64".into(),
+                        "https://github.com/vincentaistudios/conexao-movel/releases/download/v9/appimage-x64".into(),
                 },
                 Asset {
                     name: "nectarlink_9.0.0_amd64.deb".into(),
                     browser_download_url:
-                        "https://github.com/thtbee/nectarlink/releases/download/v9/deb-amd64".into(),
+                        "https://github.com/vincentaistudios/conexao-movel/releases/download/v9/deb-amd64".into(),
                 },
                 Asset {
                     name: "nectarlink-9.0.0-1.x86_64.rpm".into(),
                     browser_download_url:
-                        "https://github.com/thtbee/nectarlink/releases/download/v9/rpm-x86_64".into(),
+                        "https://github.com/vincentaistudios/conexao-movel/releases/download/v9/rpm-x86_64".into(),
                 },
                 Asset {
                     name: "SHA256SUMS.txt".into(),
-                    browser_download_url: "https://github.com/thtbee/nectarlink/releases/download/v9/sums"
+                    browser_download_url: "https://github.com/vincentaistudios/conexao-movel/releases/download/v9/sums"
                         .into(),
                 },
             ],
@@ -1433,14 +1434,14 @@ mod tests {
         let x64 = newer_release_for(release("v9.0.0"), "0.0.1", "-x64-setup.exe").unwrap();
         assert_eq!(
             (x64.version.as_str(), x64.installer_url.as_str()),
-            ("9.0.0", "https://github.com/thtbee/nectarlink/releases/download/v9/setup")
+            ("9.0.0", "https://github.com/vincentaistudios/conexao-movel/releases/download/v9/setup")
         );
         let arm64 = newer_release_for(release("v9.0.0"), "0.0.1", "-arm64-setup.exe").unwrap();
         assert_eq!(
             (arm64.installer_name.as_str(), arm64.installer_url.as_str()),
             (
                 "Nectarlink-9.0.0-arm64-setup.exe",
-                "https://github.com/thtbee/nectarlink/releases/download/v9/setup-arm64"
+                "https://github.com/vincentaistudios/conexao-movel/releases/download/v9/setup-arm64"
             )
         );
         assert!(newer_release(release("v0.0.1"), "0.0.1").is_none());
@@ -1470,7 +1471,7 @@ mod tests {
             (appimage.installer_name.as_str(), appimage.installer_url.as_str()),
             (
                 "Nectarlink-9.0.0-x86_64.AppImage",
-                "https://github.com/thtbee/nectarlink/releases/download/v9/appimage-x64"
+                "https://github.com/vincentaistudios/conexao-movel/releases/download/v9/appimage-x64"
             )
         );
         let deb = newer_release_for(release("v9.0.0"), "0.0.1", "_amd64.deb").unwrap();
@@ -1478,7 +1479,7 @@ mod tests {
             (deb.installer_name.as_str(), deb.installer_url.as_str()),
             (
                 "nectarlink_9.0.0_amd64.deb",
-                "https://github.com/thtbee/nectarlink/releases/download/v9/deb-amd64"
+                "https://github.com/vincentaistudios/conexao-movel/releases/download/v9/deb-amd64"
             )
         );
         #[cfg(target_os = "linux")]

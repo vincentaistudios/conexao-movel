@@ -1,8 +1,17 @@
 # Changelog
 
-All notable changes to NectarLink. Versions follow
+All notable changes to Conexão Móvel. Versions follow
 [semantic versioning](https://semver.org); before 1.0, a minor version may
 change things that need a step from you, and its notes say so.
+
+## 0.1.11
+
+### Novidades e Correções
+
+- **Segunda tela bidirecional (PC e Mobile)**: Possibilidade de ativar o celular/tablet como segunda tela diretamente pelo painel do PC e pelo dispositivo móvel, com registro lógico XRandR 1.5 no Linux (liberação de cursor, arraste de janelas e F11/tela cheia) e captura em 1080p nativo @ 12 Mbps / 60 fps com cursor visível.
+- **Entrada nativa na Segunda Tela**: Substituição do `xdotool` síncrono por XTest nativo para toques e rolagem sem latência nem travamento de clique.
+- **Interface e Estabilidade**: Correção do travamento de layout em Configurações > Dispositivos, melhoria do controle de tela cheia em tablets e supressão definitiva da sugestão do tema Hive após dispensada.
+- **Auto-Updater e Release**: Compatibilidade de atualização automática para prefixos `ConexaoMovel-` e `Nectarlink-`, e correção de empacotamento Linux RPM e build Windows.
 
 ## 0.1.6 (unreleased)
 

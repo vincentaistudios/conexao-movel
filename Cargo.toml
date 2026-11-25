@@ -15,7 +15,7 @@ members = [
 exclude = ["third_party"]
 
 [workspace.package]
-version = "0.1.10"
+version = "0.1.11"
 edition = "2024"
 rust-version = "1.97"
 authors = ["Miranda <vincentaistudios@users.noreply.github.com>", "Vincent AI Studios"]
@@ -27,10 +27,10 @@ repository = "https://github.com/vincentaistudios/conexao-movel"
 name = "Pollen"
 
 [workspace.dependencies]
-nectarlink-adb = { path = "core/nectarlink-adb", version = "0.1.10" }
-nectarlink-protocol = { path = "core/nectarlink-protocol", version = "0.1.10" }
-nectarlink-core = { path = "core/nectarlink-core", version = "0.1.10" }
-nectarlink-vcam = { path = "desktop/vcam", version = "0.1.10" }
+nectarlink-adb = { path = "core/nectarlink-adb", version = "0.1.11" }
+nectarlink-protocol = { path = "core/nectarlink-protocol", version = "0.1.11" }
+nectarlink-core = { path = "core/nectarlink-core", version = "0.1.11" }
+nectarlink-vcam = { path = "desktop/vcam", version = "0.1.11" }
 
 anyhow = "1"
 ciborium = "0.2"

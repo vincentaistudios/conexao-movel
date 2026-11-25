@@ -730,7 +730,10 @@ class AppUpdater(context: Context) {
             if (!isNewer(version, current)) return null
             val files = feed.getJSONArray("files")
             val apk = (0 until files.length()).map { files.getJSONObject(it) }
-                .firstOrNull { it.getString("name").endsWith("-android.apk") && it.getString("name").startsWith("Nectarlink-") }
+                .firstOrNull {
+                    val name = it.getString("name")
+                    name.endsWith("-android.apk") && (name.startsWith("ConexaoMovel-") || name.startsWith("Nectarlink-"))
+                }
                 ?: return null
             return Update(
                 version = version,
