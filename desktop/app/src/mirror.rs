@@ -51,6 +51,7 @@ const OPTIONS: MirrorStart = MirrorStart {
     screen_off: false,
     watch: None,
     sound_only: false,
+    second_screen: false,
 };
 /// Packets waiting for the decoder, at most (about two seconds).
 const BACKLOG: usize = 120;

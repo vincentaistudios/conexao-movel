@@ -62,6 +62,8 @@ mod imp {
         force_keyframe: Arc<AtomicBool>,
         /// Play on phone: the phone watches a player, and its input is ignored.
         watching: bool,
+        /// Streaming second screen virtual display to the phone.
+        second_screen: bool,
     }
 
     static ACTIVE: Mutex<Option<ActiveSession>> = Mutex::new(None);
@@ -95,6 +97,11 @@ mod imp {
     /// Whether this PC's screen is currently being shared with a phone.
     pub fn is_active() -> bool {
         active_peer().is_some()
+    }
+
+    /// Whether this PC is currently streaming a second screen virtual display to a phone.
+    pub fn is_second_screen_active() -> bool {
+        ACTIVE.lock().unwrap_or_else(|e| e.into_inner()).as_ref().is_some_and(|s| s.second_screen)
     }
 
     /// Whether this PC's display session supports screen capture for `mirror.capture`.
@@ -152,6 +159,7 @@ mod imp {
                 stop: Arc::clone(&stop),
                 force_keyframe: Arc::clone(&force_keyframe),
                 watching: options.watch.is_some(),
+                second_screen: options.second_screen,
             });
         }
         core_host::host().hub.changed(crate::state::Changes::REMOTE);
@@ -246,6 +254,36 @@ mod imp {
             return;
         }
         let _ = crate::input_share::enter_remote(*peer);
+        if let Some(geom) = crate::win::virtual_display::active_virtual_geometry() {
+            match input {
+                MirrorInput::Touch { action, x, y } => {
+                    let (px, py) = geom.map_normalized(x, y);
+                    let sx = px.to_string();
+                    let sy = py.to_string();
+                    match action {
+                        nectarlink_core::TouchAction::Down => {
+                            let _ = std::process::Command::new("xdotool").args(["mousemove", "--", &sx, &sy, "mousedown", "1"]).status();
+                        }
+                        nectarlink_core::TouchAction::Move => {
+                            let _ = std::process::Command::new("xdotool").args(["mousemove", "--", &sx, &sy]).status();
+                        }
+                        nectarlink_core::TouchAction::Up => {
+                            let _ = std::process::Command::new("xdotool").args(["mousemove", "--", &sx, &sy, "mouseup", "1"]).status();
+                        }
+                    }
+                    return;
+                }
+                MirrorInput::Scroll { x, y, dx, dy } => {
+                    let (px, py) = geom.map_normalized(x, y);
+                    let sx = px.to_string();
+                    let sy = py.to_string();
+                    let _ = std::process::Command::new("xdotool").args(["mousemove", "--", &sx, &sy]).status();
+                    win::input::scroll(dx, dy);
+                    return;
+                }
+                _ => {}
+            }
+        }
         match input {
             MirrorInput::Touch { action, x, y } => {
                 win::input::mirror_touch(action, x, y);
@@ -2425,9 +2463,23 @@ mod imp {
         }
         let watched = options.watch.as_deref().map(crate::play_on_phone::Watched::follow);
         let mut window_capture: Option<win::window_capture::WindowCapture> = None;
-        let _sound = watched.is_some().then(|| SoundToPhone::start(peer));
+        let mut virtual_display: Option<crate::win::virtual_display::VirtualDisplay> = None;
+        if options.second_screen {
+            match crate::win::virtual_display::VirtualDisplay::acquire(1920, 1080) {
+                Ok(vd) => {
+                    tracing::info!(output = %vd.output_name, "second screen virtual display enabled");
+                    virtual_display = Some(vd);
+                }
+                Err(e) => {
+                    tracing::warn!(error = %e, "second screen virtual display could not be enabled");
+                }
+            }
+        }
+        let _sound = SoundToPhone::start(peer, watched.is_some());
         if watched.is_some() {
             tracing::info!(%peer, fps, bitrate, "streaming a player to the phone");
+        } else if options.second_screen {
+            tracing::info!(%peer, fps, bitrate, "streaming second screen virtual display to the phone");
         } else {
             tracing::info!(%peer, fps, bitrate, "sharing this PC's screen");
         }
@@ -2474,7 +2526,11 @@ mod imp {
             let (dst_w, dst_h) = match stream_dims {
                 Some(dims) => dims,
                 None => {
-                    let (src_w, src_h) = primary_screen_dimensions();
+                    let (src_w, src_h) = if let Some(ref vd) = virtual_display {
+                        (vd.geometry.width, vd.geometry.height)
+                    } else {
+                        primary_screen_dimensions()
+                    };
                     let dims = target_dimensions(src_w, src_h, options.max_size);
                     stream_dims = Some(dims);
                     dims
@@ -2519,7 +2575,10 @@ mod imp {
                 (Some(place), None) => {
                     capture_screen(Some(place.on_screen), dst_w, dst_h, &mut bgra).is_some()
                 }
-                (None, _) => capture_screen(None, dst_w, dst_h, &mut bgra).is_some(),
+                (None, _) => {
+                    let v_region = virtual_display.as_ref().map(|vd| vd.region());
+                    capture_screen(v_region, dst_w, dst_h, &mut bgra).is_some()
+                }
             };
             if captured && let Some(enc) = encoder.as_mut() {
                 bgra_to_nv12(&bgra, dst_w as usize, dst_h as usize, &mut nv12);
@@ -2676,11 +2735,12 @@ mod imp {
     static NEWEST: AtomicU64 = AtomicU64::new(0);
 
     impl SoundToPhone {
-        fn start(peer: DeviceId) -> SoundToPhone {
+        fn start(peer: DeviceId, mute_pc: bool) -> SoundToPhone {
             let generation = NEWEST.fetch_add(1, Ordering::AcqRel) + 1;
             let mut before = BEFORE.lock().unwrap_or_else(|e| e.into_inner());
             if before.is_none() {
-                let muted = MUTE_WHILE_WATCHED.load(Ordering::Relaxed)
+                let muted = mute_pc
+                    && MUTE_WHILE_WATCHED.load(Ordering::Relaxed)
                     && win::audio::speaker_state().is_some_and(|(_, muted)| !muted)
                     && win::audio::set_speaker_mute(true).is_ok();
                 *before =
@@ -2975,6 +3035,10 @@ mod imp {
     }
 
     pub fn is_active() -> bool {
+        false
+    }
+
+    pub fn is_second_screen_active() -> bool {
         false
     }
 

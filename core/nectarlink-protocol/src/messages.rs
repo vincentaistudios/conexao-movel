@@ -1433,6 +1433,10 @@ pub struct MirrorStart {
     /// phone that offers [`mirror::SOUND`]). The PC plays it without a window.
     #[serde(default, skip_serializing_if = "std::ops::Not::not")]
     pub sound_only: bool,
+    /// Second screen / display extension: create a virtual display on the PC
+    /// and stream that extended desktop to this mobile client.
+    #[serde(default, skip_serializing_if = "std::ops::Not::not")]
+    pub second_screen: bool,
 }
 
 impl MirrorStart {

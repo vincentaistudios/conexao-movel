@@ -1281,7 +1281,7 @@ Item {
             Grid {
                 id: actions
                 width: parent.width
-                columns: width > 900 ? 5 : (width > 640 ? 4 : 2)
+                columns: width > 980 ? 6 : (width > 720 ? 3 : 2)
                 spacing: 12
                 readonly property real tileWidth: (width - spacing * (columns - 1)) / columns
 
@@ -1305,6 +1305,17 @@ Item {
                     sideIcon: home.feature("mirroring.app_windows").state === "available" ? Icons.apps : ""
                     sideLabel: qsTr("Open an app")
                     onSideClicked: appsSheet.openFor(home.deviceId, home.name)
+                }
+                ActionTile {
+                    width: actions.tileWidth
+                    deviceOnline: home.online
+                    title: qsTr("Segunda tela")
+                    subtitle: AppController.secondScreenActive && AppController.pcMirrorDeviceName === home.name
+                              ? qsTr("Ativa") : ""
+                    iconPath: Icons.laptop
+                    feature: ({ state: home.online ? "available" : "unknown" })
+                    active: AppController.secondScreenActive && AppController.pcMirrorDeviceName === home.name
+                    onClicked: AppController.toggleSecondScreen(home.deviceId)
                 }
                 ActionTile {
                     width: actions.tileWidth

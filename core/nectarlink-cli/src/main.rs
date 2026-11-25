@@ -3272,6 +3272,7 @@ async fn run(cli: &Cli, node: &Node) -> Result<()> {
                 screen_off: false,
                 watch: None,
                 sound_only: false,
+                second_screen: false,
             };
             node.mirror_start(id, options).await.context("the phone didn't ask its user")?;
             println!(
@@ -3481,6 +3482,7 @@ async fn run(cli: &Cli, node: &Node) -> Result<()> {
                 screen_off: false,
                 watch: Some(player.clone()),
                 sound_only: false,
+                second_screen: false,
             };
             node.mirror_start(id, options).await.context("the PC didn't stream it")?;
             println!("Watching {player}; recording for {seconds} s after the first frame.");

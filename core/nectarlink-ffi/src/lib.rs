@@ -4122,6 +4122,7 @@ impl NectarlinkNode {
         fps: u32,
         bitrate: u32,
         watch: Option<String>,
+        second_screen: Option<bool>,
     ) -> Result<()> {
         let id = parse_id(&pc_id)?;
         let node = self.node.clone();
@@ -4129,13 +4130,14 @@ impl NectarlinkNode {
             max_size,
             fps,
             bitrate,
-            audio: watch.is_some(),
+            audio: true,
             session: core::MIRROR_SCREEN,
             app: None,
             stay_awake: false,
             screen_off: false,
             watch,
             sound_only: false,
+            second_screen: second_screen.unwrap_or(false),
         };
         self.run(async move { Ok(node.mirror_start(id, options).await?) }).await
     }

@@ -94,6 +94,7 @@ pub mod qobject {
         #[qproperty(QString, pc_mirror_prompt_device_id)]
         #[qproperty(QString, pc_mirror_prompt_device_name)]
         #[qproperty(bool, pc_mirror_active)]
+        #[qproperty(bool, second_screen_active)]
         #[qproperty(QString, pc_mirror_device_name)]
         /// Whether the presentation laser pointer overlay is showing, and its
         /// normalized position on the primary screen (`0.0..=1.0`).
@@ -218,6 +219,9 @@ pub mod qobject {
         /// Immediately stops sharing this PC's screen with any phone.
         #[qinvokable]
         fn stop_pc_mirror(self: Pin<&mut AppController>);
+        /// Starts or toggles streaming this PC's extended second screen to a paired device.
+        #[qinvokable]
+        fn toggle_second_screen(self: Pin<&mut AppController>, device: &QString);
         /// Reconnects to phones that aren't connected and syncs connected
         /// ones (notifications, media).
         #[qinvokable]
@@ -470,6 +474,7 @@ pub struct AppControllerRust {
     pc_mirror_prompt_device_id: QString,
     pc_mirror_prompt_device_name: QString,
     pc_mirror_active: bool,
+    second_screen_active: bool,
     pc_mirror_device_name: QString,
     laser_active: bool,
     laser_x: f32,
@@ -786,7 +791,7 @@ impl cxx_qt::Initialize for qobject::AppController {
         self.as_mut().set_data_retention_summary(QString::default());
         self.as_mut().set_localsend_peers_json(QString::from("[]"));
         self.as_mut().set_shelf_items(QString::default());
-        if let Ok(qr) = crate::qr::encode("https://github.com/thtbee/nectarlink/releases/latest") {
+        if let Ok(qr) = crate::qr::encode("https://github.com/vincentaistudios/conexao-movel/releases/latest") {
             let svg = format!(
                 "data:image/svg+xml;utf8,<svg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 {size} {size}\" shape-rendering=\"crispEdges\"><rect width=\"{size}\" height=\"{size}\" fill=\"white\"/><path d=\"{path}\" fill=\"black\"/></svg>",
                 size = qr.size,
@@ -1303,6 +1308,7 @@ impl qobject::AppController {
         self.as_mut().set_pc_mirror_prompt_device_id(QString::from(&mirror_prompt_id));
         self.as_mut().set_pc_mirror_prompt_device_name(QString::from(&mirror_prompt_name));
         self.as_mut().set_pc_mirror_active(pc_mirror_peer_name.is_some());
+        self.as_mut().set_second_screen_active(crate::pc_mirror::is_second_screen_active());
         self.as_mut().set_pc_mirror_device_name(QString::from(&pc_mirror_peer_name.unwrap_or_default()));
         match laser {
             Some((_, x, y)) => {
@@ -1667,6 +1673,32 @@ impl qobject::AppController {
 
     pub fn stop_pc_mirror(self: Pin<&mut Self>) {
         crate::pc_mirror::stop_all();
+    }
+
+    pub fn toggle_second_screen(mut self: Pin<&mut Self>, device: &QString) {
+        let Some(id) = super::parse_device(device) else { return };
+        if crate::pc_mirror::is_second_screen_active() {
+            crate::pc_mirror::stop_for(&id);
+        } else {
+            self.as_mut().set_device_toggle(device, &QString::from("pc_mirror"), true);
+            if let Some(node) = core_host::node() {
+                node.set_pc_mirror_session_allowed(id, true);
+            }
+            let options = nectarlink_core::MirrorStart {
+                session: nectarlink_core::MIRROR_SCREEN,
+                max_size: 1920,
+                fps: 60,
+                bitrate: 8_000_000,
+                audio: true,
+                stay_awake: false,
+                screen_off: false,
+                sound_only: false,
+                watch: None,
+                app: None,
+                second_screen: true,
+            };
+            crate::pc_mirror::start(id, options);
+        }
     }
 
     pub fn unpair(self: Pin<&mut Self>, device: &QString) {

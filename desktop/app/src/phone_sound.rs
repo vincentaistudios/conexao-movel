@@ -136,6 +136,7 @@ fn start(device: DeviceId, name: String, quiet: bool) {
             screen_off: false,
             watch: None,
             sound_only: true,
+            second_screen: false,
         };
         if let Err(e) = node.mirror_start(device, options).await {
             set_active(None);

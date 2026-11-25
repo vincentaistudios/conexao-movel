@@ -392,6 +392,9 @@
     <string name="remote_laser_active">Apontador laser em %1$s · incline o celular ou arraste aqui</string>
     <string name="remote_volume_hint">Os botões de volume também mudam os slides enquanto esta tela está aberta.</string>
     <string name="remote_mode_screen">Tela</string>
+    <string name="remote_mode_second_screen">Segunda tela</string>
+    <string name="desk_second_screen">Segunda tela</string>
+    <string name="second_screen_badge">Segunda tela virtual</string>
     <string name="pc_mirror_connecting">Conectando a %1$s…</string>
     <string name="pc_mirror_fullscreen">Tela inteira</string>
     <string name="pc_mirror_exit_fullscreen">Sair da tela inteira</string>

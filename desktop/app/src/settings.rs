@@ -953,6 +953,7 @@ mod tests {
             sync_wifi_only: true,
             flow_follow_clipboard: false,
             folder_sync_rules: Vec::new(),
+            valorant_spike_auto_detect: false,
             nectar_island: true,
             nectar_island_calls: true,
             nectar_island_transfers: true,
