@@ -1336,7 +1336,7 @@ Item {
             // ================================================================
             Column {
                 visible: page.currentSection === "devices"
-                width: visible ? parent.width : 0
+                width: parent.width
                 spacing: Theme.gutter
 
                 // Device Selector Pill Bar when more than 1 phone is paired
@@ -1425,7 +1425,7 @@ Item {
                         required property string name
                         required property bool online
                         visible: index === page.selectedDeviceIndex
-                        width: visible ? column.width : 0
+                        width: column.width
 
                         // Re-read when toggles (and so capabilities) change.
                         readonly property var toggles: AppController.capsRevision >= 0 && AppController.togglesRevision >= 0
