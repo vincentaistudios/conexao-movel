@@ -151,6 +151,22 @@ pub fn mirror_touch(action: TouchAction, x: f32, y: f32) {
     send_inputs(&[mouse_input(ax, ay, 0, flags)]);
 }
 
+/// Moves the pointer to absolute desktop pixel coordinates `(px, py)`.
+pub fn move_pointer_px(px: i32, py: i32) {
+    let (w, h) = display_dimensions();
+    let nx = (px as f32 / w.max(1) as f32).clamp(0.0, 1.0);
+    let ny = (py as f32 / h.max(1) as f32).clamp(0.0, 1.0);
+    move_absolute(nx, ny);
+}
+
+/// Translates touch events at desktop pixel coordinates `(px, py)` into mouse input.
+pub fn mirror_touch_at(action: TouchAction, px: i32, py: i32) {
+    let (w, h) = display_dimensions();
+    let nx = (px as f32 / w.max(1) as f32).clamp(0.0, 1.0);
+    let ny = (py as f32 / h.max(1) as f32).clamp(0.0, 1.0);
+    mirror_touch(action, nx, ny);
+}
+
 /// Presses, releases or clicks a mouse button.
 pub fn mouse_button(button: MouseButton, action: ButtonAction) {
     let (down_flag, up_flag) = match button {

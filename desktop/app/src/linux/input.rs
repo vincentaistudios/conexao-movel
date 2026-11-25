@@ -901,12 +901,20 @@ pub fn move_absolute(x: f32, y: f32) {
 
 /// Injects a normalized touch event (`0.0..=1.0`) from reverse PC mirroring as
 /// absolute mouse movement + left button press/release.
-pub fn mirror_touch(action: TouchAction, x: f32, y: f32) {
-    if !x.is_finite() || !y.is_finite() {
+pub fn move_pointer_px(px: i32, py: i32) {
+    if !has_wayland_display()
+        && with_xtest(|api, dpy| unsafe {
+            let _ = (api.fake_motion)(dpy, -1, px, py, 0);
+        })
+    {
         return;
     }
-    let (w, h) = display_dimensions();
-    let (px, py) = normalized_to_pixels(x, y, w, h);
+    let sx = px.to_string();
+    let sy = py.to_string();
+    let _ = run_quiet("xdotool", &["mousemove", "--", &sx, &sy]);
+}
+
+pub fn mirror_touch_at(action: TouchAction, px: i32, py: i32) {
     let sx = px.to_string();
     let sy = py.to_string();
 
@@ -923,15 +931,12 @@ pub fn mirror_touch(action: TouchAction, x: f32, y: f32) {
             {
                 return;
             }
-            if has_wayland_display()
-                || !run_quiet("xdotool", &["mousemove", "--", &sx, &sy, "mousedown", "1"])
-            {
-                move_absolute(x, y);
+            if !run_quiet("xdotool", &["mousemove", "--", &sx, &sy, "mousedown", "1"]) {
                 mouse_button(MouseButton::Left, ButtonAction::Down);
             }
         }
         TouchAction::Move => {
-            move_absolute(x, y);
+            move_pointer_px(px, py);
         }
         TouchAction::Up => {
             if let Ok(mut s) = STATE.lock() {
@@ -945,13 +950,20 @@ pub fn mirror_touch(action: TouchAction, x: f32, y: f32) {
             {
                 return;
             }
-            if has_wayland_display() || !run_quiet("xdotool", &["mousemove", "--", &sx, &sy, "mouseup", "1"])
-            {
-                move_absolute(x, y);
+            if !run_quiet("xdotool", &["mousemove", "--", &sx, &sy, "mouseup", "1"]) {
                 mouse_button(MouseButton::Left, ButtonAction::Up);
             }
         }
     }
+}
+
+pub fn mirror_touch(action: TouchAction, x: f32, y: f32) {
+    if !x.is_finite() || !y.is_finite() {
+        return;
+    }
+    let (w, h) = display_dimensions();
+    let (px, py) = normalized_to_pixels(x, y, w, h);
+    mirror_touch_at(action, px, py);
 }
 
 fn x11_button_num(button: MouseButton) -> c_uint {

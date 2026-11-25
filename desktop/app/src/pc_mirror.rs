@@ -258,26 +258,12 @@ mod imp {
             match input {
                 MirrorInput::Touch { action, x, y } => {
                     let (px, py) = geom.map_normalized(x, y);
-                    let sx = px.to_string();
-                    let sy = py.to_string();
-                    match action {
-                        nectarlink_core::TouchAction::Down => {
-                            let _ = std::process::Command::new("xdotool").args(["mousemove", "--", &sx, &sy, "mousedown", "1"]).status();
-                        }
-                        nectarlink_core::TouchAction::Move => {
-                            let _ = std::process::Command::new("xdotool").args(["mousemove", "--", &sx, &sy]).status();
-                        }
-                        nectarlink_core::TouchAction::Up => {
-                            let _ = std::process::Command::new("xdotool").args(["mousemove", "--", &sx, &sy, "mouseup", "1"]).status();
-                        }
-                    }
+                    win::input::mirror_touch_at(action, px, py);
                     return;
                 }
                 MirrorInput::Scroll { x, y, dx, dy } => {
                     let (px, py) = geom.map_normalized(x, y);
-                    let sx = px.to_string();
-                    let sy = py.to_string();
-                    let _ = std::process::Command::new("xdotool").args(["mousemove", "--", &sx, &sy]).status();
+                    win::input::move_pointer_px(px, py);
                     win::input::scroll(dx, dy);
                     return;
                 }
