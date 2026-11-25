@@ -125,6 +125,20 @@ impl VirtualDisplay {
             .args(["--delmonitor", VIRTUAL_MONITOR_NAME])
             .status();
 
+        // Register the XRandR 1.5 virtual monitor BEFORE enabling the CRTC output so that
+        // the window manager (e.g. Xfwm4) sees the new monitor geometry immediately when
+        // the RandR screen-change event fires, updating _NET_DESKTOP_GEOMETRY and
+        // _NET_WORKAREA (allowing free window dragging, maximize, and F11 fullscreen).
+        let monitor_geom = format_monitor_geometry(prim_w as i32, 0, target_w, target_h);
+        let setmon_status = Command::new("xrandr")
+            .args(["--setmonitor", VIRTUAL_MONITOR_NAME, &monitor_geom, "none"])
+            .status();
+        if let Ok(st) = setmon_status
+            && !st.success()
+        {
+            tracing::warn!("xrandr --setmonitor returned non-zero status");
+        }
+
         // Add mode to the chosen disconnected output (may already exist, ignore non-fatal status).
         let _ = Command::new("xrandr")
             .args(["--addmode", &chosen_output, &mode_name])
@@ -152,22 +166,11 @@ impl VirtualDisplay {
                 .status()
                 .map_err(|e| format!("failed to extend framebuffer: {e}"))?;
             if !fb_status.success() {
+                let _ = Command::new("xrandr")
+                    .args(["--delmonitor", VIRTUAL_MONITOR_NAME])
+                    .status();
                 return Err(format!("xrandr returned failure enabling {chosen_output} with mode {mode_name}"));
             }
-        }
-
-        // Register an XRandR 1.5 virtual monitor with output "none" so GTK/GDK, Xfwm4,
-        // and other window managers recognize the second screen independently of the
-        // physical connector's disconnected state (allowing free cursor travel, window
-        // dragging, maximize, and F11 fullscreen on the secondary screen).
-        let monitor_geom = format_monitor_geometry(prim_w as i32, 0, target_w, target_h);
-        let setmon_status = Command::new("xrandr")
-            .args(["--setmonitor", VIRTUAL_MONITOR_NAME, &monitor_geom, "none"])
-            .status();
-        if let Ok(st) = setmon_status
-            && !st.success()
-        {
-            tracing::warn!("xrandr --setmonitor returned non-zero status");
         }
 
         let geometry = VirtualDisplayGeometry {
