@@ -1688,7 +1688,7 @@ impl qobject::AppController {
                 session: nectarlink_core::MIRROR_SCREEN,
                 max_size: 1920,
                 fps: 60,
-                bitrate: 8_000_000,
+                bitrate: 12_000_000,
                 audio: true,
                 stay_awake: false,
                 screen_off: false,

@@ -331,15 +331,15 @@ mod imp {
         }
     }
 
-    /// Computes target encoder dimensions (multiples of 16) fitting within `max_size`.
+    /// Computes target encoder dimensions (multiples of 8, preserving exact 1080p/720p) fitting within `max_size`.
     pub(crate) fn target_dimensions(src_w: u32, src_h: u32, max_size: u32) -> (u32, u32) {
         let max_edge = max_size.clamp(320, 1920) as f64;
         let sw = src_w.max(64) as f64;
         let sh = src_h.max(64) as f64;
         let longest = sw.max(sh);
         let scale = if longest > max_edge { max_edge / longest } else { 1.0 };
-        let w = (((sw * scale).round() as u32) / 16).max(4) * 16;
-        let h = (((sh * scale).round() as u32) / 16).max(4) * 16;
+        let w = (((sw * scale).round() as u32) / 8).max(8) * 8;
+        let h = (((sh * scale).round() as u32) / 8).max(8) * 8;
         (w, h)
     }
 
@@ -2377,8 +2377,7 @@ mod imp {
             let mut win_x: std::ffi::c_int = 0;
             let mut win_y: std::ffi::c_int = 0;
             let mut mask_ret: std::ffi::c_uint = 0;
-            if region.is_none()
-                && (api.query_pointer)(
+            if (api.query_pointer)(
                     dpy,
                     root,
                     &mut root_ret,
@@ -2389,12 +2388,14 @@ mod imp {
                     &mut win_y,
                     &mut mask_ret,
                 ) != 0
-                && root_x >= 0
-                && root_y >= 0
             {
-                let cx = ((root_x as i64) * (dst_w as i64) / (src_w as i64)) as i32;
-                let cy = ((root_y as i64) * (dst_h as i64) / (src_h as i64)) as i32;
-                draw_cursor_pointer(bgra, dst_w, dst_h, cx, cy);
+                let rel_x = root_x - src_x;
+                let rel_y = root_y - src_y;
+                if rel_x >= 0 && rel_x < src_w as i32 && rel_y >= 0 && rel_y < src_h as i32 {
+                    let cx = ((rel_x as i64) * (dst_w as i64) / (src_w as i64)) as i32;
+                    let cy = ((rel_y as i64) * (dst_h as i64) / (src_h as i64)) as i32;
+                    draw_cursor_pointer(bgra, dst_w, dst_h, cx, cy);
+                }
             }
 
             if let Some(destroy) = (*img).f.destroy_image {

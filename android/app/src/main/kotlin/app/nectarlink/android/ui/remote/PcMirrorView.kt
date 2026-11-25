@@ -330,8 +330,8 @@ fun PcMirrorView(
     val activeConfig = mirrorConfig?.takeIf { it.pcId == pcId }
     val effectiveCodec = activeConfig?.codec ?: "h264"
 
-    // Video looks its best at 1080p; the PC's desktop starts at 720p.
-    var highQuality by rememberSaveable { mutableStateOf(watch != null) }
+    // Video looks its best at 1080p; the PC's desktop starts at 720p, while SecondScreen starts at 1080p.
+    var highQuality by rememberSaveable { mutableStateOf(watch != null || isSecondScreen) }
     var showKeyboardBar by rememberSaveable { mutableStateOf(false) }
     var typedText by rememberSaveable { mutableStateOf("") }
     var surface by remember { mutableStateOf<Surface?>(null) }
@@ -487,7 +487,8 @@ fun PcMirrorView(
             controller.hide(WindowInsetsCompat.Type.systemBars())
         } else if (appliedFullScreen) {
             controller.show(WindowInsetsCompat.Type.systemBars())
-            activity.requestedOrientation = if (!autoRotateEnabled || suppressAutoEnterInLandscape) {
+            val isTablet = configuration.smallestScreenWidthDp >= 600
+            activity.requestedOrientation = if (!isTablet && (!autoRotateEnabled || suppressAutoEnterInLandscape)) {
                 ActivityInfo.SCREEN_ORIENTATION_PORTRAIT
             } else {
                 initialRequestedOrientation
@@ -527,7 +528,8 @@ fun PcMirrorView(
     }
 
     val maxSize = if (highQuality) 1920 else 1280
-    val bitrate = if (highQuality) 8_000_000 else 4_000_000
+    val bitrate = if (highQuality) (if (isSecondScreen) 12_000_000 else 8_000_000) else 4_000_000
+    val targetFps = if (isSecondScreen) 60 else 30
 
     // Nobody's watching once the phone is on something else or its screen is off, and video
     // costs the PC its CPU and the phone its data. Play on phone keeps going: its sound does.
@@ -548,9 +550,9 @@ fun PcMirrorView(
         asked = true
         android.util.Log.i(
             "PcMirrorView",
-            "startPcMirror maxSize=$maxSize fps=30 bitrate=$bitrate secondScreen=$isSecondScreen",
+            "startPcMirror maxSize=$maxSize fps=$targetFps bitrate=$bitrate secondScreen=$isSecondScreen",
         )
-        core.startPcMirror(pcId, maxSize = maxSize, fps = 30, bitrate = bitrate, watch = watch, secondScreen = isSecondScreen)
+        core.startPcMirror(pcId, maxSize = maxSize, fps = targetFps, bitrate = bitrate, watch = watch, secondScreen = isSecondScreen)
     }
 
     DisposableEffect(pcId) {
