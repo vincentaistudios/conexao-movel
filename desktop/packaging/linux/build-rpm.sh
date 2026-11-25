@@ -126,6 +126,7 @@ cp -a "${TREE}/usr" "%{buildroot}/"
 /usr/share/applications/nectarlink.desktop
 /usr/share/metainfo/org.nectarlink.desktop.metainfo.xml
 /usr/share/icons/hicolor/*/apps/nectarlink.*
+/usr/share/icons/hicolor/*/apps/sys-device-link.*
 
 %post
 update-desktop-database -q /usr/share/applications >/dev/null 2>&1 || :

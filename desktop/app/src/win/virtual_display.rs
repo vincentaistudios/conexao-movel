@@ -1,7 +1,7 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 //! Windows virtual display stub for API parity with Linux.
 
-use crate::win::browser::RECT;
+use windows::Win32::Foundation::RECT;
 
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
 pub struct VirtualDisplayGeometry {
@@ -36,7 +36,10 @@ pub fn active_virtual_geometry() -> Option<VirtualDisplayGeometry> {
 
 pub fn set_active_virtual_geometry(_geom: Option<VirtualDisplayGeometry>) {}
 
-pub struct VirtualDisplay;
+pub struct VirtualDisplay {
+    pub output_name: String,
+    pub geometry: VirtualDisplayGeometry,
+}
 
 impl VirtualDisplay {
     pub fn acquire(_target_w: u32, _target_h: u32) -> Result<Self, String> {
