@@ -80,6 +80,14 @@ pub fn parse_xrandr_query(output: &str) -> (Option<(String, u32, u32)>, Vec<Stri
     (primary, disconnected)
 }
 
+const VIRTUAL_MONITOR_NAME: &str = "VIRTUAL-SECOND";
+
+fn format_monitor_geometry(left: i32, top: i32, width: u32, height: u32) -> String {
+    let w_mm = ((width as f64) * 25.4 / 96.0).round().max(1.0) as u32;
+    let h_mm = ((height as f64) * 25.4 / 96.0).round().max(1.0) as u32;
+    format!("{width}/{w_mm}x{height}/{h_mm}+{left}+{top}")
+}
+
 /// RAII wrapper for managing a physical second screen virtual output via xrandr.
 pub struct VirtualDisplay {
     pub output_name: String,
@@ -102,7 +110,7 @@ impl VirtualDisplay {
         let raw_query = String::from_utf8_lossy(&query_cmd.stdout);
         let (primary, disconnected) = parse_xrandr_query(&raw_query);
 
-        let (prim_name, prim_w, _prim_h) = primary
+        let (prim_name, prim_w, prim_h) = primary
             .ok_or_else(|| "no connected primary display detected via xrandr".to_string())?;
 
         let chosen_output = disconnected
@@ -112,12 +120,18 @@ impl VirtualDisplay {
 
         let mode_name = format!("{target_w}x{target_h}");
 
+        // Clean up any stale virtual monitor definition before configuring.
+        let _ = Command::new("xrandr")
+            .args(["--delmonitor", VIRTUAL_MONITOR_NAME])
+            .status();
+
         // Add mode to the chosen disconnected output (may already exist, ignore non-fatal status).
         let _ = Command::new("xrandr")
             .args(["--addmode", &chosen_output, &mode_name])
             .status();
 
-        // Enable the output positioned to the right of the primary display.
+        // Enable the output positioned to the right of the primary display so Xorg allocates
+        // the extended CRTC and pointer space without panning the primary display.
         let enable_status = Command::new("xrandr")
             .args([
                 "--output",
@@ -131,7 +145,29 @@ impl VirtualDisplay {
             .map_err(|e| format!("failed to enable virtual output {chosen_output}: {e}"))?;
 
         if !enable_status.success() {
-            return Err(format!("xrandr returned failure enabling {chosen_output} with mode {mode_name}"));
+            let total_w = prim_w.saturating_add(target_w);
+            let total_h = prim_h.max(target_h);
+            let fb_status = Command::new("xrandr")
+                .args(["--fb", &format!("{total_w}x{total_h}")])
+                .status()
+                .map_err(|e| format!("failed to extend framebuffer: {e}"))?;
+            if !fb_status.success() {
+                return Err(format!("xrandr returned failure enabling {chosen_output} with mode {mode_name}"));
+            }
+        }
+
+        // Register an XRandR 1.5 virtual monitor with output "none" so GTK/GDK, Xfwm4,
+        // and other window managers recognize the second screen independently of the
+        // physical connector's disconnected state (allowing free cursor travel, window
+        // dragging, maximize, and F11 fullscreen on the secondary screen).
+        let monitor_geom = format_monitor_geometry(prim_w as i32, 0, target_w, target_h);
+        let setmon_status = Command::new("xrandr")
+            .args(["--setmonitor", VIRTUAL_MONITOR_NAME, &monitor_geom, "none"])
+            .status();
+        if let Ok(st) = setmon_status
+            && !st.success()
+        {
+            tracing::warn!("xrandr --setmonitor returned non-zero status");
         }
 
         let geometry = VirtualDisplayGeometry {
@@ -156,6 +192,9 @@ impl VirtualDisplay {
 
     pub fn release(&mut self) {
         if self.active {
+            let _ = Command::new("xrandr")
+                .args(["--delmonitor", VIRTUAL_MONITOR_NAME])
+                .status();
             let _ = Command::new("xrandr")
                 .args(["--output", &self.output_name, "--off"])
                 .status();
