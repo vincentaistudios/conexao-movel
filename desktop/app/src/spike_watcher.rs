@@ -158,6 +158,7 @@ fn run_watcher_loop() {
 }
 
 #[cfg(windows)]
+#[allow(unsafe_code)]
 fn is_valorant_foreground() -> bool {
     use windows::Win32::UI::WindowsAndMessaging::{GetForegroundWindow, GetWindowTextW};
 
@@ -180,6 +181,7 @@ fn is_valorant_foreground() -> bool {
 }
 
 #[cfg(windows)]
+#[allow(unsafe_code)]
 fn sample_hud_pixels_windows() -> Option<Vec<(u8, u8, u8)>> {
     use windows::Win32::Graphics::Gdi::{
         BI_RGB, BITMAPINFO, BITMAPINFOHEADER, BitBlt, CreateCompatibleBitmap, CreateCompatibleDC,
