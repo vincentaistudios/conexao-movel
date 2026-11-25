@@ -316,6 +316,7 @@ fun PcMirrorView(
     isFullScreen: Boolean = false,
     onFullScreenChange: (Boolean) -> Unit = {},
     watch: String? = null,
+    isSecondScreen: Boolean = false,
     onTap: () -> Unit = {},
 ) {
     val context = LocalContext.current
@@ -547,9 +548,9 @@ fun PcMirrorView(
         asked = true
         android.util.Log.i(
             "PcMirrorView",
-            "startPcMirror maxSize=$maxSize fps=30 bitrate=$bitrate",
+            "startPcMirror maxSize=$maxSize fps=30 bitrate=$bitrate secondScreen=$isSecondScreen",
         )
-        core.startPcMirror(pcId, maxSize = maxSize, fps = 30, bitrate = bitrate, watch = watch)
+        core.startPcMirror(pcId, maxSize = maxSize, fps = 30, bitrate = bitrate, watch = watch, secondScreen = isSecondScreen)
     }
 
     DisposableEffect(pcId) {

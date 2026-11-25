@@ -204,8 +204,8 @@ Installed-Size: ${INSTALLED_SIZE}
 Depends: ${BASE_DEPENDS}${QT_DEPENDS}
 Recommends: fuse3, curl | wget, libavcodec62 | libavcodec61 | libavcodec60, libopenh264-8 | libopenh264-7 | libopenh264-6, gstreamer1.0-tools, gstreamer1.0-pipewire, gstreamer1.0-plugins-base, pulseaudio-utils, pipewire-bin, libxtst6, wl-clipboard, xclip, xdg-utils, bluez, pkexec | policykit-1
 Suggests: v4l2loopback-dkms, ffmpeg, network-manager
-Maintainer: Conexão Móvel <https://github.com/thtbee/nectarlink>
-Homepage: https://github.com/thtbee/nectarlink
+Maintainer: Conexão Móvel <https://github.com/vincentaistudios/conexao-movel>
+Homepage: https://github.com/vincentaistudios/conexao-movel
 Description: Conexão Móvel — integre seu celular Android e computador
  O Conexão Móvel conecta seu celular Android e seu computador na rede local
  com criptografia de ponta a ponta, transferência de arquivos, notificações,

@@ -21,8 +21,8 @@
     </ul>
   </description>
   <launchable type="desktop-id">nectarlink.desktop</launchable>
-  <url type="homepage">https://github.com/thtbee/nectarlink</url>
-  <url type="bugtracker">https://github.com/thtbee/nectarlink/issues</url>
+  <url type="homepage">https://github.com/vincentaistudios/conexao-movel</url>
+  <url type="bugtracker">https://github.com/vincentaistudios/conexao-movel/issues</url>
   <provides>
     <binary>nectarlink-desktop</binary>
     <mediatype>x-scheme-handler/nectarlink</mediatype>

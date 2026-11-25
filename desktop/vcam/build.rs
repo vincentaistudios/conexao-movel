@@ -23,7 +23,7 @@ BEGIN
   BEGIN
     BLOCK "040904B0"
     BEGIN
-      VALUE "CompanyName", "The NectarLink contributors"
+      VALUE "CompanyName", "Miranda / Vincent AI Studios"
       VALUE "FileDescription", "NectarLink virtual camera"
       VALUE "FileVersion", "{version}"
       VALUE "InternalName", "nectarlink_vcam"

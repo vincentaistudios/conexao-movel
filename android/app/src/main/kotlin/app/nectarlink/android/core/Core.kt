@@ -2381,6 +2381,7 @@ class Core(context: Context, private val scope: CoroutineScope) : EventListener 
         fps: Int = 30,
         bitrate: Int = 4_000_000,
         watch: String? = null,
+        secondScreen: Boolean = false,
     ) {
         command {
             it.startPcMirror(
@@ -2389,6 +2390,7 @@ class Core(context: Context, private val scope: CoroutineScope) : EventListener 
                 fps.coerceIn(10, 60).toUInt(),
                 bitrate.coerceIn(500_000, 20_000_000).toUInt(),
                 watch,
+                secondScreen,
             )
         }
     }

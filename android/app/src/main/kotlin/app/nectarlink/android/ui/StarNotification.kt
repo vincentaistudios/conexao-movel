@@ -24,7 +24,7 @@ internal object StarNotification {
     private const val CHANNEL = "project"
     private const val ID = 0x5A7A
     private const val HOUR_MS = 60 * 60 * 1000L
-    private const val REPO = "https://github.com/thtbee/nectarlink"
+    private const val REPO = "https://github.com/vincentaistudios/conexao-movel"
 
     // Its own file: "appearance" is backed up, and a reinstall should ask again.
     private const val PREFS = "star_notification"

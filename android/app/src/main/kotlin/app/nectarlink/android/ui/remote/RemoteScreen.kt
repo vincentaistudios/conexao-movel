@@ -123,7 +123,7 @@ import kotlin.math.abs
 import kotlin.math.hypot
 import kotlinx.coroutines.delay
 
-enum class RemoteMode { Touchpad, AirMouse, Presentation, Screen }
+enum class RemoteMode { Touchpad, AirMouse, Presentation, Screen, SecondScreen }
 
 @OptIn(ExperimentalLayoutApi::class)
 @Composable
@@ -160,7 +160,7 @@ fun RemoteScreen(
     val landscape = LocalConfiguration.current.orientation == Configuration.ORIENTATION_LANDSCAPE
     val touchpadOnly = landscape && touchpadOnlyChosen && mode == RemoteMode.Touchpad &&
         device.online && access == Core.RemoteAccess.Allowed
-    val isFullScreen = (mode == RemoteMode.Screen && screenFullScreen) || touchpadOnly
+    val isFullScreen = ((mode == RemoteMode.Screen || mode == RemoteMode.SecondScreen) && screenFullScreen) || touchpadOnly
     DisposableEffect(view, touchpadOnly) {
         val window = (context as? Activity)?.window
         val bars = window?.let { WindowCompat.getInsetsController(it, view) }
@@ -175,7 +175,7 @@ fun RemoteScreen(
     val utteranceJoiner = remember(device.id) { UtteranceJoiner() }
 
     LaunchedEffect(mode) {
-        if (mode != RemoteMode.Screen && screenFullScreen) {
+        if (mode != RemoteMode.Screen && mode != RemoteMode.SecondScreen && screenFullScreen) {
             screenFullScreen = false
         }
     }
@@ -235,12 +235,12 @@ fun RemoteScreen(
                 ) {}
             }
 
-            // Mode switcher: Touchpad | Air mouse | Presentation | Screen
+            // Mode switcher: Touchpad | Air mouse | Presentation | Screen | Second Screen
             SingleChoiceSegmentedButtonRow(Modifier.fillMaxWidth()) {
                 SegmentedButton(
                     selected = mode == RemoteMode.Touchpad,
                     onClick = { mode = RemoteMode.Touchpad },
-                    shape = SegmentedButtonDefaults.itemShape(0, 4),
+                    shape = SegmentedButtonDefaults.itemShape(0, 5),
                     icon = {},
                     modifier = Modifier.weight(1f),
                 ) {
@@ -253,7 +253,7 @@ fun RemoteScreen(
                 SegmentedButton(
                     selected = mode == RemoteMode.AirMouse,
                     onClick = { mode = RemoteMode.AirMouse },
-                    shape = SegmentedButtonDefaults.itemShape(1, 4),
+                    shape = SegmentedButtonDefaults.itemShape(1, 5),
                     icon = {},
                     modifier = Modifier.weight(1f),
                 ) {
@@ -266,9 +266,9 @@ fun RemoteScreen(
                 SegmentedButton(
                     selected = mode == RemoteMode.Presentation,
                     onClick = { mode = RemoteMode.Presentation },
-                    shape = SegmentedButtonDefaults.itemShape(2, 4),
+                    shape = SegmentedButtonDefaults.itemShape(2, 5),
                     icon = {},
-                    modifier = Modifier.weight(1.1f),
+                    modifier = Modifier.weight(1.05f),
                 ) {
                     Text(
                         stringResource(R.string.remote_mode_presentation),
@@ -279,12 +279,25 @@ fun RemoteScreen(
                 SegmentedButton(
                     selected = mode == RemoteMode.Screen,
                     onClick = { mode = RemoteMode.Screen },
-                    shape = SegmentedButtonDefaults.itemShape(3, 4),
+                    shape = SegmentedButtonDefaults.itemShape(3, 5),
                     icon = {},
                     modifier = Modifier.weight(0.95f),
                 ) {
                     Text(
                         stringResource(R.string.remote_mode_screen),
+                        maxLines = 1,
+                        overflow = TextOverflow.Ellipsis,
+                    )
+                }
+                SegmentedButton(
+                    selected = mode == RemoteMode.SecondScreen,
+                    onClick = { mode = RemoteMode.SecondScreen },
+                    shape = SegmentedButtonDefaults.itemShape(4, 5),
+                    icon = {},
+                    modifier = Modifier.weight(1.1f),
+                ) {
+                    Text(
+                        stringResource(R.string.remote_mode_second_screen),
                         maxLines = 1,
                         overflow = TextOverflow.Ellipsis,
                     )
@@ -370,6 +383,29 @@ fun RemoteScreen(
                     )
                     // The touchpad under the screen: watch the PC and move its pointer together.
                     // While typing, the room goes to the screen and the field.
+                    if (!screenFullScreen && !WindowInsets.isImeVisible) {
+                        TouchpadSurface(
+                            pcId = device.id,
+                            core = core,
+                            sensitivity = sensitivity,
+                            onStatus = onStatus,
+                            modifier = Modifier.fillMaxWidth().height(180.dp),
+                        )
+                    }
+                }
+                RemoteMode.SecondScreen -> Column(
+                    modifier = Modifier.fillMaxSize().imePadding(),
+                    verticalArrangement = Arrangement.spacedBy(10.dp),
+                ) {
+                    PcMirrorView(
+                        pcId = device.id,
+                        pcName = device.name,
+                        core = core,
+                        isFullScreen = screenFullScreen,
+                        onFullScreenChange = { screenFullScreen = it },
+                        isSecondScreen = true,
+                        modifier = Modifier.weight(1f).fillMaxWidth(),
+                    )
                     if (!screenFullScreen && !WindowInsets.isImeVisible) {
                         TouchpadSurface(
                             pcId = device.id,

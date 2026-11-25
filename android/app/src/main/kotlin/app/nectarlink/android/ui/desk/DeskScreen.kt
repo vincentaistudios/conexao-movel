@@ -450,9 +450,9 @@ fun DeskScreen(
                         modifier = Modifier.weight(1f),
                     )
                     DeskActionButton(
-                        label = stringResource(R.string.action_remote_pc),
+                        label = stringResource(R.string.desk_second_screen),
                         enabled = device.online,
-                        onClick = { onOpenRemote(RemoteMode.Touchpad) },
+                        onClick = { onOpenRemote(RemoteMode.SecondScreen) },
                         modifier = Modifier.weight(1f),
                     )
                 }
@@ -461,19 +461,25 @@ fun DeskScreen(
                     horizontalArrangement = Arrangement.spacedBy(10.dp),
                 ) {
                     DeskActionButton(
+                        label = stringResource(R.string.action_remote_pc),
+                        enabled = device.online,
+                        onClick = { onOpenRemote(RemoteMode.Touchpad) },
+                        modifier = Modifier.weight(1f),
+                    )
+                    DeskActionButton(
                         label = stringResource(R.string.action_deck_pc),
                         enabled = device.online,
                         onClick = onOpenDeck,
                         modifier = Modifier.weight(1f),
                     )
-                    DeskActionButton(
-                        label = stringResource(R.string.power_schedule_button),
-                        enabled = true,
-                        isSecondary = true,
-                        onClick = { showPowerSchedule = true },
-                        modifier = Modifier.weight(1f),
-                    )
                 }
+                DeskActionButton(
+                    label = stringResource(R.string.power_schedule_button),
+                    enabled = true,
+                    isSecondary = true,
+                    onClick = { showPowerSchedule = true },
+                    modifier = Modifier.fillMaxWidth(),
+                )
             }
         }
 
