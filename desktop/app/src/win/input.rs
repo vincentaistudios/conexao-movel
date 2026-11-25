@@ -20,7 +20,7 @@ use windows::Win32::UI::{
         VK_MEDIA_PREV_TRACK, VK_MENU, VK_NEXT, VK_PRIOR, VK_RETURN, VK_RIGHT, VK_SHIFT, VK_SPACE, VK_TAB,
         VK_UP, VK_V, VK_VOLUME_DOWN, VK_VOLUME_MUTE, VK_VOLUME_UP, VK_X, VK_Y, VK_Z,
     },
-    WindowsAndMessaging::WHEEL_DELTA,
+    WindowsAndMessaging::{GetSystemMetrics, SM_CXSCREEN, SM_CYSCREEN, WHEEL_DELTA},
 };
 
 /// Fractional remainders for sub-pixel pointer motion and sub-notch scrolling,
@@ -151,9 +151,14 @@ pub fn mirror_touch(action: TouchAction, x: f32, y: f32) {
     send_inputs(&[mouse_input(ax, ay, 0, flags)]);
 }
 
+#[allow(unsafe_code)]
+fn screen_size_px() -> (i32, i32) {
+    unsafe { (GetSystemMetrics(SM_CXSCREEN), GetSystemMetrics(SM_CYSCREEN)) }
+}
+
 /// Moves the pointer to absolute desktop pixel coordinates `(px, py)`.
 pub fn move_pointer_px(px: i32, py: i32) {
-    let (w, h) = display_dimensions();
+    let (w, h) = screen_size_px();
     let nx = (px as f32 / w.max(1) as f32).clamp(0.0, 1.0);
     let ny = (py as f32 / h.max(1) as f32).clamp(0.0, 1.0);
     move_absolute(nx, ny);
@@ -161,7 +166,7 @@ pub fn move_pointer_px(px: i32, py: i32) {
 
 /// Translates touch events at desktop pixel coordinates `(px, py)` into mouse input.
 pub fn mirror_touch_at(action: TouchAction, px: i32, py: i32) {
-    let (w, h) = display_dimensions();
+    let (w, h) = screen_size_px();
     let nx = (px as f32 / w.max(1) as f32).clamp(0.0, 1.0);
     let ny = (py as f32 / h.max(1) as f32).clamp(0.0, 1.0);
     mirror_touch(action, nx, ny);
