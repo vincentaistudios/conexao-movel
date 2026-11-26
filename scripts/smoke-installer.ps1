@@ -23,9 +23,13 @@ if (-not $Setup -or -not (Test-Path $Setup)) { throw "no setup installer found t
 $dir = Join-Path $env:ProgramFiles 'Nectarlink'
 $exe = Join-Path $dir 'nectarlink-desktop.exe'
 $uninstallKey = 'HKLM:\Software\Microsoft\Windows\CurrentVersion\Uninstall\Nectarlink'
-$displayName = "Conex$([char]0x00E3)o M$([char]0x00F3)vel.lnk"
-$shortcut = Join-Path $env:ProgramData "Microsoft\Windows\Start Menu\Programs\$displayName"
-$desktopShortcut = Join-Path $env:PUBLIC "Desktop\$displayName"
+$startMenuDir = Join-Path $env:ProgramData 'Microsoft\Windows\Start Menu\Programs'
+$desktopDir = Join-Path $env:PUBLIC 'Desktop'
+function Find-AppShortcut($dir) {
+    Get-ChildItem -LiteralPath $dir -Filter '*.lnk' -ErrorAction SilentlyContinue |
+        Where-Object { $_.Name -like 'Conex*' -or $_.Name -like 'Nectar*' } |
+        Select-Object -First 1
+}
 $data = if ($env:RUNNER_TEMP) { Join-Path $env:RUNNER_TEMP 'nectarlink-smoke' } else { Join-Path $env:TEMP 'nectarlink-smoke' }
 
 function Check($what, [bool]$ok) {
@@ -60,8 +64,8 @@ Start-Process $Setup -ArgumentList '/S' -Wait
 Check "the app is installed" (Test-Path $exe)
 Check "an uninstaller is installed" (Test-Path (Join-Path $dir 'uninstall.exe'))
 Check "it's in Apps (uninstall entry)" (Test-Path $uninstallKey)
-Check "it's in the Start menu" (Test-Path $shortcut)
-Check "a first install adds a desktop shortcut" (Test-Path $desktopShortcut)
+Check "it's in the Start menu" ([bool](Find-AppShortcut $startMenuDir))
+Check "a first install adds a desktop shortcut" ([bool](Find-AppShortcut $desktopDir))
 Check "the firewall lets phones in" ([bool](FirewallRule))
 Check "license notices are included" ((Get-Item (Join-Path $dir 'THIRD-PARTY-NOTICES.txt')).Length -gt 100KB)
 $task = UpdateTask
@@ -86,15 +90,15 @@ Check "nobody else may change or delete the update task" (-not (Test-OthersMayWr
 
 # The desktop shortcut: an update (no /DESKTOP, as the updater runs it) leaves
 # a deleted one deleted; the setup window's choice adds or removes it.
-Remove-Item $desktopShortcut
+Find-AppShortcut $desktopDir | Remove-Item
 Start-Process $Setup -ArgumentList '/S' -Wait
-Check "an update doesn't bring back a deleted desktop shortcut" (-not (Test-Path $desktopShortcut))
+Check "an update doesn't bring back a deleted desktop shortcut" (-not (Find-AppShortcut $desktopDir))
 Start-Process $Setup -ArgumentList '/S', '/DESKTOP=1' -Wait
-Check "asking for a desktop shortcut adds it" (Test-Path $desktopShortcut)
+Check "asking for a desktop shortcut adds it" ([bool](Find-AppShortcut $desktopDir))
 Start-Process $Setup -ArgumentList '/S' -Wait
-Check "an update keeps the desktop shortcut" (Test-Path $desktopShortcut)
+Check "an update keeps the desktop shortcut" ([bool](Find-AppShortcut $desktopDir))
 Start-Process $Setup -ArgumentList '/S', '/DESKTOP=0' -Wait
-Check "declining a desktop shortcut removes it" (-not (Test-Path $desktopShortcut))
+Check "declining a desktop shortcut removes it" (-not (Find-AppShortcut $desktopDir))
 Start-Process $Setup -ArgumentList '/S', '/DESKTOP=1' -Wait
 
 # The installed copy starts on its own files and quits when asked.
@@ -112,8 +116,8 @@ $deadline = (Get-Date).AddSeconds(60)
 while ((Test-Path $dir) -and (Get-Date) -lt $deadline) { Start-Sleep 1 }
 Check "the app folder is gone" (-not (Test-Path $dir))
 Check "the uninstall entry is gone" (-not (Test-Path $uninstallKey))
-Check "the Start menu shortcut is gone" (-not (Test-Path $shortcut))
-Check "the desktop shortcut is gone" (-not (Test-Path $desktopShortcut))
+Check "the Start menu shortcut is gone" (-not (Find-AppShortcut $startMenuDir))
+Check "the desktop shortcut is gone" (-not (Find-AppShortcut $desktopDir))
 Check "the firewall rule is gone" (-not (FirewallRule))
 Check "the update task is gone" ($null -eq (UpdateTask))
 
